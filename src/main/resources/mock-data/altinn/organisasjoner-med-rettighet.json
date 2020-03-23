@@ -1,0 +1,36 @@
+[
+  {
+    "Name": "ELIAS MYRDAL",
+    "Type": "Person",
+    "SocialSecurityNumber": "01065500791"
+  },
+  {
+    "Name": "HØNEFOSS OG ØLEN",
+    "Type": "Enterprise",
+    "OrganizationNumber": "910020104",
+    "OrganizationForm": "AS",
+    "Status": "Active"
+  },
+  {
+    "Name": "JØA OG SEL",
+    "Type": "Business",
+    "OrganizationNumber": "910098898",
+    "ParentOrganizationNumber": "911366940",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ELTRODE AS",
+    "Type": "Business",
+    "OrganizationNumber": "917404437",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "STADLANDET OG SINGSÅS",
+    "Type": "Enterprise",
+    "OrganizationNumber": "911366940",
+    "OrganizationForm": "AS",
+    "Status": "Active"
+  }
+]

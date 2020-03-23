@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%-5level - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <logger name="no.nav" level="${log.level.no.nav:-INFO}"/>
+    <logger name="jdbc.sql" level="${log.level.jdbc.sql:-ERROR}"/>
+    <logger name="com.zaxxer.hikari" level="${log.level.com.zaxxer.hikari:-ERROR}"/>
+    <logger name="ch.qos.logback" level="${log.level.ch.qos.logback:-WARN}"/>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

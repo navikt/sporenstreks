@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <if condition='isDefined("KOIN_PROFILE")'>
+        <then>
+            <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+            </appender>
+        </then>
+        <else>
+            <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder>
+                    <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+                </encoder>
+            </appender>
+        </else>
+    </if>
+    <logger name="no.nav" level="${log.level.no.nav:-INFO}"/>
+    <logger name="jdbc.sql" level="${log.level.jdbc.sql:-ERROR}"/>
+    <logger name="com.zaxxer.hikari" level="${log.level.com.zaxxer.hikari:-WARN}"/>
+    <logger name="ch.qos.logback" level="${log.level.ch.qos.logback:-WARN}"/>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
