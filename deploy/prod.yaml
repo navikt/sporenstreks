@@ -1,0 +1,62 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: sporenstreks
+  namespace: default
+  labels:
+    team: {{team}}
+spec:
+  image: {{image}}:{{tag}}
+  port: 8080
+  liveness:
+    path: isalive
+    initialDelay: 10
+    periodSeconds: 3
+    failureThreshold: 10
+  readiness:
+    path: isready
+    initialDelay: 10
+    timeout: 1
+    periodSeconds: 3
+    failureThreshold: 10
+  ingresses:
+    - https://sporenstreks.nais.adeo.no
+  replicas:
+    max: 1
+    min: 1
+  resources:
+    limits:
+      cpu: 400m
+      memory: 256Mi
+    requests:
+      cpu: 200m
+      memory: 64Mi
+  vault:
+    enabled: true
+    paths:
+      - kvPath: /kv/prod/fss/helse-spion/default
+        mountPath: /var/run/secrets/nais.io/vault
+  #      - mountPath: /var/run/secrets/nais.io/apigw/altinn
+  #        kvPath: /apikey/apigw/prod/eksternapp.altinn.serviceowner/helse-spion
+  webproxy: true
+  env:
+    - name: KOIN_PROFILE
+      value: PROD
+    - name: DATABASE_HOST
+      value: A01DBVL011.adeo.no
+    - name: DATABASE_PORT
+      value: "5432"
+    - name: DATABASE_NAME
+      value: sporenstreks
+    - name: VAULT_MOUNTPATH
+      value: postgresql/prod-fss/
+    - name: OIDC_DISCOVERY_URL
+      value: https://login.microsoftonline.com/navnob2c.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1A_idporten
+    - name: OIDC_ACCEPTED_AUDIENCE
+      value: 45104d6a-f5bc-4e8c-b352-4bbfc9381f25
+    - name: OIDC_ISSUER_NAME
+      value: aadb2c
+    - name: PARTNER_GATEWAY_ALTINN_ENDPOINT
+      value: https://pep-gw.oera.no:9443/ekstern/altinn/BehandleAltinnMelding/v1
+    - name: SECURITYTOKENSERVICE_URL
+      value: https://sts.adeo.no/SecurityTokenServiceProvider/
