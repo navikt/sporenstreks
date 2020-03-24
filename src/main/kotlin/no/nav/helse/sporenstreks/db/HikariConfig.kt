@@ -17,4 +17,4 @@ fun createHikariConfig(jdbcUrl: String, username: String? = null, password: Stri
 
 
 fun createLocalHikariConfig() =
-        createHikariConfig("jdbc:postgresql://localhost:5433/sporenstreks", "sporenstreks", "sporenstreks")
+        createHikariConfig("jdbc:postgresql://localhost:5432/sporenstreks", "sporenstreks", "sporenstreks")
