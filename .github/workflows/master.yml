@@ -25,8 +25,8 @@ jobs:
         run: |
           echo $DOCKER_IMAGE > .docker_image
           echo $(echo $GITHUB_SHA | cut -c1-7) > .docker_tag
-      - name: compose up
-        run: cd docker/local && docker-compose up -d && sleep 10
+      #      - name: compose up
+      #        run: cd docker/local && docker-compose up -d && sleep 10
       - name: test and build
         run: bash ./gradlew --console=plain build test
         env:
