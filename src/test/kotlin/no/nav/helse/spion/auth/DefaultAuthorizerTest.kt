@@ -1,8 +1,8 @@
-package no.nav.helse.spion.auth
+package no.nav.helse.sporenstreks.auth
 
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.helse.spion.domene.AltinnOrganisasjon
+import no.nav.helse.sporenstreks.domene.AltinnOrganisasjon
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

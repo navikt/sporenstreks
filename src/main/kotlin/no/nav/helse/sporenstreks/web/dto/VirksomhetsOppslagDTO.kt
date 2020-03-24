@@ -1,7 +1,8 @@
-package no.nav.helse.spion.web.dto
+package no.nav.helse.sporenstreks.web.dto
 
 import io.ktor.locations.Location
-import no.nav.helse.spion.domene.Periode
+import no.nav.helse.sporenstreks.domene.Periode
+import no.nav.helse.sporenstreks.web.dto.validation.isValidOrganisasjonsnummer
 import org.valiktor.functions.isGreaterThanOrEqualTo
 import org.valiktor.functions.validate
 import org.valiktor.validate

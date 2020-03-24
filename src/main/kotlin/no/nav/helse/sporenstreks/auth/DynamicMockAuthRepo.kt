@@ -1,9 +1,7 @@
-package no.nav.helse.spion.auth
+package no.nav.helse.sporenstreks.auth
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.github.javafaker.Faker
-import no.nav.helse.spion.domene.AltinnOrganisasjon
+import no.nav.helse.sporenstreks.domene.AltinnOrganisasjon
 import java.time.LocalDateTime
 import javax.sql.DataSource
 

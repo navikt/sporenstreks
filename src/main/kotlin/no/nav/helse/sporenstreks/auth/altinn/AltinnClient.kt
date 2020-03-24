@@ -1,14 +1,14 @@
-package no.nav.helse.spion.auth.altinn
+package no.nav.helse.sporenstreks.auth.altinn
 
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.readText
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.spion.auth.AuthorizationsRepository
-import no.nav.helse.spion.domene.AltinnOrganisasjon
-import no.nav.helse.spion.selfcheck.HealthCheck
-import no.nav.helse.spion.selfcheck.HealthCheckType
+import no.nav.helse.sporenstreks.auth.AuthorizationsRepository
+import no.nav.helse.sporenstreks.domene.AltinnOrganisasjon
+import no.nav.helse.sporenstreks.selfcheck.HealthCheck
+import no.nav.helse.sporenstreks.selfcheck.HealthCheckType
 import org.slf4j.LoggerFactory
 
 class AltinnClient(

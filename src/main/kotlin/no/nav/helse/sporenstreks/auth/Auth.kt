@@ -1,6 +1,6 @@
-package no.nav.helse.spion.auth
+package no.nav.helse.sporenstreks.auth
 
-import no.nav.helse.spion.domene.AltinnOrganisasjon
+import no.nav.helse.sporenstreks.domene.AltinnOrganisasjon
 
 interface Authorizer {
     /**

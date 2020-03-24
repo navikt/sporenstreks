@@ -1,4 +1,4 @@
-package no.nav.helse.spion.auth
+package no.nav.helse.sporenstreks.auth
 
 import io.ktor.config.ApplicationConfig
 import io.ktor.request.ApplicationRequest

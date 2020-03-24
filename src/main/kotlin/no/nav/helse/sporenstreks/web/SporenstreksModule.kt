@@ -1,4 +1,4 @@
-package no.nav.helse.spion.web
+package no.nav.helse.sporenstreks.web
 
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -17,11 +17,18 @@ import io.ktor.features.StatusPages
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.jackson.JacksonConverter
+import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.locations.Locations
 import io.ktor.response.respond
 import io.ktor.routing.routing
 import io.ktor.util.DataConversionException
 import io.ktor.util.KtorExperimentalAPI
+import no.nav.helse.sporenstreks.auth.localCookieDispenser
+import no.nav.helse.sporenstreks.nais.nais
+import no.nav.helse.sporenstreks.web.api.sporenstreks
+import no.nav.helse.sporenstreks.web.dto.validation.Problem
+import no.nav.helse.sporenstreks.web.dto.validation.ValidationProblem
+import no.nav.helse.sporenstreks.web.dto.validation.ValidationProblemDetail
 import no.nav.security.token.support.ktor.tokenValidationSupport
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.get
@@ -35,6 +42,7 @@ import java.util.*
 import javax.ws.rs.ForbiddenException
 
 
+@KtorExperimentalLocationsAPI
 @KtorExperimentalAPI
 fun Application.sporenstreksModule(config: ApplicationConfig = environment.config) {
     install(Koin) {
@@ -75,10 +83,10 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
             val errorId = UUID.randomUUID()
             LOGGER.error("Uventet feil, $errorId", cause)
             val problem = Problem(
-                    type = URI.create("urn:spion:uventet-feil"),
+                    type = URI.create("urn:sporenstreks:uventet-feil"),
                     title = "Uventet feil",
                     detail = cause.message,
-                    instance = URI.create("urn:spion:uventent-feil:$errorId")
+                    instance = URI.create("urn:sporenstreks:uventent-feil:$errorId")
             )
             call.respond(HttpStatusCode.InternalServerError, problem)
         }
@@ -98,10 +106,10 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
             }
         }
 
-        exception<ForbiddenException> { cause ->
+        exception<ForbiddenException> {
             call.respond(
                     HttpStatusCode.Forbidden,
-                    Problem(URI.create("urn:spion:forbidden"), "Ingen tilgang", HttpStatusCode.Forbidden.value)
+                    Problem(URI.create("urn:sporenstreks:forbidden"), "Ingen tilgang", HttpStatusCode.Forbidden.value)
             )
         }
 
@@ -140,7 +148,7 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
                     val problem = Problem(
                             title = "Feil ved prosessering av JSON-dataene som ble oppgitt",
                             detail = cause.message,
-                            instance = URI.create("urn:spion:json-mapping-error:$errorId")
+                            instance = URI.create("urn:sporenstreks:json-mapping-error:$errorId")
                     )
                     call.respond(HttpStatusCode.BadRequest, problem)
                 }

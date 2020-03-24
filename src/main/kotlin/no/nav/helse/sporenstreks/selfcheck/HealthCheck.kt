@@ -1,4 +1,4 @@
-package no.nav.helse.spion.selfcheck
+package no.nav.helse.sporenstreks.selfcheck
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

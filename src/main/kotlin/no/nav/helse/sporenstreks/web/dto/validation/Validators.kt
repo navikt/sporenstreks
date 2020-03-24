@@ -1,8 +1,8 @@
-package no.nav.helse.spion.web.dto.validation
+package no.nav.helse.sporenstreks.web.dto.validation
 
-import no.nav.helse.spion.web.dto.validation.FoedselsNrValidator.Companion.tabeller.kontrollsiffer1
-import no.nav.helse.spion.web.dto.validation.FoedselsNrValidator.Companion.tabeller.kontrollsiffer2
-import no.nav.helse.spion.web.dto.validation.OrganisasjonsnummerValidator.Companion.tabeller.weights
+import no.nav.helse.sporenstreks.web.dto.validation.FoedselsNrValidator.Companion.tabeller.kontrollsiffer1
+import no.nav.helse.sporenstreks.web.dto.validation.FoedselsNrValidator.Companion.tabeller.kontrollsiffer2
+import no.nav.helse.sporenstreks.web.dto.validation.OrganisasjonsnummerValidator.Companion.tabeller.weights
 
 
 class FoedselsNrValidator(input: String?) {

@@ -1,19 +1,14 @@
-package no.nav.helse.spion.web.integration
+package no.nav.helse.sporenstreks.web.integration
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
-import io.ktor.server.testing.setBody
 import io.ktor.util.KtorExperimentalAPI
-import no.nav.helse.spion.web.dto.PersonOppslagDto
+import no.nav.helse.sporenstreks.web.dto.PersonOppslagDto
+import no.nav.helse.sporenstreks.web.sporenstreksModule
 import no.nav.helse.validWithoutPeriode
-import no.nav.security.token.support.test.JwtTokenGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.koin.core.get
 
 @KtorExperimentalAPI
 class ApplicationAuthenticationTest : ControllerIntegrationTestBase() {

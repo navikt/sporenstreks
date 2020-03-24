@@ -1,4 +1,4 @@
-package no.nav.helse.spion.web
+package no.nav.helse.sporenstreks.web
 
 import com.typesafe.config.ConfigFactory
 import io.ktor.config.HoconApplicationConfig

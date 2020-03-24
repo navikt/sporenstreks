@@ -1,7 +1,7 @@
 package no.nav.helse
 
-import no.nav.helse.spion.domene.Periode
-import no.nav.helse.spion.web.dto.PersonOppslagDto
+import no.nav.helse.sporenstreks.domene.Periode
+import no.nav.helse.sporenstreks.web.dto.PersonOppslagDto
 import java.time.LocalDate
 
 object TestData {

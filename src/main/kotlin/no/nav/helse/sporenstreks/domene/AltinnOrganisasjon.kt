@@ -1,4 +1,4 @@
-package no.nav.helse.spion.domene
+package no.nav.helse.sporenstreks.domene
 
 data class AltinnOrganisasjon(
         val name: String,

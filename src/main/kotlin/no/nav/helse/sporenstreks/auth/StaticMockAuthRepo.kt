@@ -1,11 +1,11 @@
-package no.nav.helse.spion.auth
+package no.nav.helse.sporenstreks.auth
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import loadFromResources
-import no.nav.helse.spion.domene.AltinnOrganisasjon
-import no.nav.helse.spion.selfcheck.HealthCheck
-import no.nav.helse.spion.selfcheck.HealthCheckType
+import no.nav.helse.sporenstreks.domene.AltinnOrganisasjon
+import no.nav.helse.sporenstreks.selfcheck.HealthCheck
+import no.nav.helse.sporenstreks.selfcheck.HealthCheckType
 
 class StaticMockAuthRepo(om: ObjectMapper) : AuthorizationsRepository, HealthCheck {
     override val healthCheckType = HealthCheckType.READYNESS

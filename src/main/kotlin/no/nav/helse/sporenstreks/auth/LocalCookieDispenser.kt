@@ -1,4 +1,4 @@
-package no.nav.helse.spion.auth
+package no.nav.helse.sporenstreks.auth
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock

@@ -1,4 +1,4 @@
-package no.nav.helse.spion.domene
+package no.nav.helse.sporenstreks.domene
 
 data class Arbeidsgiver(
         val navn: String,

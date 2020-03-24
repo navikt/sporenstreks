@@ -1,4 +1,4 @@
-package no.nav.helse.spion.nais
+package no.nav.helse.sporenstreks.nais
 
 import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
@@ -14,13 +14,12 @@ import io.ktor.util.pipeline.PipelineContext
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
 import io.prometheus.client.hotspot.DefaultExports
-import no.nav.helse.spion.selfcheck.HealthCheck
-import no.nav.helse.spion.selfcheck.HealthCheckState
-import no.nav.helse.spion.selfcheck.HealthCheckType
-import no.nav.helse.spion.selfcheck.runHealthChecks
-import org.koin.ktor.ext.get
+import no.nav.helse.sporenstreks.selfcheck.HealthCheck
+import no.nav.helse.sporenstreks.selfcheck.HealthCheckState
+import no.nav.helse.sporenstreks.selfcheck.HealthCheckType
+import no.nav.helse.sporenstreks.selfcheck.runHealthChecks
+import no.nav.helse.sporenstreks.web.getAllOfType
 import org.koin.ktor.ext.getKoin
-import java.time.LocalDate
 import java.util.*
 
 private val collectorRegistry = CollectorRegistry.defaultRegistry

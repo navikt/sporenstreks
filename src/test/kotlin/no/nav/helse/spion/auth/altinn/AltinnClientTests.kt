@@ -1,4 +1,4 @@
-package no.nav.helse.spion.auth.altinn
+package no.nav.helse.sporenstreks.auth.altinn
 
 import com.fasterxml.jackson.databind.MapperFeature
 import io.ktor.client.HttpClient

@@ -1,4 +1,4 @@
-package no.nav.helse.spion.web.dto
+package no.nav.helse.sporenstreks.web.dto
 
 import no.nav.helse.TestData
 import no.nav.helse.validWithPeriode

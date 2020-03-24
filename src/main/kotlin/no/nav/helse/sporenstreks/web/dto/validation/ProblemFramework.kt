@@ -1,4 +1,4 @@
-package no.nav.helse.spion.web.dto.validation
+package no.nav.helse.sporenstreks.web.dto.validation
 
 import java.net.URI
 
@@ -27,7 +27,7 @@ open class Problem(
 class ValidationProblem(
         val violations: Set<ValidationProblemDetail>
 ) : Problem(
-        URI.create("urn:spion:validation-error"),
+        URI.create("urn:sporenstreks:validation-error"),
         "Valideringen av input feilet",
         422,
         "Ett eller flere felter har feil."

@@ -1,4 +1,4 @@
-package no.nav.helse.spion.web
+package no.nav.helse.sporenstreks.web
 
 import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
@@ -14,16 +14,10 @@ import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.config.ApplicationConfig
 import io.ktor.util.KtorExperimentalAPI
-import no.altinn.services.serviceengine.correspondence._2009._10.ICorrespondenceAgencyExternalBasic
-import no.nav.helse.spion.auth.*
-import no.nav.helse.spion.db.createHikariConfig
-import no.nav.helse.spion.db.createLocalHikariConfig
-import no.nav.helse.spion.db.getDataSource
-import org.apache.cxf.ext.logging.LoggingInInterceptor
-import org.apache.cxf.ext.logging.LoggingOutInterceptor
-import org.apache.cxf.frontend.ClientProxy
-import org.apache.kafka.clients.CommonClientConfigs
-import org.apache.kafka.common.config.SaslConfigs
+import no.nav.helse.sporenstreks.auth.*
+import no.nav.helse.sporenstreks.db.createHikariConfig
+import no.nav.helse.sporenstreks.db.createLocalHikariConfig
+import no.nav.helse.sporenstreks.db.getDataSource
 import org.koin.core.Koin
 import org.koin.core.definition.Kind
 import org.koin.core.module.Module

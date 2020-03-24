@@ -1,4 +1,4 @@
-package no.nav.helse.spion.web.integration
+package no.nav.helse.sporenstreks.web.integration
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock

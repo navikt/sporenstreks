@@ -1,4 +1,4 @@
-package no.nav.helse.spion.db
+package no.nav.helse.sporenstreks.db
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource

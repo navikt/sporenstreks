@@ -1,4 +1,4 @@
-package no.nav.helse.spion.web.dto.validation
+package no.nav.helse.sporenstreks.web.dto.validation
 
 import org.valiktor.Constraint
 import org.valiktor.Validator

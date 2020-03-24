@@ -1,10 +1,12 @@
-package no.nav.helse.spion.web.integration
+package no.nav.helse.sporenstreks.web.integration
 
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.util.KtorExperimentalAPI
-import no.nav.helse.spion.auth.StaticMockAuthRepo
+import no.nav.helse.sporenstreks.auth.StaticMockAuthRepo
+import no.nav.helse.sporenstreks.web.sporenstreksModule
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.koin.ktor.ext.get
 

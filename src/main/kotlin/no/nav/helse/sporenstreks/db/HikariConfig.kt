@@ -1,4 +1,4 @@
-package no.nav.helse.spion.db
+package no.nav.helse.sporenstreks.db
 
 import com.zaxxer.hikari.HikariConfig
 
@@ -17,4 +17,4 @@ fun createHikariConfig(jdbcUrl: String, username: String? = null, password: Stri
 
 
 fun createLocalHikariConfig() =
-        createHikariConfig("jdbc:postgresql://localhost:5432/spion", "spion", "spion")
+        createHikariConfig("jdbc:postgresql://localhost:5433/sporenstreks", "sporenstreks", "sporenstreks")
