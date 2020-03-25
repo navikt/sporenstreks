@@ -3,7 +3,6 @@ package no.nav.helse.sporenstreks.web.dto.validation
 import no.nav.helse.sporenstreks.web.dto.Arbeidsgiverperiode
 import org.valiktor.Constraint
 import org.valiktor.Validator
-import java.time.Duration
 import java.time.Period
 
 interface CustomConstraint : Constraint {
@@ -23,9 +22,15 @@ fun <E> Validator<E>.Property<String?>.isValidOrganisasjonsnummer() =
         this.validate(OrganisasjonsnummerConstraint()) { OrganisasjonsnummerValidator.isValid(it) }
 
 class RefusjonsDagerConstraint : CustomConstraint
-fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.sumAntallDagerMindreEnnEllerLik(maksDager: Int) =
-        this.validate(RefusjonsDagerConstraint()) { ps -> ps!!.sumBy { it.antallDagerMedRefusjon } <= maksDager }
+fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.arbeidsgiverBetalerForDager(arbeidsgiverensDager: Int) =
+        this.validate(RefusjonsDagerConstraint()) { ps ->
+            val totalAgp = ps!!.map {
+                Period.between(it.fom, it.tom.plusDays(1))
+            }.sumBy { it.days }
 
+            val antallRefusjonsDager = ps!!.sumBy { it.antallDagerMedRefusjon }
+            antallRefusjonsDager <= totalAgp - arbeidsgiverensDager
+        }
 
 class SammenhengeneArbeidsgiverPeriode : CustomConstraint
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.harMaksimaltOppholdMellomPerioder(maksDagerMedOpphold: Int) =
