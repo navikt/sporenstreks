@@ -1,0 +1,59 @@
+package no.nav.helse.sporenstreks.db
+
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.helse.sporenstreks.domene.Refusjonskrav
+import org.slf4j.LoggerFactory
+import java.sql.Connection
+import javax.sql.DataSource
+
+class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapper) {
+    private val logger = LoggerFactory.getLogger(PostgresRefusjonskravRepository::class.java)
+    private val tableName = "refusjonskrav"
+
+    private val getByVirksomhetsnummerStatement = """SELECT data::json FROM $tableName 
+            WHERE data ->> 'virksomhetsnummer' = ?;"""
+
+    private val saveStatement = "INSERT INTO $tableName (data) VALUES (?::json);"
+
+    private val getByIdentitetsnummerAndVirksomhetsnummerStatement = """SELECT data::json FROM $tableName 
+         WHERE data ->> 'identitetsnummer' = ?
+            AND data ->> 'virksomhetsnummer' = ?;"""
+
+    fun getForVirksomhet(virksomhetsnummer: String): List<Refusjonskrav> {
+        ds.connection.use { con ->
+            val resultList = ArrayList<Refusjonskrav>()
+            val res = con.prepareStatement(getByVirksomhetsnummerStatement).apply {
+                setString(1, virksomhetsnummer)
+            }.executeQuery()
+
+            while (res.next()) {
+                resultList.add(mapper.readValue(res.getString("data")))
+            }
+            return resultList
+        }
+    }
+
+    fun insert(yp: Refusjonskrav, con: Connection): Int {
+        val json = mapper.writeValueAsString(yp)
+        return con.prepareStatement(saveStatement).apply {
+            setString(1, json)
+        }.executeUpdate()
+    }
+
+    private fun getExistingRefusjonskrav(identitetsnummer: String, virksomhetsnummer: String): List<Refusjonskrav> {
+        ds.connection.use {
+            val existingYpList = ArrayList<Refusjonskrav>()
+            val res = it.prepareStatement(getByIdentitetsnummerAndVirksomhetsnummerStatement).apply {
+                setString(1, identitetsnummer)
+                setString(2, virksomhetsnummer)
+            }.executeQuery()
+
+            while (res.next()) {
+                existingYpList.add(mapper.readValue(res.getString("data")))
+            }
+
+            return existingYpList
+        }
+    }
+}

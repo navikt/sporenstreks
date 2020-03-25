@@ -1,6 +1,6 @@
 package no.nav.helse.sporenstreks.web.dto.validation
 
-import no.nav.helse.sporenstreks.web.dto.Arbeidsgiverperiode
+import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import org.valiktor.Constraint
 import org.valiktor.Validator
 import java.time.Period

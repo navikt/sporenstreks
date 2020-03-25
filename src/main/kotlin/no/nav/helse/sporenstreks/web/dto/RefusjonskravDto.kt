@@ -1,17 +1,12 @@
 package no.nav.helse.sporenstreks.web.dto
 
+import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.web.dto.validation.*
 import org.valiktor.functions.isGreaterThanOrEqualTo
 import org.valiktor.functions.isPositive
 import org.valiktor.functions.validateForEach
 import org.valiktor.validate
 import java.time.LocalDate
-
-data class Arbeidsgiverperiode(
-        val fom: LocalDate,
-        val tom: LocalDate,
-        val antallDagerMedRefusjon: Int
-)
 
 data class RefusjonskravDto(
         val identitetsnummer: String,

@@ -1,6 +1,7 @@
 package no.nav.helse.sporenstreks.web.dto
 
 import no.nav.helse.TestData
+import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.valiktor.ConstraintViolationException
@@ -14,8 +15,8 @@ internal class RefusjonsKravDtoTest {
                 TestData.validIdentitetsnummer,
                 TestData.validOrgNr,
                 setOf(Arbeidsgiverperiode(
-                        LocalDate.of(2020, 4,1),
-                        LocalDate.of(2020, 4,5),
+                        LocalDate.of(2020, 4, 1),
+                        LocalDate.of(2020, 4, 5),
                         2
                 ), Arbeidsgiverperiode(
                         LocalDate.of(2020, 4, 22),
@@ -32,8 +33,8 @@ internal class RefusjonsKravDtoTest {
                 TestData.validIdentitetsnummer,
                 TestData.validOrgNr,
                 setOf(Arbeidsgiverperiode(
-                        LocalDate.of(2020, 4,1),
-                        LocalDate.of(2020, 4,5),
+                        LocalDate.of(2020, 4, 1),
+                        LocalDate.of(2020, 4, 5),
                         2
                 ), Arbeidsgiverperiode(
                         LocalDate.of(2020, 4, 5),
@@ -88,14 +89,14 @@ internal class RefusjonsKravDtoTest {
                     TestData.validOrgNr,
                     setOf(
                             Arbeidsgiverperiode(
-                                LocalDate.of(2020, 4, 1),
-                                LocalDate.of(2020, 4, 5),
-                                2
-                        ), Arbeidsgiverperiode(
-                                LocalDate.of(2020, 4, 23),
-                                LocalDate.of(2020, 4, 29),
-                                8
-                        )),
+                                    LocalDate.of(2020, 4, 1),
+                                    LocalDate.of(2020, 4, 5),
+                                    2
+                            ), Arbeidsgiverperiode(
+                            LocalDate.of(2020, 4, 23),
+                            LocalDate.of(2020, 4, 29),
+                            8
+                    )),
                     123.8
             )
         }
@@ -109,14 +110,14 @@ internal class RefusjonsKravDtoTest {
                     TestData.validOrgNr,
                     setOf(
                             Arbeidsgiverperiode(
-                                LocalDate.of(2020, 4, 1),
-                                LocalDate.of(2020, 4, 5),
-                                5
-                        ), Arbeidsgiverperiode(
-                                LocalDate.of(2020, 4, 20),
-                                LocalDate.of(2020, 4, 29),
-                                9
-                        )),
+                                    LocalDate.of(2020, 4, 1),
+                                    LocalDate.of(2020, 4, 5),
+                                    5
+                            ), Arbeidsgiverperiode(
+                            LocalDate.of(2020, 4, 20),
+                            LocalDate.of(2020, 4, 29),
+                            9
+                    )),
                     123.8
             )
         }
@@ -130,14 +131,14 @@ internal class RefusjonsKravDtoTest {
                     TestData.validOrgNr,
                     setOf(
                             Arbeidsgiverperiode(
-                                LocalDate.of(2020, 4, 1),
-                                LocalDate.of(2020, 4, 6),
-                                5
-                        ), Arbeidsgiverperiode(
-                                LocalDate.of(2020, 4, 10),
-                                LocalDate.of(2020, 4, 20),
-                                9
-                        )),
+                                    LocalDate.of(2020, 4, 1),
+                                    LocalDate.of(2020, 4, 6),
+                                    5
+                            ), Arbeidsgiverperiode(
+                            LocalDate.of(2020, 4, 10),
+                            LocalDate.of(2020, 4, 20),
+                            9
+                    )),
                     123.8
             )
         }
@@ -150,14 +151,14 @@ internal class RefusjonsKravDtoTest {
                     TestData.validOrgNr,
                     setOf(
                             Arbeidsgiverperiode(
-                                LocalDate.of(2020, 4, 1),
-                                LocalDate.of(2020, 4, 6),
-                                2
-                        ), Arbeidsgiverperiode(
-                                LocalDate.of(2020, 4, 10),
-                                LocalDate.of(2020, 4, 19),
-                                10
-                        )),
+                                    LocalDate.of(2020, 4, 1),
+                                    LocalDate.of(2020, 4, 6),
+                                    2
+                            ), Arbeidsgiverperiode(
+                            LocalDate.of(2020, 4, 10),
+                            LocalDate.of(2020, 4, 19),
+                            10
+                    )),
                     123.8
             )
     }
@@ -206,8 +207,8 @@ internal class RefusjonsKravDtoTest {
                                     LocalDate.of(2020, 4, 6),
                                     4
                             ), Arbeidsgiverperiode(
-                                    LocalDate.of(2020, 4, 10),
-                                    LocalDate.of(2020, 4, 12),
+                            LocalDate.of(2020, 4, 10),
+                            LocalDate.of(2020, 4, 12),
                             3
                     )),
                     123.8

@@ -34,7 +34,7 @@ spec:
   vault:
     enabled: true
     paths:
-      - kvPath: /kv/prod/fss/helse-spion/default
+      - kvPath: /kv/prod/fss/sporenstreks/default
         mountPath: /var/run/secrets/nais.io/vault
       - mountPath: /var/run/secrets/nais.io/apigw/altinn
         kvPath: /apikey/apigw/prod/eksternapp.altinn.serviceowner/sporenstreks
