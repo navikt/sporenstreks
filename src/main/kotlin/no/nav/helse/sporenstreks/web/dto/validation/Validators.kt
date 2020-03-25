@@ -87,7 +87,6 @@ class OrganisasjonsnummerValidator(input: String?) {
     companion object {
         object tabeller {
             val weights: List<Int> = listOf(3, 2, 7, 6, 5, 4, 3, 2)
-
         }
 
         fun isValid(asString: String?): Boolean {
@@ -100,7 +99,10 @@ class OrganisasjonsnummerValidator(input: String?) {
         }
 
         fun checksum(kontrollsifferVekter: List<Int>, orgNr: String): Int {
-            val produktsum = kontrollsifferVekter.reduceIndexed { i, sum, siffer -> sum + siffer * orgNr[i].toString().toInt() }
+            var produktsum = 0
+            for ((i, m) in kontrollsifferVekter.withIndex()) {
+                produktsum += m * orgNr[i].toString().toInt()
+            }
 
             val res = 11 - (produktsum % 11)
             return if (res == 11) 0 else res

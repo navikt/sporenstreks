@@ -130,7 +130,7 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
             call.respond(
                     HttpStatusCode.BadRequest,
                     ValidationProblem(setOf(
-                            ValidationProblemDetail("NotNull", cause.msg, cause.path.joinToString(".") { it.fieldName }, "null"))
+                            ValidationProblemDetail("NotNull", "Det angitte feltet er påkrevd", cause.path.joinToString(".") { it.fieldName }, "null"))
                     )
             )
         }

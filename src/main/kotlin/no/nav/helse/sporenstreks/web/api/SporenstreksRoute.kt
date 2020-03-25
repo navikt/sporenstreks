@@ -13,17 +13,16 @@ import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.pipeline.PipelineContext
 import no.nav.helse.sporenstreks.auth.Authorizer
 import no.nav.helse.sporenstreks.auth.hentIdentitetsnummerFraLoginToken
-import no.nav.helse.sporenstreks.web.dto.SkjemaDto
+import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import javax.ws.rs.ForbiddenException
 
 @KtorExperimentalAPI
 fun Route.sporenstreks(authorizer: Authorizer) {
     route("api/v1") {
-        route("/skjema") {
-
-            post("/send-inn") {
-                val oppslag = call.receive<SkjemaDto>()
-                authorize(authorizer, oppslag.arbeidsgiverId)
+        route("/refusjonskrav") {
+            post("/") {
+                val oppslag = call.receive<RefusjonskravDto>()
+                authorize(authorizer, oppslag.virksomhetsnummer)
                 call.respond(HttpStatusCode.OK)
             }
         }
