@@ -27,6 +27,10 @@ data class RefusjonskravDto(
             validate(RefusjonskravDto::beløp).isPositive()
 
             validate(RefusjonskravDto::perioder).validateForEach {
+                validate(Arbeidsgiverperiode::fom).isGreaterThanOrEqualTo(LocalDate.of(2020, 3, 16))
+            }
+
+            validate(RefusjonskravDto::perioder).validateForEach {
                 validate(Arbeidsgiverperiode::tom).isGreaterThanOrEqualTo(it.fom)
             }
 

@@ -76,7 +76,7 @@ fun buildAndTestConfig() = module {
 fun localDevConfig(config: ApplicationConfig) = module {
     single { getDataSource(createLocalHikariConfig(), "sporenstreks", null) as DataSource }
 
-    single { DynamicMockAuthRepo(get(), get()) as AuthorizationsRepository }
+    single { StaticMockAuthRepo(get()) as AuthorizationsRepository }
     single { DefaultAuthorizer(get()) as Authorizer }
 
     LocalOIDCWireMock.start()

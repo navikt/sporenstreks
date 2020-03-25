@@ -7,22 +7,22 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Route
+import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.pipeline.PipelineContext
+import no.nav.helse.sporenstreks.auth.AuthorizationsRepository
 import no.nav.helse.sporenstreks.auth.Authorizer
 import no.nav.helse.sporenstreks.auth.hentIdentitetsnummerFraLoginToken
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import javax.ws.rs.ForbiddenException
 
 @KtorExperimentalAPI
-fun Route.sporenstreks(authorizer: Authorizer) {
+fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepository) {
     route("api/v1") {
         route("/refusjonskrav") {
             post("/") {
-                val oppslag = call.receive<RefusjonskravDto>()
-                authorize(authorizer, oppslag.virksomhetsnummer)
                 //TODOs
                 //Opprett Domeneobjekt
                 //Lagre i databasen
@@ -33,7 +33,17 @@ fun Route.sporenstreks(authorizer: Authorizer) {
                 //Knytt dokument til sak?
                 //Opprett oppgave i gosys
                 //Skal det publiseres noe annet sted..?
+                val refusjonskrav = call.receive<RefusjonskravDto>()
+                authorize(authorizer, refusjonskrav.virksomhetsnummer)
+                println("Backend mottok $refusjonskrav")
                 call.respond(HttpStatusCode.OK)
+            }
+        }
+
+        route("/arbeidsgivere") {
+            get("/") {
+                val id = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
+                call.respond(authRepo.hentOrgMedRettigheterForPerson(id))
             }
         }
     }

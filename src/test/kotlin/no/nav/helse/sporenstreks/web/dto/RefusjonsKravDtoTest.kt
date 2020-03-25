@@ -16,12 +16,12 @@ internal class RefusjonsKravDtoTest {
                 TestData.validIdentitetsnummer,
                 TestData.validOrgNr,
                 setOf(Arbeidsgiverperiode(
-                        LocalDate.of(2010, 1,1),
-                        LocalDate.of(2010, 1,5),
+                        LocalDate.of(2020, 4,1),
+                        LocalDate.of(2020, 4,5),
                         2
                 ), Arbeidsgiverperiode(
-                        LocalDate.of(2010, 1, 22),
-                        LocalDate.of(2010, 1, 29),
+                        LocalDate.of(2020, 4, 22),
+                        LocalDate.of(2020, 4, 29),
                         4
                 )),
                 3272.3
@@ -34,12 +34,12 @@ internal class RefusjonsKravDtoTest {
                 TestData.validIdentitetsnummer,
                 TestData.validOrgNr,
                 setOf(Arbeidsgiverperiode(
-                        LocalDate.of(2010, 1,1),
-                        LocalDate.of(2010, 1,5),
+                        LocalDate.of(2020, 4,1),
+                        LocalDate.of(2020, 4,5),
                         2
                 ), Arbeidsgiverperiode(
-                        LocalDate.of(2010, 1, 5),
-                        LocalDate.of(2010, 1, 10),
+                        LocalDate.of(2020, 4, 5),
+                        LocalDate.of(2020, 4, 10),
                         4
                 )),
                 3272.3
@@ -53,12 +53,12 @@ internal class RefusjonsKravDtoTest {
                     TestData.validIdentitetsnummer,
                     TestData.validOrgNr,
                     setOf(Arbeidsgiverperiode(
-                            LocalDate.of(2010, 1, 1),
-                            LocalDate.of(2010, 1, 6),
+                            LocalDate.of(2020, 4, 1),
+                            LocalDate.of(2020, 4, 6),
                             2
                     ), Arbeidsgiverperiode(
-                            LocalDate.of(2010, 1, 5),
-                            LocalDate.of(2010, 1, 10),
+                            LocalDate.of(2020, 4, 5),
+                            LocalDate.of(2020, 4, 10),
                             4
                     )),
                     3272.3
@@ -73,8 +73,8 @@ internal class RefusjonsKravDtoTest {
                     TestData.validIdentitetsnummer,
                     TestData.validOrgNr,
                     setOf(Arbeidsgiverperiode(
-                            LocalDate.of(2010, 1, 1),
-                            LocalDate.of(2010, 1, 5),
+                            LocalDate.of(2020, 4, 1),
+                            LocalDate.of(2020, 4, 5),
                             2
                     )),
                     -1.0
@@ -90,12 +90,12 @@ internal class RefusjonsKravDtoTest {
                     TestData.validOrgNr,
                     setOf(
                             Arbeidsgiverperiode(
-                                LocalDate.of(2010, 1, 1),
-                                LocalDate.of(2010, 1, 5),
+                                LocalDate.of(2020, 4, 1),
+                                LocalDate.of(2020, 4, 5),
                                 2
                         ), Arbeidsgiverperiode(
-                                LocalDate.of(2010, 1, 23),
-                                LocalDate.of(2010, 1, 29),
+                                LocalDate.of(2020, 4, 23),
+                                LocalDate.of(2020, 4, 29),
                                 8
                         )),
                     123.8
@@ -111,12 +111,12 @@ internal class RefusjonsKravDtoTest {
                     TestData.validOrgNr,
                     setOf(
                             Arbeidsgiverperiode(
-                                LocalDate.of(2010, 1, 1),
-                                LocalDate.of(2010, 1, 5),
+                                LocalDate.of(2020, 4, 1),
+                                LocalDate.of(2020, 4, 5),
                                 5
                         ), Arbeidsgiverperiode(
-                                LocalDate.of(2010, 1, 20),
-                                LocalDate.of(2010, 1, 29),
+                                LocalDate.of(2020, 4, 20),
+                                LocalDate.of(2020, 4, 29),
                                 9
                         )),
                     123.8
@@ -132,12 +132,12 @@ internal class RefusjonsKravDtoTest {
                     TestData.validOrgNr,
                     setOf(
                             Arbeidsgiverperiode(
-                                LocalDate.of(2010, 1, 1),
-                                LocalDate.of(2010, 1, 6),
+                                LocalDate.of(2020, 4, 1),
+                                LocalDate.of(2020, 4, 6),
                                 5
                         ), Arbeidsgiverperiode(
-                                LocalDate.of(2010, 1, 10),
-                                LocalDate.of(2010, 1, 20),
+                                LocalDate.of(2020, 4, 10),
+                                LocalDate.of(2020, 4, 20),
                                 9
                         )),
                     123.8
@@ -152,12 +152,12 @@ internal class RefusjonsKravDtoTest {
                     TestData.validOrgNr,
                     setOf(
                             Arbeidsgiverperiode(
-                                LocalDate.of(2010, 1, 1),
-                                LocalDate.of(2010, 1, 6),
+                                LocalDate.of(2020, 4, 1),
+                                LocalDate.of(2020, 4, 6),
                                 2
                         ), Arbeidsgiverperiode(
-                                LocalDate.of(2010, 1, 10),
-                                LocalDate.of(2010, 1, 19),
+                                LocalDate.of(2020, 4, 10),
+                                LocalDate.of(2020, 4, 19),
                                 10
                         )),
                     123.8
@@ -172,8 +172,8 @@ internal class RefusjonsKravDtoTest {
                     TestData.validOrgNr,
                     setOf(
                             Arbeidsgiverperiode(
-                                    LocalDate.of(2010, 1, 1),
-                                    LocalDate.of(2010, 1, 6),
+                                    LocalDate.of(2020, 4, 1),
+                                    LocalDate.of(2020, 4, 6),
                                     7)),
                     123.8
             )
