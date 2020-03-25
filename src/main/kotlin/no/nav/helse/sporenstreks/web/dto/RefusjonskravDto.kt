@@ -37,8 +37,8 @@ data class RefusjonskravDto(
             // antall refusjonsdager kan ikke vøre lenger enn periodens lengde
             validate(RefusjonskravDto::perioder).refujonsDagerIkkeOverstigerPeriodelengder()
 
-            // Summen av antallDagerMedRefusjon kan ikke overstige 13 dager
-            validate(RefusjonskravDto::perioder).sumAntallDagerMindreEnnEllerLik(13)
+            // Summen av antallDagerMedRefusjon kan ikke overstige total periodelengde - 3 dager
+            validate(RefusjonskravDto::perioder).arbeidsgiverBetalerForDager(3)
 
             // opphold mellom periodene kan ikke overstige 16 dager
             validate(RefusjonskravDto::perioder).harMaksimaltOppholdMellomPerioder(16)

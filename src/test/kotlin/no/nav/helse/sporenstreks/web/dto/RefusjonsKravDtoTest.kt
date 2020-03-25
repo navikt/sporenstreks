@@ -1,8 +1,6 @@
 package no.nav.helse.sporenstreks.web.dto
 
 import no.nav.helse.TestData
-import no.nav.helse.validWithPeriode
-import no.nav.helse.validWithoutPeriode
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.valiktor.ConstraintViolationException
@@ -175,6 +173,43 @@ internal class RefusjonsKravDtoTest {
                                     LocalDate.of(2020, 4, 1),
                                     LocalDate.of(2020, 4, 6),
                                     7)),
+                    123.8
+            )
+        }
+    }
+
+    @Test
+    fun `Periode før 16 mars er ikke gyldige`() {
+        Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
+            RefusjonskravDto(
+                    TestData.validIdentitetsnummer,
+                    TestData.validOrgNr,
+                    setOf(
+                            Arbeidsgiverperiode(
+                                    LocalDate.of(2020, 3, 15),
+                                    LocalDate.of(2020, 3, 20),
+                                    2)),
+                    123.8
+            )
+        }
+    }
+
+    @Test
+    fun `Maks refusjonsdager er totalperiode minus 3 dager`() {
+        Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
+            RefusjonskravDto(
+                    TestData.validIdentitetsnummer,
+                    TestData.validOrgNr,
+                    setOf(
+                            Arbeidsgiverperiode(
+                                    LocalDate.of(2020, 4, 1),
+                                    LocalDate.of(2020, 4, 6),
+                                    4
+                            ), Arbeidsgiverperiode(
+                                    LocalDate.of(2020, 4, 10),
+                                    LocalDate.of(2020, 4, 12),
+                            3
+                    )),
                     123.8
             )
         }
