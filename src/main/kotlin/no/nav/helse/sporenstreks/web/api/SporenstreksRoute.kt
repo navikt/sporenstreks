@@ -23,6 +23,16 @@ fun Route.sporenstreks(authorizer: Authorizer) {
             post("/") {
                 val oppslag = call.receive<RefusjonskravDto>()
                 authorize(authorizer, oppslag.virksomhetsnummer)
+                //TODOs
+                //Opprett Domeneobjekt
+                //Lagre i databasen
+                //Async?
+                //Opprett PDF
+                //Journalfør dokument
+                //Opprett sak..?
+                //Knytt dokument til sak?
+                //Opprett oppgave i gosys
+                //Skal det publiseres noe annet sted..?
                 call.respond(HttpStatusCode.OK)
             }
         }
