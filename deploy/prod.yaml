@@ -36,8 +36,8 @@ spec:
     paths:
       - kvPath: /kv/prod/fss/helse-spion/default
         mountPath: /var/run/secrets/nais.io/vault
-  #      - mountPath: /var/run/secrets/nais.io/apigw/altinn
-  #        kvPath: /apikey/apigw/prod/eksternapp.altinn.serviceowner/helse-spion
+      - mountPath: /var/run/secrets/nais.io/apigw/altinn
+        kvPath: /apikey/apigw/prod/eksternapp.altinn.serviceowner/sporenstreks
   webproxy: true
   env:
     - name: KOIN_PROFILE
