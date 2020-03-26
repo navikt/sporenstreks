@@ -5,7 +5,8 @@ import java.util.*
 
 interface RefusjonskravRepository {
     fun getAllForVirksomhet(virksomhetsnummer: String): List<Refusjonskrav>
-    fun insert(refusjonskrav: Refusjonskrav)
+    fun insert(refusjonskrav: Refusjonskrav): Refusjonskrav
     fun getExistingRefusjonskrav(identitetsnummer: String, virksomhetsnummer: String): List<Refusjonskrav>
     fun delete(id: UUID): Int
+    fun getById(id: UUID): Refusjonskrav?
 }

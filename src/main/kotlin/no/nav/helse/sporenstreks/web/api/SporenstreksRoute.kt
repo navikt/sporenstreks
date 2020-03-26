@@ -38,8 +38,8 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                         refusjonskrav.beløp
                 )
 
-                db.insert(domeneKrav)
-                call.respond(HttpStatusCode.OK)
+                val saved = db.insert(domeneKrav)
+                call.respond(HttpStatusCode.OK, saved)
             }
         }
 

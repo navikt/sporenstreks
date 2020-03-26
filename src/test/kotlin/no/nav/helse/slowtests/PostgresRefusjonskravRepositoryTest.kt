@@ -22,26 +22,7 @@ import java.time.LocalDate
 internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
 
     lateinit var repo: PostgresRefusjonskravRepository
-
-    val refusjonskrav = Refusjonskrav(
-            TestData.validIdentitetsnummer,
-            TestData.notValidIdentitetsnummer,
-            TestData.validOrgNr,
-            setOf(
-                    Arbeidsgiverperiode(
-                            LocalDate.of(2020, 4, 1),
-                            LocalDate.of(2020, 4, 6),
-                            3
-                    ), Arbeidsgiverperiode(
-                    LocalDate.of(2020, 4, 10),
-                    LocalDate.of(2020, 4, 12),
-                    3
-            )),
-            6612.23,
-            RefusjonsKravStatus.MOTTATT,
-            "oppgave-id-234234",
-            "joark-ref-1232"
-    )
+    lateinit var refusjonskrav: Refusjonskrav
 
     @BeforeEach
     internal fun setUp() {
@@ -50,15 +31,31 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
 
         }
         repo = PostgresRefusjonskravRepository(HikariDataSource(createLocalHikariConfig()), get())
-        val referansenummer = repo.insert(refusjonskrav)
-        refusjonskrav.referansenummer = referansenummer
+        refusjonskrav = repo.insert(Refusjonskrav(
+                TestData.validIdentitetsnummer,
+                TestData.notValidIdentitetsnummer,
+                TestData.validOrgNr,
+                setOf(
+                        Arbeidsgiverperiode(
+                                LocalDate.of(2020, 4, 1),
+                                LocalDate.of(2020, 4, 6),
+                                3
+                        ), Arbeidsgiverperiode(
+                        LocalDate.of(2020, 4, 10),
+                        LocalDate.of(2020, 4, 12),
+                        3
+                )),
+                6612.23,
+                RefusjonsKravStatus.MOTTATT,
+                "oppgave-id-234234",
+                "joark-ref-1232"
+        ))
     }
 
     @AfterEach
     internal fun tearDown() {
         repo.delete(refusjonskrav.id)
         stopKoin()
-
     }
 
     @Test
@@ -75,6 +72,12 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
 
         assertThat(rs.size).isEqualTo(1)
         assertThat(rs.first()).isEqualTo(refusjonskrav)
+    }
+
+    @Test
+    fun `Kan hente fra id`() {
+        val krav = repo.getById(refusjonskrav.id)
+        assertThat(krav).isEqualTo(refusjonskrav)
     }
 
     @Test

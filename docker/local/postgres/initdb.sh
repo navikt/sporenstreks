@@ -16,6 +16,7 @@ psql -v ON_ERROR_STOP=1 --username "sporenstreks" --dbname "sporenstreks" <<-EOS
 
     ALTER SEQUENCE refusjonskrav_referansenummer_seq RESTART WITH 452171;
 
+    CREATE INDEX id ON refusjonskrav ((data ->> 'id'));
     CREATE INDEX virksomhetsnummer ON refusjonskrav ((data ->> 'virksomhetsnummer'));
     CREATE INDEX identitetsnummer ON refusjonskrav ((data  ->> 'identitetsnummer'));
 EOSQL
