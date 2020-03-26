@@ -19,6 +19,8 @@ class MockDokarkivKlient : DokarkivKlient {
     }
 }
 
+//TODO Legg til helsesjekk?
+
 class DokarkivKlientImpl(
         private val dokarkivBaseUrl: String,
         private val httpClient: HttpClient,
