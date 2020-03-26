@@ -35,6 +35,9 @@ class DokarkivKlientTest {
 
     private val identitetsnummer = "01020354321"
 
+    val stsMock = mockk<STSClient>(relaxed = true)
+
+
     val client = HttpClient(MockEngine) {
 
         install(JsonFeature) {
@@ -62,9 +65,9 @@ class DokarkivKlientTest {
         }
     }
 
-    //@Test
+    @Test
     internal fun `valid answer from altinn returns properly serialized list of all org forms`() {
-        val dokarkivKlient = DokarkivKlientImpl("http://juice", client, mockk())
+        val dokarkivKlient = DokarkivKlientImpl("http://juice", client, stsMock)
         val refusjonskrav = Refusjonskrav(
                 opprettetAv = "MEG",
                 identitetsnummer = identitetsnummer,
@@ -79,3 +82,4 @@ class DokarkivKlientTest {
 
 
 }
+
