@@ -29,30 +29,16 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                 val refusjonskrav = call.receive<RefusjonskravDto>()
                 authorize(authorizer, refusjonskrav.virksomhetsnummer)
 
-                //TODOs
-                //Opprett PDF
-                //Journalfør dokument
-                //Opprett sak..?
-                //Knytt dokument til sak?
-                //Opprett oppgave i gosys
-                //Skal det publiseres noe annet sted..?
-
-                val joarkReferanse = "vi må ha en ID fra dok-håndtering"
-                val oppgavereferanse = "vi må ha en ID fra oppgavehåndtering"
                 val opprettetAv = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
                 val domeneKrav = Refusjonskrav(
                         opprettetAv,
                         refusjonskrav.identitetsnummer,
                         refusjonskrav.virksomhetsnummer,
                         refusjonskrav.perioder,
-                        refusjonskrav.beløp,
-                        joarkReferanse,
-                        oppgavereferanse
+                        refusjonskrav.beløp
                 )
 
                 db.insert(domeneKrav)
-
-                println("Backend mottok og lagret $refusjonskrav")
                 call.respond(HttpStatusCode.OK)
             }
         }

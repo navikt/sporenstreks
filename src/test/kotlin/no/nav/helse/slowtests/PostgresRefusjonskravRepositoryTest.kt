@@ -5,6 +5,7 @@ import no.nav.helse.TestData
 import no.nav.helse.sporenstreks.db.PostgresRefusjonskravRepository
 import no.nav.helse.sporenstreks.db.createLocalHikariConfig
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
+import no.nav.helse.sporenstreks.domene.RefusjonsKravStatus
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.web.common
 import org.assertj.core.api.Assertions.assertThat
@@ -37,8 +38,9 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
                     3
             )),
             6612.23,
-            "joark-ref-1232",
-            "oppgave-id-234234"
+            RefusjonsKravStatus.MOTTATT,
+            "oppgave-id-234234",
+            "joark-ref-1232"
     )
 
     @BeforeEach
@@ -48,7 +50,8 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
 
         }
         repo = PostgresRefusjonskravRepository(HikariDataSource(createLocalHikariConfig()), get())
-        repo.insert(refusjonskrav)
+        val referansenummer = repo.insert(refusjonskrav)
+        refusjonskrav.referansenummer = referansenummer
     }
 
     @AfterEach

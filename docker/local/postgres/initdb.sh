@@ -10,8 +10,12 @@ EOSQL
 
 psql -v ON_ERROR_STOP=1 --username "sporenstreks" --dbname "sporenstreks" <<-EOSQL
     CREATE TABLE refusjonskrav (
-                           data jsonb NOT NULL
+                           data jsonb NOT NULL,
+                           referansenummer SERIAL UNIQUE
     );
+
+    ALTER SEQUENCE refusjonskrav_referansenummer_seq RESTART WITH 452171;
+
     CREATE INDEX virksomhetsnummer ON refusjonskrav ((data ->> 'virksomhetsnummer'));
     CREATE INDEX identitetsnummer ON refusjonskrav ((data  ->> 'identitetsnummer'));
 EOSQL

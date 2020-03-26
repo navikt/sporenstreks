@@ -12,8 +12,10 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
     private val logger = LoggerFactory.getLogger(PostgresRefusjonskravRepository::class.java)
     private val tableName = "refusjonskrav"
 
-    private val getByVirksomhetsnummerStatement = """SELECT data::json FROM $tableName 
+    private val getByVirksomhetsnummerStatement = """SELECT * FROM $tableName 
             WHERE data ->> 'virksomhetsnummer' = ?;"""
+
+    private val getByIdStatement = """SELECT * FROM $tableName WHERE data ->> 'id' = ?"""
 
     private val saveStatement = "INSERT INTO $tableName (data) VALUES (?::json);"
 
@@ -37,6 +39,8 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
         }
     }
 
+
+
     override fun insert(refusjonskrav: Refusjonskrav) {
         val json = mapper.writeValueAsString(refusjonskrav)
         ds.connection.use {
@@ -55,7 +59,8 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
             }.executeQuery()
 
             while (res.next()) {
-                existingYpList.add(mapper.readValue(res.getString("data")))
+                val refusjonsKrav = mapper.readValue<Refusjonskrav>(res.getString("data"))
+                existingYpList.add(refusjonsKrav)
             }
 
             return existingYpList
