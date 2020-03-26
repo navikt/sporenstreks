@@ -16,12 +16,13 @@ import no.nav.helse.sporenstreks.auth.AuthorizationsRepository
 import no.nav.helse.sporenstreks.auth.Authorizer
 import no.nav.helse.sporenstreks.auth.hentIdentitetsnummerFraLoginToken
 import no.nav.helse.sporenstreks.db.PostgresRefusjonskravRepository
+import no.nav.helse.sporenstreks.db.RefusjonskravRepository
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import javax.ws.rs.ForbiddenException
 
 @KtorExperimentalAPI
-fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepository, db: PostgresRefusjonskravRepository) {
+fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepository, db: RefusjonskravRepository) {
     route("api/v1") {
         route("/refusjonskrav") {
             post("/") {

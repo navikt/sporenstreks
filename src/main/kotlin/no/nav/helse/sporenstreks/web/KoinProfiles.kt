@@ -15,10 +15,7 @@ import io.ktor.client.features.json.JsonFeature
 import io.ktor.config.ApplicationConfig
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.sporenstreks.auth.*
-import no.nav.helse.sporenstreks.db.PostgresRefusjonskravRepository
-import no.nav.helse.sporenstreks.db.createHikariConfig
-import no.nav.helse.sporenstreks.db.createLocalHikariConfig
-import no.nav.helse.sporenstreks.db.getDataSource
+import no.nav.helse.sporenstreks.db.*
 import org.koin.core.Koin
 import org.koin.core.definition.Kind
 import org.koin.core.module.Module
@@ -70,13 +67,14 @@ val common = module {
 fun buildAndTestConfig() = module {
     single { StaticMockAuthRepo(get()) as AuthorizationsRepository } bind StaticMockAuthRepo::class
     single { DefaultAuthorizer(get()) as Authorizer }
+    single { MockRefusjonskravRepo() as RefusjonskravRepository }
 
     LocalOIDCWireMock.start()
 }
 
 fun localDevConfig(config: ApplicationConfig) = module {
     single { getDataSource(createLocalHikariConfig(), "sporenstreks", null) as DataSource }
-    single { PostgresRefusjonskravRepository(get(), get()) }
+    single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
 
     single { StaticMockAuthRepo(get()) as AuthorizationsRepository }
     single { DefaultAuthorizer(get()) as Authorizer }
@@ -91,7 +89,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
                 config.getString("database.name"),
                 config.getString("database.vault.mountpath")) as DataSource
     }
-    single { PostgresRefusjonskravRepository(get(), get()) }
+    single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository}
 
     /*single {
         AltinnClient(
@@ -116,7 +114,7 @@ fun prodConfig(config: ApplicationConfig) = module {
                 config.getString("database.vault.mountpath")) as DataSource
     }
 
-    single { PostgresRefusjonskravRepository(get(), get()) }
+    single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
     single { StaticMockAuthRepo(get()) as AuthorizationsRepository } bind StaticMockAuthRepo::class
     single { DefaultAuthorizer(get()) as Authorizer }
 }

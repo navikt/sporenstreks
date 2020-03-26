@@ -4,12 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import org.slf4j.LoggerFactory
-import java.sql.Connection
 import java.util.*
 import javax.sql.DataSource
 import kotlin.collections.ArrayList
 
-class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapper) {
+class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapper) : RefusjonskravRepository {
     private val logger = LoggerFactory.getLogger(PostgresRefusjonskravRepository::class.java)
     private val tableName = "refusjonskrav"
 
@@ -24,7 +23,7 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
 
     private val deleteStatement = "DELETE FROM $tableName WHERE data ->> 'id' = ?"
 
-    fun getAllForVirksomhet(virksomhetsnummer: String): List<Refusjonskrav> {
+    override fun getAllForVirksomhet(virksomhetsnummer: String): List<Refusjonskrav> {
         ds.connection.use { con ->
             val resultList = ArrayList<Refusjonskrav>()
             val res = con.prepareStatement(getByVirksomhetsnummerStatement).apply {
@@ -38,7 +37,7 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
         }
     }
 
-    fun insert(refusjonskrav: Refusjonskrav) {
+    override fun insert(refusjonskrav: Refusjonskrav) {
         val json = mapper.writeValueAsString(refusjonskrav)
         ds.connection.use {
             it.prepareStatement(saveStatement).apply {
@@ -47,7 +46,7 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
         }
     }
 
-    fun getExistingRefusjonskrav(identitetsnummer: String, virksomhetsnummer: String): List<Refusjonskrav> {
+    override fun getExistingRefusjonskrav(identitetsnummer: String, virksomhetsnummer: String): List<Refusjonskrav> {
         ds.connection.use {
             val existingYpList = ArrayList<Refusjonskrav>()
             val res = it.prepareStatement(getByIdentitetsnummerAndVirksomhetsnummerStatement).apply {
@@ -64,7 +63,7 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
     }
 
 
-    fun delete(id: UUID): Int {
+    override fun delete(id: UUID): Int {
         ds.connection.use {
             return it.prepareStatement(deleteStatement).apply {
                 setString(1, id.toString())
