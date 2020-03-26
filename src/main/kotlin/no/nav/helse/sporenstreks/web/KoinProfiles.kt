@@ -17,7 +17,8 @@ import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.sporenstreks.auth.*
 import no.nav.helse.sporenstreks.auth.altinn.AltinnClient
 import no.nav.helse.sporenstreks.db.*
-import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.DokarkivKlient
+import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.DokarkivKlientImpl
+import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.MockDokarkivKlient
 import org.koin.core.Koin
 import org.koin.core.definition.Kind
 import org.koin.core.module.Module
@@ -78,6 +79,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { getDataSource(createLocalHikariConfig(), "sporenstreks", null) as DataSource }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
 
+    single { MockDokarkivKlient() }
     single { StaticMockAuthRepo(get()) as AuthorizationsRepository }
     single { DefaultAuthorizer(get()) as Authorizer }
 
@@ -103,7 +105,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
         ) as AuthorizationsRepository
     }
 
-    single { DokarkivKlient(config.getString("dokarkiv.baseurl"), get()) }
+    single { DokarkivKlientImpl(config.getString("dokarkiv.baseurl"), get()) }
     single { DynamicMockAuthRepo(get(), get()) as AuthorizationsRepository }
     single { DefaultAuthorizer(get()) as Authorizer }
 
@@ -117,7 +119,7 @@ fun prodConfig(config: ApplicationConfig) = module {
                 config.getString("database.vault.mountpath")) as DataSource
     }
 
-    single { DokarkivKlient(config.getString("dokarkiv.baseurl"), get()) }
+    single { DokarkivKlientImpl(config.getString("dokarkiv.baseurl"), get()) }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
     single { StaticMockAuthRepo(get()) as AuthorizationsRepository } bind StaticMockAuthRepo::class
     single { DefaultAuthorizer(get()) as Authorizer }
