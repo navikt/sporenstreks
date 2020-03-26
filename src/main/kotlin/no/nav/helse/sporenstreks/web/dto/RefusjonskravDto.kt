@@ -12,14 +12,14 @@ data class RefusjonskravDto(
         val identitetsnummer: String,
         val virksomhetsnummer: String,
         val perioder: Set<Arbeidsgiverperiode>,
-        val beløp: Double
+        val beloep: Double
 ) {
 
     init {
         validate(this) {
             validate(RefusjonskravDto::identitetsnummer).isValidIdentitetsnummer()
             validate(RefusjonskravDto::virksomhetsnummer).isValidOrganisasjonsnummer()
-            validate(RefusjonskravDto::beløp).isPositive()
+            validate(RefusjonskravDto::beloep).isPositive()
 
             validate(RefusjonskravDto::perioder).validateForEach {
                 validate(Arbeidsgiverperiode::fom).isGreaterThanOrEqualTo(LocalDate.of(2020, 3, 16))

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import org.slf4j.LoggerFactory
+import java.io.IOException
+import java.sql.ResultSet
 import java.util.*
 import javax.sql.DataSource
 import kotlin.collections.ArrayList
@@ -12,12 +14,14 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
     private val logger = LoggerFactory.getLogger(PostgresRefusjonskravRepository::class.java)
     private val tableName = "refusjonskrav"
 
-    private val getByVirksomhetsnummerStatement = """SELECT data::json FROM $tableName 
+    private val getByVirksomhetsnummerStatement = """SELECT * FROM $tableName 
             WHERE data ->> 'virksomhetsnummer' = ?;"""
+
+    private val getByIdStatement = """SELECT * FROM $tableName WHERE data ->> 'id' = ?"""
 
     private val saveStatement = "INSERT INTO $tableName (data) VALUES (?::json);"
 
-    private val getByIdentitetsnummerAndVirksomhetsnummerStatement = """SELECT data::json FROM $tableName 
+    private val getByIdentitetsnummerAndVirksomhetsnummerStatement = """SELECT * FROM $tableName 
          WHERE data ->> 'identitetsnummer' = ?
             AND data ->> 'virksomhetsnummer' = ?;"""
 
@@ -31,19 +35,37 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
             }.executeQuery()
 
             while (res.next()) {
-                resultList.add(mapper.readValue(res.getString("data")))
+                resultList.add(extractRefusjonskrav(res))
             }
             return resultList
         }
     }
 
-    override fun insert(refusjonskrav: Refusjonskrav) {
+    override fun getById(id: UUID): Refusjonskrav? {
+        ds.connection.use {
+            val existingYpList = ArrayList<Refusjonskrav>()
+            val res = it.prepareStatement(getByIdStatement).apply {
+                setString(1, id.toString())
+            }.executeQuery()
+
+            while (res.next()) {
+                existingYpList.add(extractRefusjonskrav(res))
+            }
+
+            return existingYpList.firstOrNull()
+        }
+    }
+
+
+    override fun insert(refusjonskrav: Refusjonskrav): Refusjonskrav {
         val json = mapper.writeValueAsString(refusjonskrav)
         ds.connection.use {
             it.prepareStatement(saveStatement).apply {
                 setString(1, json)
             }.executeUpdate()
         }
+
+        return getById(refusjonskrav.id) ?: throw IOException("Unable to read receipt for refusjonskrav with id ${refusjonskrav.id}")
     }
 
     override fun getExistingRefusjonskrav(identitetsnummer: String, virksomhetsnummer: String): List<Refusjonskrav> {
@@ -55,13 +77,12 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
             }.executeQuery()
 
             while (res.next()) {
-                existingYpList.add(mapper.readValue(res.getString("data")))
+                existingYpList.add(extractRefusjonskrav(res))
             }
 
             return existingYpList
         }
     }
-
 
     override fun delete(id: UUID): Int {
         ds.connection.use {
@@ -69,6 +90,12 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
                 setString(1, id.toString())
             }.executeUpdate()
         }
+    }
+
+    private fun extractRefusjonskrav(res: ResultSet): Refusjonskrav {
+        val refusjonsKrav = mapper.readValue<Refusjonskrav>(res.getString("data"))
+        refusjonsKrav.referansenummer = res.getInt("referansenummer")
+        return refusjonsKrav
     }
 
 }

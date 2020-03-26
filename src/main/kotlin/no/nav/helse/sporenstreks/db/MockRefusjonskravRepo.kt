@@ -8,8 +8,8 @@ class MockRefusjonskravRepo : RefusjonskravRepository {
         return emptyList()
     }
 
-    override fun insert(refusjonskrav: Refusjonskrav) {
-
+    override fun insert(refusjonskrav: Refusjonskrav): Refusjonskrav {
+        return getById(UUID.randomUUID())
     }
 
     override fun getExistingRefusjonskrav(identitetsnummer: String, virksomhetsnummer: String): List<Refusjonskrav> {
@@ -18,5 +18,9 @@ class MockRefusjonskravRepo : RefusjonskravRepository {
 
     override fun delete(id: UUID): Int {
         return 0
+    }
+
+    override fun getById(id: UUID): Refusjonskrav {
+        return Refusjonskrav("", "", "", emptySet(), 0.0)
     }
 }
