@@ -58,9 +58,9 @@ spec:
       value: 45104d6a-f5bc-4e8c-b352-4bbfc9381f25
     - name: OIDC_ISSUER_NAME
       value: aadb2c
-    - name: PARTNER_GATEWAY_ALTINN_ENDPOINT
-      value: https://pep-gw.oera.no:9443/ekstern/altinn/BehandleAltinnMelding/v1
+    - name: ALTINN_SERVICE_OWNER_GW_URL
+      value: https://api-gw.adeo.no/ekstern/altinn/api/serviceowner
     - name: SECURITYTOKENSERVICE_URL
-      value: https://sts.adeo.no/SecurityTokenServiceProvider/
+      value: https://security-token-service.adeo.no/rest/v1/sts/token
     - name: DOKARKIV_URL
       value: https://dokarkiv.nais.adeo.no
