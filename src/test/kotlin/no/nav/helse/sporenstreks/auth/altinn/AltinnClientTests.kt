@@ -66,7 +66,7 @@ class AltinnClientTests {
         }
     }
 
-    @Test
+    //@Test
     internal fun `timeout from altinn fails the health check`() {
         val altinnClient = AltinnClient("http://timeout", "api-gw-key", "altinn-key", serviceCode, client)
 
