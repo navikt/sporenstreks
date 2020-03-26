@@ -15,7 +15,9 @@ import io.ktor.client.features.json.JsonFeature
 import io.ktor.config.ApplicationConfig
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.sporenstreks.auth.*
+import no.nav.helse.sporenstreks.auth.altinn.AltinnClient
 import no.nav.helse.sporenstreks.db.*
+import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.DokarkivKlient
 import org.koin.core.Koin
 import org.koin.core.definition.Kind
 import org.koin.core.module.Module
@@ -91,7 +93,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository}
 
-    /*single {
+    single {
         AltinnClient(
                 config.getString("altinn.service_owner_api_url"),
                 config.getString("altinn.gw_api_key"),
@@ -99,8 +101,9 @@ fun preprodConfig(config: ApplicationConfig) = module {
                 config.getString("altinn.service_id"),
                 get()
         ) as AuthorizationsRepository
-    }*/
+    }
 
+    single { DokarkivKlient(config.getString("dokarkiv.baseurl"), get()) }
     single { DynamicMockAuthRepo(get(), get()) as AuthorizationsRepository }
     single { DefaultAuthorizer(get()) as Authorizer }
 
@@ -114,6 +117,7 @@ fun prodConfig(config: ApplicationConfig) = module {
                 config.getString("database.vault.mountpath")) as DataSource
     }
 
+    single { DokarkivKlient(config.getString("dokarkiv.baseurl"), get()) }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
     single { StaticMockAuthRepo(get()) as AuthorizationsRepository } bind StaticMockAuthRepo::class
     single { DefaultAuthorizer(get()) as Authorizer }

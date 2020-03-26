@@ -38,6 +38,8 @@ spec:
         mountPath: /var/run/secrets/nais.io/vault
       - mountPath: /var/run/secrets/nais.io/apigw/altinn
         kvPath: /apikey/apigw/prod/eksternapp.altinn.serviceowner/sporenstreks
+      - mountPath: /var/run/secrets/nais.io/service_user
+        kvPath: /serviceuser/data/prod/srvsporenstreks
   webproxy: true
   env:
     - name: KOIN_PROFILE
@@ -60,3 +62,5 @@ spec:
       value: https://pep-gw.oera.no:9443/ekstern/altinn/BehandleAltinnMelding/v1
     - name: SECURITYTOKENSERVICE_URL
       value: https://sts.adeo.no/SecurityTokenServiceProvider/
+    - name: DOKARKIV_URL
+      value: https://dokarkiv.nais.adeo.no
