@@ -15,6 +15,7 @@ import io.ktor.client.features.json.JsonFeature
 import io.ktor.config.ApplicationConfig
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.sporenstreks.auth.*
+import no.nav.helse.sporenstreks.db.PostgresRefusjonskravRepository
 import no.nav.helse.sporenstreks.db.createHikariConfig
 import no.nav.helse.sporenstreks.db.createLocalHikariConfig
 import no.nav.helse.sporenstreks.db.getDataSource
@@ -75,6 +76,7 @@ fun buildAndTestConfig() = module {
 
 fun localDevConfig(config: ApplicationConfig) = module {
     single { getDataSource(createLocalHikariConfig(), "sporenstreks", null) as DataSource }
+    single { PostgresRefusjonskravRepository(get(), get()) }
 
     single { StaticMockAuthRepo(get()) as AuthorizationsRepository }
     single { DefaultAuthorizer(get()) as Authorizer }
@@ -89,6 +91,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
                 config.getString("database.name"),
                 config.getString("database.vault.mountpath")) as DataSource
     }
+    single { PostgresRefusjonskravRepository(get(), get()) }
 
     /*single {
         AltinnClient(
@@ -113,6 +116,7 @@ fun prodConfig(config: ApplicationConfig) = module {
                 config.getString("database.vault.mountpath")) as DataSource
     }
 
+    single { PostgresRefusjonskravRepository(get(), get()) }
     single { StaticMockAuthRepo(get()) as AuthorizationsRepository } bind StaticMockAuthRepo::class
     single { DefaultAuthorizer(get()) as Authorizer }
 }

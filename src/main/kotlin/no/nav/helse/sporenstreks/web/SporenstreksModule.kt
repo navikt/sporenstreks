@@ -166,7 +166,7 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
 
     routing {
         authenticate {
-            sporenstreks(get(), get())
+            sporenstreks(get(), get(), get())
         }
     }
 }

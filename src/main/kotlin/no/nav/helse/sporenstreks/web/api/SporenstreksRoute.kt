@@ -15,20 +15,43 @@ import io.ktor.util.pipeline.PipelineContext
 import no.nav.helse.sporenstreks.auth.AuthorizationsRepository
 import no.nav.helse.sporenstreks.auth.Authorizer
 import no.nav.helse.sporenstreks.auth.hentIdentitetsnummerFraLoginToken
-import no.nav.helse.sporenstreks.domene.fraDto
+import no.nav.helse.sporenstreks.db.PostgresRefusjonskravRepository
+import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import javax.ws.rs.ForbiddenException
 
 @KtorExperimentalAPI
-fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepository) {
+fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepository, db: PostgresRefusjonskravRepository) {
     route("api/v1") {
         route("/refusjonskrav") {
             post("/") {
-                val dto = call.receive<RefusjonskravDto>()
-                authorize(authorizer, dto.virksomhetsnummer)
-                println("Backend mottok $dto")
-                val refusjonskrav = fraDto(dto)
-                //TODO lagre i databasen
+                val refusjonskrav = call.receive<RefusjonskravDto>()
+                authorize(authorizer, refusjonskrav.virksomhetsnummer)
+
+                //TODOs
+                //Opprett PDF
+                //Journalfør dokument
+                //Opprett sak..?
+                //Knytt dokument til sak?
+                //Opprett oppgave i gosys
+                //Skal det publiseres noe annet sted..?
+
+                val joarkReferanse = "vi må ha en ID fra dok-håndtering"
+                val oppgavereferanse = "vi må ha en ID fra oppgavehåndtering"
+                val opprettetAv = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
+                val domeneKrav = Refusjonskrav(
+                        opprettetAv,
+                        refusjonskrav.identitetsnummer,
+                        refusjonskrav.virksomhetsnummer,
+                        refusjonskrav.perioder,
+                        refusjonskrav.beløp,
+                        joarkReferanse,
+                        oppgavereferanse
+                )
+
+                db.insert(domeneKrav)
+
+                println("Backend mottok og lagret $refusjonskrav")
                 call.respond(HttpStatusCode.OK)
             }
         }
