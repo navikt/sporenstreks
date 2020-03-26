@@ -24,13 +24,14 @@ internal class KvitteringTest {
                         perioder = setOf(Arbeidsgiverperiode(
                                 LocalDate.of(2020, 4,1),
                                 LocalDate.of(2020, 4,5),
-                                2
+                                2,
+                                4500800.50
                         ), Arbeidsgiverperiode(
                                 LocalDate.of(2020, 4, 5),
                                 LocalDate.of(2020, 4, 10),
-                                4
+                                4,
+                                1220800.50
                         )),
-                        beloep = 4500800.50,
                         opprettet = LocalDateTime.now(),
                         status = RefusjonsKravStatus.MOTTATT,
                         opprettetAv = "NAV",
@@ -56,9 +57,9 @@ internal class KvitteringTest {
                         perioder = setOf(Arbeidsgiverperiode(
                                 LocalDate.of(2020, 4,1),
                                 LocalDate.of(2020, 4,5),
-                                2
+                                2,
+                                250.50
                         )),
-                        beloep = 4500800.50,
                         opprettet = LocalDateTime.now(),
                         status = RefusjonsKravStatus.MOTTATT,
                         opprettetAv = "NAV",

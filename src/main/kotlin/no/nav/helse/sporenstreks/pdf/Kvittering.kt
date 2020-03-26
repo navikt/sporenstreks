@@ -39,16 +39,17 @@ class Kvittering {
         contentStream.newLineAtOffset(0F, -LINE_HEIGHT)
         contentStream.showText("Virksomhetsnummer: ${innhold.refusjonskrav.virksomhetsnummer}")
 
-        contentStream.newLineAtOffset(0F, -LINE_HEIGHT)
-        contentStream.showText("Refusjonsbeløp: ${NUMBER_FORMAT.format(innhold.refusjonskrav.beloep)} kroner")
+
 
         contentStream.newLineAtOffset(0F, -LINE_HEIGHT*2)
         contentStream.showText("Perioder:")
         innhold.refusjonskrav.perioder.forEach {
             contentStream.newLineAtOffset(0F, -LINE_HEIGHT)
-            contentStream.showText("Fra: ${DATE_FORMAT.format(it.fom)}   Til: ${DATE_FORMAT.format(it.tom)}    Antall dager: ${it.antallDagerMedRefusjon}")
+            contentStream.showText("Fra: ${DATE_FORMAT.format(it.fom)}    Til: ${DATE_FORMAT.format(it.tom)}    Antall dager: ${it.antallDagerMedRefusjon}    Refusjonsbeløp: ${NUMBER_FORMAT.format(it.beloep)}")
         }
 
+//        contentStream.newLineAtOffset(0F, -LINE_HEIGHT)
+//        contentStream.showText("Refusjonsbeløp: ${NUMBER_FORMAT.format(innhold.refusjonskrav.beloep)} kroner")
 
         contentStream.newLineAtOffset(0F, -LINE_HEIGHT*5)
         contentStream.showText("Referansenummer: ${innhold.refusjonskrav.referansenummer}")
