@@ -28,7 +28,7 @@ class DokarkivKlientImpl(
     override fun journalførDokument(dokument: String, refusjonskrav: Refusjonskrav): String {
         logger.debug("Journalfører dokument");
         val url = "$dokarkivBaseUrl/journalpost?forsoekFerdigstill=true"
-        return runBlocking {
+        val response = runBlocking {
             httpClient.post<JournalpostResponse> {
                 url(url)
                 headers.append("AUTHORIZATION", "OIDCTOKEN")
@@ -48,8 +48,10 @@ class DokarkivKlientImpl(
                         )),
                         datoMottatt = refusjonskrav.opprettet.toLocalDate()
                 )
-            }.journalpostId
+            }
         }
+        assert(response.journalpostFerdigstilt)
+        return response.journalpostId
     }
 }
 
