@@ -12,7 +12,7 @@ data class HealthCheckResult(
         val componentName: String,
         val state: HealthCheckState,
         val runTime: Long,
-        val error: Throwable? = null)
+        val errorMessage: String? = null)
 
 interface HealthCheck {
     /**
@@ -37,7 +37,7 @@ suspend fun runHealthChecks(checkableComponents: Collection<HealthCheck>): List<
             }
             HealthCheckResult(it.javaClass.canonicalName, HealthCheckState.OK, runTime)
         } catch (ex: Throwable) {
-            HealthCheckResult(it.javaClass.canonicalName, HealthCheckState.ERROR, runTime, ex)
+            HealthCheckResult(it.javaClass.canonicalName, HealthCheckState.ERROR, runTime, ex.message)
         }
     }
 }
