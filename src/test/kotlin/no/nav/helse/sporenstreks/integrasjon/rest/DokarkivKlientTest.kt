@@ -68,7 +68,6 @@ class DokarkivKlientTest {
                 identitetsnummer = identitetsnummer,
                 virksomhetsnummer = "123",
                 perioder = emptySet(),
-                beloep = 0.0,
                 joarkReferanse = "NUL",
                 oppgaveId = "NULL"
         )

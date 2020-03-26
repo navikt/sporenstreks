@@ -4,6 +4,7 @@ import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.web.dto.validation.*
 import org.valiktor.functions.isGreaterThanOrEqualTo
 import org.valiktor.functions.isPositive
+import org.valiktor.functions.isPositiveOrZero
 import org.valiktor.functions.validateForEach
 import org.valiktor.validate
 import java.time.LocalDate
@@ -11,18 +12,17 @@ import java.time.LocalDate
 data class RefusjonskravDto(
         val identitetsnummer: String,
         val virksomhetsnummer: String,
-        val perioder: Set<Arbeidsgiverperiode>,
-        val beloep: Double
+        val perioder: Set<Arbeidsgiverperiode>
 ) {
 
     init {
         validate(this) {
             validate(RefusjonskravDto::identitetsnummer).isValidIdentitetsnummer()
             validate(RefusjonskravDto::virksomhetsnummer).isValidOrganisasjonsnummer()
-            validate(RefusjonskravDto::beloep).isPositive()
 
             validate(RefusjonskravDto::perioder).validateForEach {
                 validate(Arbeidsgiverperiode::fom).isGreaterThanOrEqualTo(LocalDate.of(2020, 3, 16))
+                validate(Arbeidsgiverperiode::beloep).isPositiveOrZero()
             }
 
             validate(RefusjonskravDto::perioder).validateForEach {
