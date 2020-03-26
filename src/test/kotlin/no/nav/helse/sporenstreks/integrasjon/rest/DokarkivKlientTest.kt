@@ -14,7 +14,7 @@ import io.ktor.client.features.json.JsonFeature
 import io.ktor.http.ContentType
 import io.ktor.http.headersOf
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
-import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.DokarkivKlient
+import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.DokarkivKlientImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.JournalpostResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -62,13 +62,13 @@ class DokarkivKlientTest {
 
     @Test
     internal fun `valid answer from altinn returns properly serialized list of all org forms`() {
-        val dokarkivKlient = DokarkivKlient("http://juice", client)
+        val dokarkivKlient = DokarkivKlientImpl("http://juice", client)
         val refusjonskrav = Refusjonskrav(
                 opprettetAv = "MEG",
                 identitetsnummer = identitetsnummer,
                 virksomhetsnummer = "123",
                 perioder = emptySet(),
-                beløp = 0.0,
+                beloep = 0.0,
                 joarkReferanse = "NUL",
                 oppgaveId = "NULL"
         )

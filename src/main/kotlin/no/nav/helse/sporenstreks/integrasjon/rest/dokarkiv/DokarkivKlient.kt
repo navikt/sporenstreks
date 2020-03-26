@@ -8,14 +8,24 @@ import kotlinx.coroutines.runBlocking
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import org.slf4j.LoggerFactory
 
-class DokarkivKlient(
+interface DokarkivKlient {
+    fun journalførDokument(dokument: String, refusjonskrav: Refusjonskrav): String
+}
+
+class MockDokarkivKlient : DokarkivKlient {
+    override fun journalførDokument(dokument: String, refusjonskrav: Refusjonskrav): String {
+        return "id"
+    }
+}
+
+class DokarkivKlientImpl(
         private val dokarkivBaseUrl: String,
-        private val httpClient: HttpClient) {
+        private val httpClient: HttpClient) : DokarkivKlient {
 
     private val logger: org.slf4j.Logger = LoggerFactory.getLogger("DokarkivClient")
 
 
-    fun journalførDokument(dokument: String, refusjonskrav: Refusjonskrav): String {
+    override fun journalførDokument(dokument: String, refusjonskrav: Refusjonskrav): String {
         logger.debug("Journalfører dokument");
         val url = "$dokarkivBaseUrl/journalpost?forsoekFerdigstill=true"
         return runBlocking {
