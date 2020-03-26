@@ -41,7 +41,7 @@ spec:
         kvPath: /apikey/apigw/dev/eksternapp.altinn.serviceowner/sporenstreks_q1
       - mountPath: /var/run/secrets/nais.io/service_user
         kvPath: /serviceuser/data/dev/srvsporenstreks
-  webproxy: true
+  webproxy: truemm
   env:
     - name: KOIN_PROFILE
       value: PREPROD
