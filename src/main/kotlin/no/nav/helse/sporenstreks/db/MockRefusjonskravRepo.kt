@@ -1,6 +1,7 @@
 package no.nav.helse.sporenstreks.db
 
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
+import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import java.util.*
 
 class MockRefusjonskravRepo : RefusjonskravRepository {
@@ -22,5 +23,9 @@ class MockRefusjonskravRepo : RefusjonskravRepository {
 
     override fun getById(id: UUID): Refusjonskrav {
         return Refusjonskrav("", "", "", emptySet())
+    }
+
+    override fun getByStatus(status: RefusjonskravStatus): List<Refusjonskrav> {
+        return emptyList()
     }
 }

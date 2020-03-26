@@ -5,7 +5,7 @@ import no.nav.helse.TestData
 import no.nav.helse.sporenstreks.db.PostgresRefusjonskravRepository
 import no.nav.helse.sporenstreks.db.createLocalHikariConfig
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
-import no.nav.helse.sporenstreks.domene.RefusjonsKravStatus
+import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.web.common
 import org.assertj.core.api.Assertions.assertThat
@@ -45,7 +45,7 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
                         LocalDate.of(2020, 4, 12),
                         3, 1000.0
                 )),
-                RefusjonsKravStatus.MOTTATT,
+                RefusjonskravStatus.MOTTATT,
                 "oppgave-id-234234",
                 "joark-ref-1232"
         ))
@@ -77,6 +77,13 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
     fun `Kan hente fra id`() {
         val krav = repo.getById(refusjonskrav.id)
         assertThat(krav).isEqualTo(refusjonskrav)
+    }
+
+    @Test
+    fun `Kan hente fra status`() {
+        val krav = repo.getByStatus(RefusjonskravStatus.MOTTATT)
+        assertThat(krav.size).isEqualTo(1)
+        assertThat(krav.first()).isEqualTo(refusjonskrav)
     }
 
     @Test
