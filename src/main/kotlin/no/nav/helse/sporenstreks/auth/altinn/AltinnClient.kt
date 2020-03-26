@@ -49,7 +49,9 @@ class AltinnClient(
 
     override suspend fun doHealthCheck() {
         try {
-            hentOrgMedRettigheterForPerson("01065500791")
+            // TODO: Få på plass en ok helsesjekk her. Litt vanskelig siden det ikke er noe naturlig å kalle,
+            // og kubernetes hamrer denne helsesjekken ved oppstart om den feiler
+            // hentOrgMedRettigheterForPerson("01065500791")
         } catch (ex: io.ktor.client.features.ClientRequestException) {
             if (!(ex.response.status == HttpStatusCode.BadRequest && ex.response.readText().contains("Invalid social security number"))) {
                 throw ex
