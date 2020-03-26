@@ -106,7 +106,6 @@ fun preprodConfig(config: ApplicationConfig) = module {
     }
 
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get()) }
-    single { DynamicMockAuthRepo(get(), get()) as AuthorizationsRepository }
     single { DefaultAuthorizer(get()) as Authorizer }
 
 }
@@ -119,9 +118,18 @@ fun prodConfig(config: ApplicationConfig) = module {
                 config.getString("database.vault.mountpath")) as DataSource
     }
 
+    single {
+        AltinnClient(
+                config.getString("altinn.service_owner_api_url"),
+                config.getString("altinn.gw_api_key"),
+                config.getString("altinn.altinn_api_key"),
+                config.getString("altinn.service_id"),
+                get()
+        ) as AuthorizationsRepository
+    }
+
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get()) }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
-    single { StaticMockAuthRepo(get()) as AuthorizationsRepository } bind StaticMockAuthRepo::class
     single { DefaultAuthorizer(get()) as Authorizer }
 }
 
