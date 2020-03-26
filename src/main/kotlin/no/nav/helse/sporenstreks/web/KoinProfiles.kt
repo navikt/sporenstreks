@@ -105,7 +105,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
         ) as AuthorizationsRepository
     }
 
-    single { DokarkivKlientImpl(config.getString("dokarkiv.baseurl"), get()) }
+    single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get()) }
     single { DynamicMockAuthRepo(get(), get()) as AuthorizationsRepository }
     single { DefaultAuthorizer(get()) as Authorizer }
 
@@ -119,7 +119,7 @@ fun prodConfig(config: ApplicationConfig) = module {
                 config.getString("database.vault.mountpath")) as DataSource
     }
 
-    single { DokarkivKlientImpl(config.getString("dokarkiv.baseurl"), get()) }
+    single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get()) }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
     single { StaticMockAuthRepo(get()) as AuthorizationsRepository } bind StaticMockAuthRepo::class
     single { DefaultAuthorizer(get()) as Authorizer }
