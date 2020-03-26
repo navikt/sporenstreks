@@ -9,7 +9,7 @@ data class Refusjonskrav(
         val virksomhetsnummer: String,
         val perioder: Set<Arbeidsgiverperiode>,
 
-        var status: RefusjonsKravStatus = RefusjonsKravStatus.MOTTATT,
+        var status: RefusjonskravStatus = RefusjonskravStatus.MOTTATT,
         var oppgaveId: String? = null,
         var joarkReferanse: String? = null,
 
@@ -21,7 +21,7 @@ data class Refusjonskrav(
         var referansenummer: Int = 0
 )
 
-enum class RefusjonsKravStatus {
+enum class RefusjonskravStatus {
     MOTTATT,
     SENDT_TIL_BEHANDLING,
     FEILET

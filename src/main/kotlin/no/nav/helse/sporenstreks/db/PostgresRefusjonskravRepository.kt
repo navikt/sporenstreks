@@ -3,6 +3,8 @@ package no.nav.helse.sporenstreks.db
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
+import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
+import org.postgresql.jdbc.PgArray
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.sql.ResultSet
@@ -12,10 +14,13 @@ import kotlin.collections.ArrayList
 
 class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapper) : RefusjonskravRepository {
     private val logger = LoggerFactory.getLogger(PostgresRefusjonskravRepository::class.java)
-    private val tableName = "refusjonskrav"
 
+    private val tableName = "refusjonskrav"
     private val getByVirksomhetsnummerStatement = """SELECT * FROM $tableName 
             WHERE data ->> 'virksomhetsnummer' = ?;"""
+
+    private val getByStatuses = """SELECT * FROM $tableName 
+            WHERE data ->> 'status' = ?;"""
 
     private val getByIdStatement = """SELECT * FROM $tableName WHERE data ->> 'id' = ?"""
 
@@ -32,6 +37,20 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
             val resultList = ArrayList<Refusjonskrav>()
             val res = con.prepareStatement(getByVirksomhetsnummerStatement).apply {
                 setString(1, virksomhetsnummer)
+            }.executeQuery()
+
+            while (res.next()) {
+                resultList.add(extractRefusjonskrav(res))
+            }
+            return resultList
+        }
+    }
+
+    override fun getByStatus(status: RefusjonskravStatus): List<Refusjonskrav> {
+        ds.connection.use { con ->
+            val resultList = ArrayList<Refusjonskrav>()
+            val res = con.prepareStatement(getByStatuses).apply {
+                setString(1, status.toString())
             }.executeQuery()
 
             while (res.next()) {
