@@ -10,6 +10,7 @@ data class Refusjonskrav(
         val perioder: Set<Arbeidsgiverperiode>,
 
         var status: RefusjonskravStatus = RefusjonskravStatus.MOTTATT,
+        var feilmelding: String? = null,
         var oppgaveId: String? = null,
         var joarkReferanse: String? = null,
 
