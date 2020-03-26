@@ -17,13 +17,12 @@ internal class RefusjonsKravDtoTest {
                 setOf(Arbeidsgiverperiode(
                         LocalDate.of(2020, 4, 1),
                         LocalDate.of(2020, 4, 5),
-                        2
+                        2, 2.3
                 ), Arbeidsgiverperiode(
                         LocalDate.of(2020, 4, 22),
                         LocalDate.of(2020, 4, 29),
-                        4
-                )),
-                3272.3
+                        4, 2.4
+                ))
         )
     }
 
@@ -35,13 +34,12 @@ internal class RefusjonsKravDtoTest {
                 setOf(Arbeidsgiverperiode(
                         LocalDate.of(2020, 4, 1),
                         LocalDate.of(2020, 4, 5),
-                        2
+                        2, 2.0
                 ), Arbeidsgiverperiode(
                         LocalDate.of(2020, 4, 5),
                         LocalDate.of(2020, 4, 10),
-                        4
-                )),
-                3272.3
+                        4, 2.0
+                ))
         )
     }
 
@@ -54,13 +52,12 @@ internal class RefusjonsKravDtoTest {
                     setOf(Arbeidsgiverperiode(
                             LocalDate.of(2020, 4, 1),
                             LocalDate.of(2020, 4, 6),
-                            2
+                            2, 1.0
                     ), Arbeidsgiverperiode(
                             LocalDate.of(2020, 4, 5),
                             LocalDate.of(2020, 4, 10),
-                            4
-                    )),
-                    3272.3
+                            4, 2.0
+                    ))
             )
         }
     }
@@ -74,9 +71,8 @@ internal class RefusjonsKravDtoTest {
                     setOf(Arbeidsgiverperiode(
                             LocalDate.of(2020, 4, 1),
                             LocalDate.of(2020, 4, 5),
-                            2
-                    )),
-                    -1.0
+                            2, -14.65
+                    ))
             )
         }
     }
@@ -91,13 +87,12 @@ internal class RefusjonsKravDtoTest {
                             Arbeidsgiverperiode(
                                     LocalDate.of(2020, 4, 1),
                                     LocalDate.of(2020, 4, 5),
-                                    2
+                                    2, 2.0
                             ), Arbeidsgiverperiode(
                             LocalDate.of(2020, 4, 23),
                             LocalDate.of(2020, 4, 29),
-                            8
-                    )),
-                    123.8
+                            8, 0.0
+                    ))
             )
         }
     }
@@ -112,13 +107,12 @@ internal class RefusjonsKravDtoTest {
                             Arbeidsgiverperiode(
                                     LocalDate.of(2020, 4, 1),
                                     LocalDate.of(2020, 4, 5),
-                                    5
+                                    5, 2.0
                             ), Arbeidsgiverperiode(
                             LocalDate.of(2020, 4, 20),
                             LocalDate.of(2020, 4, 29),
-                            9
-                    )),
-                    123.8
+                            9, 2.0
+                    ))
             )
         }
     }
@@ -133,13 +127,12 @@ internal class RefusjonsKravDtoTest {
                             Arbeidsgiverperiode(
                                     LocalDate.of(2020, 4, 1),
                                     LocalDate.of(2020, 4, 6),
-                                    5
+                                    5, 2.0
                             ), Arbeidsgiverperiode(
                             LocalDate.of(2020, 4, 10),
                             LocalDate.of(2020, 4, 20),
-                            9
-                    )),
-                    123.8
+                            9, 2.0
+                    ))
             )
         }
     }
@@ -153,13 +146,12 @@ internal class RefusjonsKravDtoTest {
                             Arbeidsgiverperiode(
                                     LocalDate.of(2020, 4, 1),
                                     LocalDate.of(2020, 4, 6),
-                                    2
+                                    2, 2.0
                             ), Arbeidsgiverperiode(
                             LocalDate.of(2020, 4, 10),
                             LocalDate.of(2020, 4, 19),
-                            10
-                    )),
-                    123.8
+                            10, 2.0
+                    ))
             )
     }
 
@@ -173,8 +165,7 @@ internal class RefusjonsKravDtoTest {
                             Arbeidsgiverperiode(
                                     LocalDate.of(2020, 4, 1),
                                     LocalDate.of(2020, 4, 6),
-                                    7)),
-                    123.8
+                                    7, 2.0))
             )
         }
     }
@@ -189,8 +180,7 @@ internal class RefusjonsKravDtoTest {
                             Arbeidsgiverperiode(
                                     LocalDate.of(2020, 3, 15),
                                     LocalDate.of(2020, 3, 20),
-                                    2)),
-                    123.8
+                                    2, 2.0))
             )
         }
     }
@@ -205,13 +195,12 @@ internal class RefusjonsKravDtoTest {
                             Arbeidsgiverperiode(
                                     LocalDate.of(2020, 4, 1),
                                     LocalDate.of(2020, 4, 6),
-                                    4
+                                    4, 2000.0
                             ), Arbeidsgiverperiode(
                             LocalDate.of(2020, 4, 10),
                             LocalDate.of(2020, 4, 12),
-                            3
-                    )),
-                    123.8
+                            3, 1500.0
+                    ))
             )
         }
     }

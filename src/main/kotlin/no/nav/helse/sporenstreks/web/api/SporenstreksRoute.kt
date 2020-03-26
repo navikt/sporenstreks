@@ -33,8 +33,7 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                         opprettetAv,
                         refusjonskrav.identitetsnummer,
                         refusjonskrav.virksomhetsnummer,
-                        refusjonskrav.perioder,
-                        refusjonskrav.beloep
+                        refusjonskrav.perioder
                 )
 
                 val saved = db.insert(domeneKrav)

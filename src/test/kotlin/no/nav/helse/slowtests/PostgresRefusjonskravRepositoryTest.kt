@@ -39,13 +39,12 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
                         Arbeidsgiverperiode(
                                 LocalDate.of(2020, 4, 1),
                                 LocalDate.of(2020, 4, 6),
-                                3
+                                3, 1000.0
                         ), Arbeidsgiverperiode(
                         LocalDate.of(2020, 4, 10),
                         LocalDate.of(2020, 4, 12),
-                        3
+                        3, 1000.0
                 )),
-                6612.23,
                 RefusjonsKravStatus.MOTTATT,
                 "oppgave-id-234234",
                 "joark-ref-1232"

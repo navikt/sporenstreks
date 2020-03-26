@@ -8,7 +8,6 @@ data class Refusjonskrav(
         val identitetsnummer: String,
         val virksomhetsnummer: String,
         val perioder: Set<Arbeidsgiverperiode>,
-        val beloep: Double,
 
         var status: RefusjonsKravStatus = RefusjonsKravStatus.MOTTATT,
         var oppgaveId: String? = null,

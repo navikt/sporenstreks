@@ -21,6 +21,6 @@ class MockRefusjonskravRepo : RefusjonskravRepository {
     }
 
     override fun getById(id: UUID): Refusjonskrav {
-        return Refusjonskrav("", "", "", emptySet(), 0.0)
+        return Refusjonskrav("", "", "", emptySet())
     }
 }
