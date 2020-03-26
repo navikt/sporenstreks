@@ -33,8 +33,8 @@ internal class KvitteringTest {
         )
         val kv = Kvittering()
         val ba = kv.lagPDF(innhold)
-        val file = File("kvittering_vanlig.pdf")
-//        val file = File.createTempFile("kvittering_vanlig", "pdf")
+//        val file = File("kvittering_vanlig.pdf")
+        val file = File.createTempFile("kvittering_vanlig", "pdf")
         Files.write(ba, file)
         assertTrue { file.exists() }
     }
@@ -56,8 +56,8 @@ internal class KvitteringTest {
                 )
         )
         val ba = kv.lagPDF(innhold)
-        val file = File("kvittering_spesialtegn.pdf")
-//        val file = File.createTempFile("kvittering_spesialtegn", "pdf")
+//        val file = File("kvittering_spesialtegn.pdf")
+        val file = File.createTempFile("kvittering_spesialtegn", "pdf")
         Files.write(ba, file)
         assertTrue { file.exists() }
     }
