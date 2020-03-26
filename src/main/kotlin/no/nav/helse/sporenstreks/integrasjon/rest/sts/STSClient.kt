@@ -75,7 +75,8 @@ class STSClient(private val username: String, private val password: String, priv
             try {
                 val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
                 check(response.statusCode() == HttpURLConnection.HTTP_OK) { String.format("Feil oppsto under henting av token fra STS - %s", response.body()) }
-                return ObjectMapper().readValue(response.body(), STSOidcResponse::class.java).access_token ?: throw IllegalStateException("Feilet ved kall til STS")
+                return ObjectMapper().readValue(response.body(), STSOidcResponse::class.java).access_token
+                        ?: throw IllegalStateException("Feilet ved kall til STS")
             } catch (e: InterruptedException) {
                 throw IllegalStateException("Feilet ved kall til STS", e)
             } catch (e: IOException) {

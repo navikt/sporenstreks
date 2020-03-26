@@ -6,6 +6,7 @@ import io.ktor.client.request.url
 import io.ktor.http.contentType
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
+import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
 import org.slf4j.LoggerFactory
 
 interface DokarkivKlient {
@@ -20,7 +21,8 @@ class MockDokarkivKlient : DokarkivKlient {
 
 class DokarkivKlientImpl(
         private val dokarkivBaseUrl: String,
-        private val httpClient: HttpClient) : DokarkivKlient {
+        private val httpClient: HttpClient,
+        private val stsClient: STSClient) : DokarkivKlient {
 
     private val logger: org.slf4j.Logger = LoggerFactory.getLogger("DokarkivClient")
 
@@ -31,7 +33,7 @@ class DokarkivKlientImpl(
         val response = runBlocking {
             httpClient.post<JournalpostResponse> {
                 url(url)
-                headers.append("AUTHORIZATION", "OIDCTOKEN")
+                headers.append("AUTHORIZATION", stsClient.getOidcToken())
                 contentType(io.ktor.http.ContentType.Application.Json)
                 body = JournalpostRequest(
                         bruker = Bruker(

@@ -19,6 +19,7 @@ import no.nav.helse.sporenstreks.auth.altinn.AltinnClient
 import no.nav.helse.sporenstreks.db.*
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.DokarkivKlientImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.MockDokarkivKlient
+import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
 import org.koin.core.Koin
 import org.koin.core.definition.Kind
 import org.koin.core.module.Module
@@ -105,7 +106,8 @@ fun preprodConfig(config: ApplicationConfig) = module {
         ) as AuthorizationsRepository
     }
 
-    single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get()) }
+    single { STSClient(config.getString("service_user.username"), config.getString("service_user.password"), config.getString("sts_url")) }
+    single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) }
     single { DefaultAuthorizer(get()) as Authorizer }
 
 }
@@ -128,7 +130,8 @@ fun prodConfig(config: ApplicationConfig) = module {
         ) as AuthorizationsRepository
     }
 
-    single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get()) }
+    single { STSClient(config.getString("service_user.username"), config.getString("service_user.password"), config.getString("sts_url")) }
+    single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
     single { DefaultAuthorizer(get()) as Authorizer }
 }
