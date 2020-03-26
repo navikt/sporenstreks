@@ -49,7 +49,10 @@ class Kvittering {
             contentStream.showText("Fra: ${DATE_FORMAT.format(it.fom)}   Til: ${DATE_FORMAT.format(it.tom)}    Antall dager: ${it.antallDagerMedRefusjon}")
         }
 
+
         contentStream.newLineAtOffset(0F, -LINE_HEIGHT*5)
+        contentStream.showText("Referansenummer: ${innhold.refusjonskrav.referansenummer}")
+        contentStream.newLineAtOffset(0F, -LINE_HEIGHT*2)
         contentStream.showText("Opprettet: ${TIMESTAMP_FORMAT.format(LocalDateTime.now())}")
 
         contentStream.endText()

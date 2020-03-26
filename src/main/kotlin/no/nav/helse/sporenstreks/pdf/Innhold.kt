@@ -1,5 +1,5 @@
 package no.nav.helse.sporenstreks.pdf
 
-import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
+import no.nav.helse.sporenstreks.domene.Refusjonskrav
 
-data class Innhold (val navn: String, val refusjonskrav: RefusjonskravDto)
+data class Innhold (val navn: String, val refusjonskrav: Refusjonskrav)
