@@ -35,7 +35,7 @@ class DokarkivKlientImpl(
         val response = runBlocking {
             httpClient.post<JournalpostResponse> {
                 url(url)
-                headers.append("AUTHORIZATION", stsClient.getOidcToken())
+                headers.append("Authorization", "Bearer " + stsClient.getOidcToken())
                 contentType(io.ktor.http.ContentType.Application.Json)
                 body = JournalpostRequest(
                         bruker = Bruker(
