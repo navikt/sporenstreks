@@ -42,6 +42,9 @@ class AltinnClientTests {
                     url.startsWith("http://timeout") -> {
                         respond("Timed out", HttpStatusCode.GatewayTimeout)
                     }
+                    url.startsWith("http://altinn-timeout") -> {
+                        respond("Timed out", HttpStatusCode.BadGateway)
+                    }
                     else -> error("Unhandled ${request.url}")
                 }
             }
@@ -72,6 +75,14 @@ class AltinnClientTests {
 
         assertThrows(ServerResponseException::class.java) {
             runBlocking { altinnClient.doHealthCheck() }
+        }
+    }
+
+    @Test
+    internal fun `timeout from altinn throws AltinnBrukteForLangTidException`() {
+        val altinnClient = AltinnClient("http://altinn-timeout", "api-gw-key", "altinn-key", serviceCode, client)
+        assertThrows(AltinnBrukteForLangTidException::class.java) {
+            runBlocking { altinnClient.hentOrgMedRettigheterForPerson(identitetsnummer) }
         }
     }
 
