@@ -38,5 +38,5 @@ data class AvsenderMottaker(
 )
 
 data class Sak(
-        val sakstype: String = "GENERELL"
+        val sakstype: String = "GENERELL_SAK"
 )
