@@ -61,6 +61,6 @@ spec:
     - name: ALTINN_SERVICE_OWNER_GW_URL
       value: https://api-gw.adeo.no/ekstern/altinn/api/serviceowner
     - name: SECURITYTOKENSERVICE_URL
-      value: https://security-token-service.adeo.no/rest/v1/sts/token
+      value: https://security-token-service.nais.adeo.no/rest/v1/sts/token
     - name: DOKARKIV_URL
       value: https://dokarkiv.nais.adeo.no
