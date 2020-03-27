@@ -15,6 +15,7 @@ import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.pipeline.PipelineContext
 import no.nav.helse.sporenstreks.auth.AuthorizationsRepository
 import no.nav.helse.sporenstreks.auth.Authorizer
+import no.nav.helse.sporenstreks.auth.altinn.AltinnBrukteForLangTidException
 import no.nav.helse.sporenstreks.auth.hentIdentitetsnummerFraLoginToken
 import no.nav.helse.sporenstreks.db.RefusjonskravRepository
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
@@ -56,7 +57,13 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
         route("/arbeidsgivere") {
             get("/") {
                 val id = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
-                call.respond(authRepo.hentOrgMedRettigheterForPerson(id))
+                try {
+                    val rettigheter = authRepo.hentOrgMedRettigheterForPerson(id)
+                    call.respond(rettigheter)
+                } catch(ae: AltinnBrukteForLangTidException) {
+                    // Midlertidig fiks for å la klienten prøve igjen når noe timer ut ifbm dette kallet til Altinn
+                    call.respond(HttpStatusCode.ExpectationFailed)
+                }
             }
         }
     }

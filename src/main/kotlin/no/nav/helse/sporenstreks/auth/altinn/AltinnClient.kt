@@ -1,6 +1,7 @@
 package no.nav.helse.sporenstreks.auth.altinn
 
 import io.ktor.client.HttpClient
+import io.ktor.client.features.ServerResponseException
 import io.ktor.client.request.get
 import io.ktor.client.statement.readText
 import io.ktor.http.HttpStatusCode
@@ -40,9 +41,16 @@ class AltinnClient(
 
         val url = baseUrl + identitetsnummer
         return runBlocking {
-            httpClient.get<Set<AltinnOrganisasjon>>(url) {
-                headers.append("X-NAV-APIKEY", apiGwApiKey)
-                headers.append("APIKEY", altinnApiKey)
+            try {
+                httpClient.get<Set<AltinnOrganisasjon>>(url) {
+                    headers.append("X-NAV-APIKEY", apiGwApiKey)
+                    headers.append("APIKEY", altinnApiKey)
+                }
+            } catch(ex: ServerResponseException) {
+                // midlertidig hook for å detektere at det tok for lang tid å hente rettigheter
+                // brukeren/klienten kan prøve igjen når dette skjer siden altinn svarer raskere gang nummer 2
+                if (ex.response.status == HttpStatusCode.BadGateway) throw AltinnBrukteForLangTidException()
+                else throw ex
             }
         }
     }
@@ -59,3 +67,7 @@ class AltinnClient(
         }
     }
 }
+
+class AltinnBrukteForLangTidException : Exception(
+        "Altinn brukte for lang tid til å svare på forespørsleen om tilganger. Prøv igjen om litt."
+)
