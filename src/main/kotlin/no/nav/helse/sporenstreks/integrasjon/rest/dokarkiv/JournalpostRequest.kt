@@ -34,7 +34,7 @@ data class Bruker(
 data class AvsenderMottaker(
         val id: String,
         val idType: String = "ORGNR",
-        val navn: String //TODO
+        val navn: String
 )
 
 data class Sak(

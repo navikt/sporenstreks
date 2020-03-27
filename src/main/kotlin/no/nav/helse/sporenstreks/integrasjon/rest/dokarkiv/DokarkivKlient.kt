@@ -43,7 +43,7 @@ class DokarkivKlientImpl(
                         ),
                         avsenderMottaker = AvsenderMottaker(
                                 id = refusjonskrav.virksomhetsnummer,
-                                navn = "TODO"
+                                navn = "Arbeidsgiver"
                         ),
                         dokumenter = listOf(Dokument(
                                 dokumentVarianter = listOf(DokumentVariant(
