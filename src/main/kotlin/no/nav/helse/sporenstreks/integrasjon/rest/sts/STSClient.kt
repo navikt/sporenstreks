@@ -1,6 +1,7 @@
 package no.nav.helse.sporenstreks.integrasjon.rest.sts
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import no.nav.security.token.support.core.jwt.JwtToken
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 import java.io.IOException
@@ -17,13 +18,13 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
 
 
-class STSClient(private val username: String, private val password: String, private val stsEndpoint: String) {
+class STSClient(username: String, password: String, stsEndpoint: String) {
 
     private val httpClient: HttpClient
     private val endpointURI: URI
     private val basicAuth: String
 
-    private var currentToken: String
+    private var currentToken: JwtToken
 
     init {
         basicAuth = basicAuth(username, password)
@@ -32,57 +33,46 @@ class STSClient(private val username: String, private val password: String, priv
                 .queryParam("scope", "openid")
                 .build()
         httpClient = HttpClient.newHttpClient()
-        currentToken = tokenFromSTS
+        currentToken = requestToken()
     }
 
 
     fun getOidcToken(): String {
-        if (isExpired(currentToken)) {
-            log.info("OIDC Token for srvoppgave expired, getting a new one from the STS")
-            currentToken = tokenFromSTS
+        if (isExpired()) {
+            log.info("OIDC Token is expired, getting a new one from the STS")
+            currentToken = requestToken()
+            log.info("Hentet nytt token fra sts som går ut ${currentToken.jwtTokenClaims.expirationTime}")
         }
-        return currentToken
+        return currentToken.tokenAsString
     }
 
-    private fun isExpired(oidcToken: String): Boolean {
-        val mapper = ObjectMapper()
+    private fun isExpired(): Boolean {
+        return currentToken.jwtTokenClaims.expirationTime.after(Date.from(Instant.now().minusSeconds(300)))
+    }
+
+    private fun requestToken(): JwtToken {
+        log.info("sts endpoint uri: $endpointURI")
+        val request = HttpRequest.newBuilder()
+                .uri(endpointURI)
+                .header(HttpHeaders.AUTHORIZATION, basicAuth)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .timeout(Duration.ofSeconds(5))
+                .GET()
+                .build()
         try {
-            val tokenBody = String(Base64.getDecoder().decode(StringUtils.substringBetween(oidcToken, ".")))
-            val node = mapper.readTree(tokenBody)
-            val now = Instant.now()
-            val expiry = Instant.ofEpochSecond(node["exp"].longValue()).minusSeconds(300) //5 min padding
-            log.debug("OIDC token still not expired, checking that {} is after {} - ({} {})", now, expiry, now.epochSecond, expiry.epochSecond)
-            if (now.isAfter(expiry)) {
-                log.info("OIDC token expired {} is after {}", now, expiry)
-                return true
-            }
-        } catch (e: Exception) {
-            throw IllegalStateException("Klarte ikke parse oidc token fra STS", e)
-        }
-        return false
-    }
+            val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
+            check(response.statusCode() == HttpURLConnection.HTTP_OK) { String.format("Feil oppsto under henting av token fra STS - %s", response.body()) }
 
-    private val tokenFromSTS: String
-        private get() {
-            log.info("sts endpoint uri: $endpointURI")
-            val request = HttpRequest.newBuilder()
-                    .uri(endpointURI)
-                    .header(HttpHeaders.AUTHORIZATION, basicAuth)
-                    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
-                    .timeout(Duration.ofSeconds(5))
-                    .GET()
-                    .build()
-            try {
-                val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
-                check(response.statusCode() == HttpURLConnection.HTTP_OK) { String.format("Feil oppsto under henting av token fra STS - %s", response.body()) }
-                return ObjectMapper().readValue(response.body(), STSOidcResponse::class.java).access_token
-                        ?: throw IllegalStateException("Feilet ved kall til STS")
-            } catch (e: InterruptedException) {
-                throw IllegalStateException("Feilet ved kall til STS", e)
-            } catch (e: IOException) {
-                throw IllegalStateException("Feilet ved kall til STS", e)
-            }
+            val accessToken = ObjectMapper().readValue(response.body(), STSOidcResponse::class.java).access_token
+                    ?: throw IllegalStateException("Feilet ved kall til STS")
+
+            return JwtToken(accessToken)
+        } catch (e: InterruptedException) {
+            throw IllegalStateException("Feilet ved kall til STS", e)
+        } catch (e: IOException) {
+            throw IllegalStateException("Feilet ved kall til STS", e)
         }
+    }
 
     private fun basicAuth(username: String, password: String): String {
         log.info("basic auth username: $username")
@@ -99,5 +89,4 @@ class STSOidcResponse {
     var access_token: String? = null
     var token_type: String? = null
     var expires_in: Int? = null
-
 }
