@@ -17,6 +17,8 @@ import no.nav.helse.sporenstreks.auth.Authorizer
 import no.nav.helse.sporenstreks.auth.hentIdentitetsnummerFraLoginToken
 import no.nav.helse.sporenstreks.db.RefusjonskravRepository
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
+import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
+import no.nav.helse.sporenstreks.metrics.REQUEST_TIME
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import javax.ws.rs.ForbiddenException
 
@@ -25,19 +27,25 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
     route("api/v1") {
         route("/refusjonskrav") {
             post("/") {
-                val refusjonskrav = call.receive<RefusjonskravDto>()
-                authorize(authorizer, refusjonskrav.virksomhetsnummer)
+                INNKOMMENDE_REFUSJONSKRAV_COUNTER.inc()
+                val timer = REQUEST_TIME.startTimer()
+                try {
+                    val refusjonskrav = call.receive<RefusjonskravDto>()
+                    authorize(authorizer, refusjonskrav.virksomhetsnummer)
 
-                val opprettetAv = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
-                val domeneKrav = Refusjonskrav(
-                        opprettetAv,
-                        refusjonskrav.identitetsnummer,
-                        refusjonskrav.virksomhetsnummer,
-                        refusjonskrav.perioder
-                )
+                    val opprettetAv = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
+                    val domeneKrav = Refusjonskrav(
+                            opprettetAv,
+                            refusjonskrav.identitetsnummer,
+                            refusjonskrav.virksomhetsnummer,
+                            refusjonskrav.perioder
+                    )
 
-                val saved = db.insert(domeneKrav)
-                call.respond(HttpStatusCode.OK, saved)
+                    val saved = db.insert(domeneKrav)
+                    call.respond(HttpStatusCode.OK, saved)
+                } finally {
+                    timer.observeDuration()
+                }
             }
         }
 
