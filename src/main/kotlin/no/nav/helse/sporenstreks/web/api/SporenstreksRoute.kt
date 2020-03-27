@@ -74,7 +74,7 @@ fun Route.testJournalføring(joarkService: JoarkService, config: ApplicationConf
     route("apitest/v1") {
         get("/journalfør") {
             if (config.property("koin.profile").getString() == "PREPROD") {
-                joarkService.journalfør(Refusjonskrav(
+                call.respond(joarkService.journalfør(Refusjonskrav(
                         opprettetAv = "test",
                         identitetsnummer = "08018421659",
                         virksomhetsnummer = "123456785",
@@ -85,7 +85,7 @@ fun Route.testJournalføring(joarkService: JoarkService, config: ApplicationConf
                                 beloep = 5000.0
                         ))
                 )
-                )
+                ))
             }
         }
     }
