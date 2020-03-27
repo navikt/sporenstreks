@@ -61,6 +61,12 @@ val common = module {
     val httpClient = HttpClient(Apache) {
         install(JsonFeature) {
             serializer = JacksonSerializer {
+                registerModule(KotlinModule())
+                registerModule(Jdk8Module())
+                registerModule(JavaTimeModule())
+                disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                configure(SerializationFeature.INDENT_OUTPUT, true)
+                configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
                 configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
             }
         }
