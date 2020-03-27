@@ -15,3 +15,10 @@ val INNKOMMENDE_REFUSJONSKRAV_COUNTER: Counter = Counter.build()
         .name("inkommende_refusjonskrav")
         .help("Counts the number of incoming messages")
         .register()
+
+
+val FEIL_COUNTER: Counter = Counter.build()
+        .namespace(METRICS_NS)
+        .name("feil")
+        .help("Counts the number of errors")
+        .register()

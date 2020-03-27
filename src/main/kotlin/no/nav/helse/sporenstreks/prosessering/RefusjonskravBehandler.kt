@@ -5,6 +5,7 @@ import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.integrasjon.JoarkService
 import no.nav.helse.sporenstreks.integrasjon.OppgaveService
+import no.nav.helse.sporenstreks.metrics.FEIL_COUNTER
 
 class RefusjonskravBehandler(val joarkService: JoarkService,
                              val oppgaveService: OppgaveService,
@@ -25,6 +26,7 @@ class RefusjonskravBehandler(val joarkService: JoarkService,
         } catch (e: Exception) {
             refusjonskrav.status = RefusjonskravStatus.FEILET
             refusjonskrav.feilmelding = e.cause.toString() //TODO Finpuss
+            FEIL_COUNTER.inc()
             //repository.update TODO
         }
     }

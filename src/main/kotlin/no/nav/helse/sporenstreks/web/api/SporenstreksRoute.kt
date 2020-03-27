@@ -3,6 +3,7 @@ package no.nav.helse.sporenstreks.web.api
 import io.ktor.application.ApplicationCall
 import io.ktor.application.application
 import io.ktor.application.call
+import io.ktor.config.ApplicationConfig
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
 import io.ktor.response.respond
@@ -16,10 +17,13 @@ import no.nav.helse.sporenstreks.auth.AuthorizationsRepository
 import no.nav.helse.sporenstreks.auth.Authorizer
 import no.nav.helse.sporenstreks.auth.hentIdentitetsnummerFraLoginToken
 import no.nav.helse.sporenstreks.db.RefusjonskravRepository
+import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
+import no.nav.helse.sporenstreks.integrasjon.JoarkService
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
 import no.nav.helse.sporenstreks.metrics.REQUEST_TIME
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
+import java.time.LocalDate
 import javax.ws.rs.ForbiddenException
 
 @KtorExperimentalAPI
@@ -57,6 +61,29 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
         }
     }
 }
+
+@KtorExperimentalAPI
+fun Route.testJournalføring(joarkService: JoarkService, config: ApplicationConfig) {
+    route("apitest/v1") {
+        get("/journalfør") {
+            if (config.property("koin.profile").getString() == "PREPROD") {
+                joarkService.journalfør(Refusjonskrav(
+                        opprettetAv = "test",
+                        identitetsnummer = "08018421659",
+                        virksomhetsnummer = "123456785",
+                        perioder = setOf(Arbeidsgiverperiode(
+                                fom = LocalDate.of(2020, 3, 16),
+                                tom = LocalDate.of(2020, 4, 1),
+                                antallDagerMedRefusjon = 5,
+                                beloep = 5000.0
+                        ))
+                )
+                )
+            }
+        }
+    }
+}
+
 
 private suspend fun PipelineContext<Unit, ApplicationCall>.authorize(authorizer: Authorizer, arbeidsgiverId: String) {
     val identitetsnummer = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)

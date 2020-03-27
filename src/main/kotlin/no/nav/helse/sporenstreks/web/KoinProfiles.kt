@@ -17,6 +17,7 @@ import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.sporenstreks.auth.*
 import no.nav.helse.sporenstreks.auth.altinn.AltinnClient
 import no.nav.helse.sporenstreks.db.*
+import no.nav.helse.sporenstreks.integrasjon.JoarkService
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.DokarkivKlientImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.MockDokarkivKlient
 import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
@@ -94,7 +95,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
                 config.getString("database.name"),
                 config.getString("database.vault.mountpath")) as DataSource
     }
-    single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository}
+    single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
 
     single {
         AltinnClient(
@@ -108,6 +109,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single { STSClient(config.getString("service_user.username"), config.getString("service_user.password"), config.getString("sts_url")) }
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) }
+    single { JoarkService(get()) }
     single { DefaultAuthorizer(get()) as Authorizer }
 
 }
@@ -133,6 +135,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { STSClient(config.getString("service_user.username"), config.getString("service_user.password"), config.getString("sts_url")) }
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
+    single { JoarkService(get()) }
     single { DefaultAuthorizer(get()) as Authorizer }
 }
 
