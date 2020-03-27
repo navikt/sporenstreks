@@ -26,7 +26,6 @@ import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.sporenstreks.auth.localCookieDispenser
 import no.nav.helse.sporenstreks.nais.nais
 import no.nav.helse.sporenstreks.web.api.sporenstreks
-import no.nav.helse.sporenstreks.web.api.testJournalføring
 import no.nav.helse.sporenstreks.web.dto.validation.Problem
 import no.nav.helse.sporenstreks.web.dto.validation.ValidationProblem
 import no.nav.helse.sporenstreks.web.dto.validation.ValidationProblemDetail
