@@ -67,7 +67,6 @@ val common = module {
                 disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 configure(SerializationFeature.INDENT_OUTPUT, true)
                 configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-                configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
             }
         }
     }
