@@ -28,7 +28,7 @@ data class DokumentVariant(
 
 data class Bruker(
         val id: String,
-        val idType: String = "fnr"
+        val idType: String = "FNR"
 )
 
 data class AvsenderMottaker(
