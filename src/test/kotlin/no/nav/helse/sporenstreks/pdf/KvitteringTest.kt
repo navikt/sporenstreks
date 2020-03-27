@@ -2,8 +2,8 @@ package no.nav.helse.sporenstreks.pdf
 
 import no.nav.helse.TestData
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
-import no.nav.helse.sporenstreks.domene.RefusjonsKravStatus
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
+import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import org.junit.jupiter.api.Test
 
 import wiremock.com.google.common.io.Files
@@ -33,7 +33,7 @@ internal class KvitteringTest {
                                 1220800.50
                         )),
                         opprettet = LocalDateTime.now(),
-                        status = RefusjonsKravStatus.MOTTATT,
+                        status = RefusjonskravStatus.MOTTATT,
                         opprettetAv = "NAV",
                         referansenummer = 12345
                 )
@@ -61,7 +61,7 @@ internal class KvitteringTest {
                                 250.50
                         )),
                         opprettet = LocalDateTime.now(),
-                        status = RefusjonsKravStatus.MOTTATT,
+                        status = RefusjonskravStatus.MOTTATT,
                         opprettetAv = "NAV",
                         referansenummer = 12345
                 )
