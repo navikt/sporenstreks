@@ -169,6 +169,6 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
         authenticate {
             sporenstreks(get(), get(), get())
         }
-        testJournalføring(get(), get())
+        testJournalføring(get(), config)
     }
 }

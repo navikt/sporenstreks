@@ -18,6 +18,7 @@ import no.nav.helse.sporenstreks.auth.*
 import no.nav.helse.sporenstreks.auth.altinn.AltinnClient
 import no.nav.helse.sporenstreks.db.*
 import no.nav.helse.sporenstreks.integrasjon.JoarkService
+import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.DokarkivKlient
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.DokarkivKlientImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.MockDokarkivKlient
 import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
@@ -73,6 +74,8 @@ fun buildAndTestConfig() = module {
     single { StaticMockAuthRepo(get()) as AuthorizationsRepository } bind StaticMockAuthRepo::class
     single { DefaultAuthorizer(get()) as Authorizer }
     single { MockRefusjonskravRepo() as RefusjonskravRepository }
+    single { MockDokarkivKlient() as DokarkivKlient }
+    single { JoarkService(get()) as JoarkService }
 
     LocalOIDCWireMock.start()
 }
@@ -81,9 +84,10 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { getDataSource(createLocalHikariConfig(), "sporenstreks", null) as DataSource }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
 
-    single { MockDokarkivKlient() }
+    single { MockDokarkivKlient() as DokarkivKlient }
     single { StaticMockAuthRepo(get()) as AuthorizationsRepository }
     single { DefaultAuthorizer(get()) as Authorizer }
+    single { JoarkService(get()) as JoarkService }
 
     LocalOIDCWireMock.start()
 }
@@ -108,8 +112,8 @@ fun preprodConfig(config: ApplicationConfig) = module {
     }
 
     single { STSClient(config.getString("service_user.username"), config.getString("service_user.password"), config.getString("sts_url")) }
-    single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) }
-    single { JoarkService(get()) }
+    single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
+    single { JoarkService(get()) as JoarkService }
     single { DefaultAuthorizer(get()) as Authorizer }
 
 }
@@ -133,9 +137,9 @@ fun prodConfig(config: ApplicationConfig) = module {
     }
 
     single { STSClient(config.getString("service_user.username"), config.getString("service_user.password"), config.getString("sts_url")) }
-    single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) }
+    single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
-    single { JoarkService(get()) }
+    single { JoarkService(get()) as JoarkService }
     single { DefaultAuthorizer(get()) as Authorizer }
 }
 
