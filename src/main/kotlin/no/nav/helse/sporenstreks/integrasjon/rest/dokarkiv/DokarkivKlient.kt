@@ -31,7 +31,7 @@ class DokarkivKlientImpl(
 
     override fun journalførDokument(dokument: String, refusjonskrav: Refusjonskrav): String {
         logger.debug("Journalfører dokument");
-        val url = "$dokarkivBaseUrl/journalpost?forsoekFerdigstill=true"
+        val url = "$dokarkivBaseUrl/rest/journalpostapi/v1/journalpost?forsoekFerdigstill=true"
         val response = runBlocking {
             httpClient.post<JournalpostResponse> {
                 url(url)
