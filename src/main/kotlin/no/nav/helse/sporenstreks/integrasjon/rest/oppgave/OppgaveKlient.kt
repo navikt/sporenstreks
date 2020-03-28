@@ -50,8 +50,14 @@ class OppgaveKlient constructor (
         val opprettOppgaveRequest = mapOppgave(sakId, journalpostId, aktørId, strukturertSkjema)
         try {
             log.info("Oppretter oppgave")
-            return OppgaveResultat(opprettOppgave(opprettOppgaveRequest, MDCOperations.generateCallId(), stsClient.getOidcToken()).id, false)
-        } catch (ex : Exception) {
+            return OppgaveResultat(
+                    opprettOppgave(
+                            opprettOppgaveRequest,
+                            MDCOperations.generateCallId(), // TODO Må gjenbruke callId fra første kall i kjeden
+                            stsClient.getOidcToken()
+                    ).id, false
+            )
+        } catch (ex: Exception) {
             throw OpprettOppgaveException(journalpostId)
         }
     }
