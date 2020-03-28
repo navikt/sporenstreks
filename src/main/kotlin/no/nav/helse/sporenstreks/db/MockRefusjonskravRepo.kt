@@ -28,4 +28,8 @@ class MockRefusjonskravRepo : RefusjonskravRepository {
     override fun getByStatus(status: RefusjonskravStatus): List<Refusjonskrav> {
         return emptyList()
     }
+
+    override fun update(krav: Refusjonskrav) {
+
+    }
 }

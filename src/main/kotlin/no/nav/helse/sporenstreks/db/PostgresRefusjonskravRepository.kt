@@ -26,6 +26,8 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
 
     private val saveStatement = "INSERT INTO $tableName (data) VALUES (?::json);"
 
+    private val updateStatement = "UPDATE $tableName SET data = ?::json WHERE data ->> 'id' = ?;"
+
     private val getByIdentitetsnummerAndVirksomhetsnummerStatement = """SELECT * FROM $tableName 
          WHERE data ->> 'identitetsnummer' = ?
             AND data ->> 'virksomhetsnummer' = ?;"""
@@ -57,6 +59,16 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
                 resultList.add(extractRefusjonskrav(res))
             }
             return resultList
+        }
+    }
+
+    override fun update(krav: Refusjonskrav) {
+        val json = mapper.writeValueAsString(krav)
+        ds.connection.use {
+            it.prepareStatement(updateStatement).apply {
+                setString(1, json)
+                setString(2, krav.id.toString())
+            }.executeUpdate()
         }
     }
 

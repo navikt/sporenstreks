@@ -11,4 +11,5 @@ interface RefusjonskravRepository {
     fun delete(id: UUID): Int
     fun getById(id: UUID): Refusjonskrav?
     fun getByStatus(status: RefusjonskravStatus): List<Refusjonskrav>
+    fun update(krav: Refusjonskrav)
 }

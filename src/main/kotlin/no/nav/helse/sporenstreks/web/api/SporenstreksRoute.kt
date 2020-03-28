@@ -28,7 +28,6 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
     route("api/v1") {
         route("/refusjonskrav") {
             post("/") {
-                INNKOMMENDE_REFUSJONSKRAV_COUNTER.inc()
                 val timer = REQUEST_TIME.startTimer()
                 try {
                     val refusjonskrav = call.receive<RefusjonskravDto>()
@@ -44,6 +43,7 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
 
                     val saved = db.insert(domeneKrav)
                     call.respond(HttpStatusCode.OK, saved)
+                    INNKOMMENDE_REFUSJONSKRAV_COUNTER.inc()
                 } finally {
                     timer.observeDuration()
                 }

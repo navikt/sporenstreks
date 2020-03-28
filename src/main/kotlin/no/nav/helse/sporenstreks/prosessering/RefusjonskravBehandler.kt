@@ -15,21 +15,19 @@ class RefusjonskravBehandler(val joarkService: JoarkService,
         try {
             if (refusjonskrav.joarkReferanse.isNullOrBlank()) {
                 refusjonskrav.joarkReferanse = joarkService.journalfør(refusjonskrav)
-                //repository.update(refusjonskrav) TODO
+                repository.update(refusjonskrav) // Unødvendig å lagre i mellom her kanskje sålenge vi updater i catchen?
             }
             if (refusjonskrav.oppgaveId.isNullOrBlank()) {
                 refusjonskrav.oppgaveId = oppgaveService.opprettOppgave(refusjonskrav, refusjonskrav.joarkReferanse!!)
-                //repository.update(refusjonskrav) TODO
+                repository.update(refusjonskrav)
             }
             refusjonskrav.status = RefusjonskravStatus.SENDT_TIL_BEHANDLING
-            //repository.update(refusjonskrav) TODO
+            repository.update(refusjonskrav)
         } catch (e: Exception) {
             refusjonskrav.status = RefusjonskravStatus.FEILET
             refusjonskrav.feilmelding = e.cause.toString() //TODO Finpuss
             FEIL_COUNTER.inc()
-            //repository.update TODO
+            repository.update(refusjonskrav) // Hva gjør vi om dette kallet feiler? Printe til loggene?
         }
     }
-
-
 }

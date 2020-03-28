@@ -87,6 +87,22 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
     }
 
     @Test
+    fun `Kan oppdatere krav`() {
+        val res = repo.getByStatus(RefusjonskravStatus.MOTTATT)
+        val krav = res.first()
+
+        krav.joarkReferanse = "dette er en test"
+        krav.oppgaveId = "oppgaveId"
+        krav.status = RefusjonskravStatus.SENDT_TIL_BEHANDLING
+
+        repo.update(krav)
+
+        val fromDb = repo.getById(krav.id)
+
+        assertThat(krav).isEqualTo(fromDb)
+    }
+
+    @Test
     fun `Sletter et refusjonskrav`() {
         val deletedCount = repo.delete(refusjonskrav.id)
         assertThat(deletedCount).isEqualTo(1)
