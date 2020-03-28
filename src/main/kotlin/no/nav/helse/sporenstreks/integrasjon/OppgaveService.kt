@@ -7,12 +7,12 @@ import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.OppgaveKlient
 
 class OppgaveService(private val oppgaveKlient: OppgaveKlient, private val om: ObjectMapper) {
 
-    fun opprettOppgave(refusjonskrav: Refusjonskrav, journalpostId: String): String {
+    fun opprettOppgave(refusjonskrav: Refusjonskrav, journalpostId: String, sakId: String, aktørId: String): String {
         val response = runBlocking {
             oppgaveKlient.opprettOppgave(
-                    sakId = "123",
+                    sakId = sakId,
                     journalpostId = journalpostId,
-                    aktørId = "123",
+                    aktørId = aktørId,
                     strukturertSkjema = mapStrukturert(refusjonskrav)
             )
         }

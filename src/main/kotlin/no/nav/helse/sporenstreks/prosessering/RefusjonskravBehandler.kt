@@ -18,7 +18,7 @@ class RefusjonskravBehandler(val joarkService: JoarkService,
                 //repository.update(refusjonskrav) TODO
             }
             if (refusjonskrav.oppgaveId.isNullOrBlank()) {
-                refusjonskrav.oppgaveId = oppgaveService.opprettOppgave(refusjonskrav, refusjonskrav.joarkReferanse!!)
+                refusjonskrav.oppgaveId = oppgaveService.opprettOppgave(refusjonskrav, "123", "123", "123") // TODO
                 //repository.update(refusjonskrav) TODO
             }
             refusjonskrav.status = RefusjonskravStatus.SENDT_TIL_BEHANDLING

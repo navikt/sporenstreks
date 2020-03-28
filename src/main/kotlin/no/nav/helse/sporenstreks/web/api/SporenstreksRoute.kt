@@ -18,6 +18,7 @@ import no.nav.helse.sporenstreks.auth.altinn.AltinnBrukteForLangTidException
 import no.nav.helse.sporenstreks.auth.hentIdentitetsnummerFraLoginToken
 import no.nav.helse.sporenstreks.db.RefusjonskravRepository
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
+import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.OpprettOppgaveDto
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
 import no.nav.helse.sporenstreks.metrics.REQUEST_TIME
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
@@ -60,6 +61,13 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                     // Midlertidig fiks for å la klienten prøve igjen når noe timer ut ifbm dette kallet til Altinn
                     call.respond(HttpStatusCode.ExpectationFailed)
                 }
+            }
+        }
+
+        route("/oppgave") {
+            post("/") {
+                call.receive<OpprettOppgaveDto>()
+                call.respond(HttpStatusCode.Accepted)
             }
         }
     }
