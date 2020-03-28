@@ -8,7 +8,6 @@ import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.OppgaveKlient
 class OppgaveService(private val oppgaveKlient: OppgaveKlient, private val om: ObjectMapper) {
 
     fun opprettOppgave(refusjonskrav: Refusjonskrav, journalpostId: String): String {
-        refusjonskrav.identitetsnummer
         val response = runBlocking {
             oppgaveKlient.opprettOppgave(
                     sakId = "123",
