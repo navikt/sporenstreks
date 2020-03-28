@@ -13,6 +13,7 @@ import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
+import no.nav.helse.sporenstreks.utils.MDCOperations
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.time.LocalDate
@@ -76,10 +77,9 @@ class OppgaveKlient constructor (
             geografiskTilknytning: String
     ): OppgaveResultat {
         val opprettOppgaveRequest = mapOppgave(sakId, journalpostId, aktørId, geografiskTilknytning)
-        val correlationId =  "123"
         try {
             log.info("Oppretter oppgave")
-            return OppgaveResultat(opprettOppgave(opprettOppgaveRequest, correlationId, stsClient.getOidcToken()).id, false)
+            return OppgaveResultat(opprettOppgave(opprettOppgaveRequest, MDCOperations.generateCallId(), stsClient.getOidcToken()).id, false)
         } catch (ex : Exception) {
             throw OpprettOppgaveException(journalpostId)
         }
