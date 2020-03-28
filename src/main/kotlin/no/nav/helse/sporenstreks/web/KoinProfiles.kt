@@ -22,6 +22,7 @@ import no.nav.helse.sporenstreks.integrasjon.OppgaveService
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.DokarkivKlient
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.DokarkivKlientImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.MockDokarkivKlient
+import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.OppgaveKlient
 import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
 import org.koin.core.Koin
 import org.koin.core.definition.Kind
@@ -83,6 +84,7 @@ fun buildAndTestConfig() = module {
     single { MockDokarkivKlient() as DokarkivKlient }
     single { JoarkService(get()) as JoarkService }
     single { OppgaveService(get(), get()) as OppgaveService }
+    single { OppgaveKlient(get(), get(), get()) as OppgaveKlient }
 
     LocalOIDCWireMock.start()
 }
@@ -96,6 +98,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { DefaultAuthorizer(get()) as Authorizer }
     single { JoarkService(get()) as JoarkService }
     single { OppgaveService(get(), get()) as OppgaveService }
+    single { OppgaveKlient(get(), get(), get()) as OppgaveKlient }
 
     LocalOIDCWireMock.start()
 }
@@ -124,7 +127,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { JoarkService(get()) as JoarkService }
     single { DefaultAuthorizer(get()) as Authorizer }
     single { OppgaveService(get(), get()) as OppgaveService }
-
+    single { OppgaveKlient(get(), get(), get()) as OppgaveKlient }
 }
 
 @KtorExperimentalAPI
@@ -151,6 +154,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { JoarkService(get()) as JoarkService }
     single { DefaultAuthorizer(get()) as Authorizer }
     single { OppgaveService(get(), get()) as OppgaveService }
+    single { OppgaveKlient(get(), get(), get()) as OppgaveKlient }
 }
 
 // utils

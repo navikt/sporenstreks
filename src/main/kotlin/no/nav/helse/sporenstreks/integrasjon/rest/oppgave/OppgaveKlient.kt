@@ -1,13 +1,6 @@
 package no.nav.helse.sporenstreks.integrasjon.rest.oppgave
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.apache.Apache
-import io.ktor.client.features.json.JacksonSerializer
-import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.http.ContentType
@@ -20,24 +13,9 @@ import java.time.LocalDate
 
 @Component
 class OppgaveKlient constructor (
-        private val url: String, private val stsClient: STSClient
+        private val url: String, private val stsClient: STSClient, private val httpClient: HttpClient
 ) {
 
-    private var httpClient = buildClient()
-
-    private fun buildClient(): HttpClient {
-        return HttpClient(Apache) {
-            install(JsonFeature) {
-                serializer = JacksonSerializer {
-                    registerKotlinModule()
-                    registerModule(JavaTimeModule())
-                    configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                    configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                }
-                expectSuccess = false
-            }
-        }
-    }
 
     private suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest, msgId: String, token: String): OpprettOppgaveResponse {
         return httpClient.post(url) {
