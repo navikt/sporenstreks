@@ -139,20 +139,20 @@ internal class RefusjonsKravDtoTest {
 
     @Test
     fun `16 dagers arbeidsgiverperiode totalt er gyldig`() {
-            RefusjonskravDto(
-                    TestData.validIdentitetsnummer,
-                    TestData.validOrgNr,
-                    setOf(
-                            Arbeidsgiverperiode(
-                                    LocalDate.of(2020, 4, 1),
-                                    LocalDate.of(2020, 4, 6),
-                                    2, 2.0
-                            ), Arbeidsgiverperiode(
-                            LocalDate.of(2020, 4, 10),
-                            LocalDate.of(2020, 4, 19),
-                            10, 2.0
-                    ))
-            )
+        RefusjonskravDto(
+                TestData.validIdentitetsnummer,
+                TestData.validOrgNr,
+                setOf(
+                        Arbeidsgiverperiode(
+                                LocalDate.of(2020, 4, 1),
+                                LocalDate.of(2020, 4, 6),
+                                2, 2.0
+                        ), Arbeidsgiverperiode(
+                        LocalDate.of(2020, 4, 10),
+                        LocalDate.of(2020, 4, 19),
+                        10, 2.0
+                ))
+        )
     }
 
     @Test
@@ -166,21 +166,6 @@ internal class RefusjonsKravDtoTest {
                                     LocalDate.of(2020, 4, 1),
                                     LocalDate.of(2020, 4, 6),
                                     7, 2.0))
-            )
-        }
-    }
-
-    @Test
-    fun `Periode før 16 mars er ikke gyldige`() {
-        Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
-            RefusjonskravDto(
-                    TestData.validIdentitetsnummer,
-                    TestData.validOrgNr,
-                    setOf(
-                            Arbeidsgiverperiode(
-                                    LocalDate.of(2020, 3, 15),
-                                    LocalDate.of(2020, 3, 20),
-                                    2, 2.0))
             )
         }
     }
@@ -204,4 +189,114 @@ internal class RefusjonsKravDtoTest {
             )
         }
     }
+
+    @Test
+    fun `Får ikke refusjon over 6G`() {
+        Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
+            RefusjonskravDto(
+                    TestData.validIdentitetsnummer,
+                    TestData.validOrgNr,
+                    setOf(
+                            Arbeidsgiverperiode(
+                                    LocalDate.of(2020, 4, 1),
+                                    LocalDate.of(2020, 4, 6),
+                                    3, 6000.0
+                            ), Arbeidsgiverperiode(
+                            LocalDate.of(2020, 4, 10),
+                            LocalDate.of(2020, 4, 15),
+                            3, 10000.0
+                    ))
+            )
+        }
+    }
+
+    @Test
+    fun `Dager uten refusjon kan være før 16 mars`() {
+        RefusjonskravDto(
+                TestData.validIdentitetsnummer,
+                TestData.validOrgNr,
+                setOf(Arbeidsgiverperiode(
+                        LocalDate.of(2020, 3, 9),
+                        LocalDate.of(2020, 3, 19),
+                        4, 2000.0
+                ))
+        )
+    }
+
+    @Test
+    fun `Sammenlagte perioder må ha tre dager uten refusjonskrav`() {
+        RefusjonskravDto(
+                TestData.validIdentitetsnummer,
+                TestData.validOrgNr,
+                setOf(
+                        Arbeidsgiverperiode(
+                                LocalDate.of(2020, 3, 10),
+                                LocalDate.of(2020, 3, 15),
+                                0, 0.0
+                        ), Arbeidsgiverperiode(
+                        LocalDate.of(2020, 3, 20),
+                        LocalDate.of(2020, 3, 25),
+                        5, 10000.0
+                ))
+        )
+
+        Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
+            RefusjonskravDto(
+                    TestData.validIdentitetsnummer,
+                    TestData.validOrgNr,
+                    setOf(Arbeidsgiverperiode(
+                            LocalDate.of(2020, 4, 10),
+                            LocalDate.of(2020, 4, 15),
+                            5, 10000.0
+                    ))
+            )
+        }
+    }
+
+    @Test
+    fun `Må inneholde minst en periode med dager etter 16 mars`() {
+        Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
+            RefusjonskravDto(
+                    TestData.validIdentitetsnummer,
+                    TestData.validOrgNr,
+                    setOf(Arbeidsgiverperiode(
+                            LocalDate.of(2020, 2, 20),
+                            LocalDate.of(2020, 2, 25),
+                            0, 0.0
+                    ),
+                            Arbeidsgiverperiode(
+                                    LocalDate.of(2020, 3, 10),
+                                    LocalDate.of(2020, 3, 15),
+                                    5, 10000.0
+                            ))
+            )
+        }
+    }
+
+
+    @Test
+    fun `Kan ikke kreve refusjon for dager før 16 mars`() {
+        Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
+            RefusjonskravDto(
+                    TestData.validIdentitetsnummer,
+                    TestData.validOrgNr,
+                    setOf(
+                            Arbeidsgiverperiode(
+                                    LocalDate.of(2020, 3, 10),
+                                    LocalDate.of(2020, 3, 17),
+                                    4, 4000.0))
+            )
+        }
+
+        RefusjonskravDto(
+                TestData.validIdentitetsnummer,
+                TestData.validOrgNr,
+                setOf(
+                        Arbeidsgiverperiode(
+                                LocalDate.of(2020, 3, 10),
+                                LocalDate.of(2020, 3, 17),
+                                0, 0.0))
+        )
+    }
+
 }

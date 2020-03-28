@@ -3,7 +3,6 @@ package no.nav.helse.sporenstreks.web.dto
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.web.dto.validation.*
 import org.valiktor.functions.isGreaterThanOrEqualTo
-import org.valiktor.functions.isPositive
 import org.valiktor.functions.isPositiveOrZero
 import org.valiktor.functions.validateForEach
 import org.valiktor.validate
@@ -16,12 +15,15 @@ data class RefusjonskravDto(
 ) {
 
     init {
+        val grunnbeløp2019 = 99858
+        val seksG =  grunnbeløp2019 * 6.0
+        val refusjonFraDato = LocalDate.of(2020, 3, 16)
+
         validate(this) {
             validate(RefusjonskravDto::identitetsnummer).isValidIdentitetsnummer()
             validate(RefusjonskravDto::virksomhetsnummer).isValidOrganisasjonsnummer()
 
             validate(RefusjonskravDto::perioder).validateForEach {
-                validate(Arbeidsgiverperiode::fom).isGreaterThanOrEqualTo(LocalDate.of(2020, 3, 16))
                 validate(Arbeidsgiverperiode::beloep).isPositiveOrZero()
             }
 
@@ -29,11 +31,16 @@ data class RefusjonskravDto(
                 validate(Arbeidsgiverperiode::tom).isGreaterThanOrEqualTo(it.fom)
             }
 
+            validate(RefusjonskravDto::perioder).refusjonsbeløpKanIkkeOverstigeGrunnbeløp(seksG)
+
             // antall refusjonsdager kan ikke vøre lenger enn periodens lengde
             validate(RefusjonskravDto::perioder).refujonsDagerIkkeOverstigerPeriodelengder()
 
+            // kan ikke kreve refusjon for dager før 16. mars
+            validate(RefusjonskravDto::perioder).refusjonsdagerInnenforGyldigPeriode(refusjonFraDato)
+
             // Summen av antallDagerMedRefusjon kan ikke overstige total periodelengde - 3 dager
-            validate(RefusjonskravDto::perioder).arbeidsgiverBetalerForDager(3)
+            validate(RefusjonskravDto::perioder).arbeidsgiverBetalerForDager(3, refusjonFraDato)
 
             // opphold mellom periodene kan ikke overstige 16 dager
             validate(RefusjonskravDto::perioder).harMaksimaltOppholdMellomPerioder(16)
