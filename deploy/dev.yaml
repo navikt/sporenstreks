@@ -65,3 +65,5 @@ spec:
       value: https://security-token-service.nais.preprod.local/rest/v1/sts/token
     - name: DOKARKIV_URL
       value: https://dokarkiv-q1.nais.preprod.local
+    - name: AKTOERREGISTER_URL
+      value: https://app-q1.adeo.no/aktoerregister/api/v1

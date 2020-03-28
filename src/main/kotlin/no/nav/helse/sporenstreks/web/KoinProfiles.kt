@@ -18,6 +18,7 @@ import no.nav.helse.sporenstreks.auth.*
 import no.nav.helse.sporenstreks.auth.altinn.AltinnClient
 import no.nav.helse.sporenstreks.db.*
 import no.nav.helse.sporenstreks.integrasjon.JoarkService
+import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumer
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.DokarkivKlient
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.DokarkivKlientImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.MockDokarkivKlient
@@ -93,6 +94,13 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { StaticMockAuthRepo(get()) as AuthorizationsRepository }
     single { DefaultAuthorizer(get()) as Authorizer }
     single { JoarkService(get()) as JoarkService }
+    single {
+        AktorConsumer(get(),
+                config.getString("service_user.username"),
+                config.getString("aktoerregister.url"),
+                get()
+        )
+    }
 
     LocalOIDCWireMock.start()
 }
@@ -120,6 +128,14 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
     single { JoarkService(get()) as JoarkService }
     single { DefaultAuthorizer(get()) as Authorizer }
+
+    single {
+        AktorConsumer(get(),
+                config.getString("service_user.username"),
+                config.getString("aktoerregister.url"),
+                get()
+        )
+    }
 
 }
 
