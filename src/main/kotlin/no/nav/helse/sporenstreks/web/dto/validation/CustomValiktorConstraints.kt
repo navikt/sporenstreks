@@ -28,7 +28,7 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.arbeidsgiverBetale
         this.validate(RefusjonsDagerConstraint()) { ps ->
             var refusjonsdager = 0
             var arbeidsgiverdagerUtenRefusjon = 0
-            val totalAgp = ps!!.map {
+            ps!!.forEach() {
                 if (it.fom >= d) {
                   refusjonsdager += Period.between(it.fom, it.tom.plusDays(1)).days
                 } else if (it.tom < d){

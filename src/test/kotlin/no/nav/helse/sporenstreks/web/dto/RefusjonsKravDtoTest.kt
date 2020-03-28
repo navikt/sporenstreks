@@ -265,7 +265,7 @@ internal class RefusjonsKravDtoTest {
                             0, 0.0
                     ),
                             Arbeidsgiverperiode(
-                                    LocalDate.of(2020, 3, 10),
+                                    LocalDate.of(2020, 2, 15),
                                     LocalDate.of(2020, 3, 15),
                                     5, 10000.0
                             ))
