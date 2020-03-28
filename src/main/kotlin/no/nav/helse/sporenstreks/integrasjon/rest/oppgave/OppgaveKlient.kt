@@ -48,35 +48,27 @@ class OppgaveKlient constructor (
         }
     }
 
-    fun mapOppgave(sakId: String, journalpostId: String, aktørId: String, geografiskTilknytning: String): OpprettOppgaveRequest {
+    fun mapOppgave(sakId: String, journalpostId: String, aktørId: String, beskrivelse: String): OpprettOppgaveRequest {
         return OpprettOppgaveRequest(
-                tildeltEnhetsnr = geografiskTilknytning,
                 aktoerId = aktørId,
                 journalpostId = journalpostId,
-                behandlesAvApplikasjon = "FS22",
                 saksreferanse = sakId,
-                beskrivelse = "StrukturertInformasjon",
+                beskrivelse = beskrivelse,
                 tema = "SYK",
                 oppgavetype = "Robotbehandling",
-                behandlingstype = "",
                 behandlingstema = "refusjonskrav dag 4",
                 aktivDato = LocalDate.now().plusDays(7),
                 prioritet = "NORM"
         )
     }
 
-    /**
-     * Når det gjelder Oppgavetype og Behandlingstema så har vi fått tildelt disse:
-     * Oppgavetype = «Robotbehandling»;
-     * Behandlingstema = "refusjonskrav dag 4«;
-     */
     suspend fun opprettOppgave(
             sakId: String,
             journalpostId: String,
             aktørId: String,
-            geografiskTilknytning: String
+            strukturertSkjema: String
     ): OppgaveResultat {
-        val opprettOppgaveRequest = mapOppgave(sakId, journalpostId, aktørId, geografiskTilknytning)
+        val opprettOppgaveRequest = mapOppgave(sakId, journalpostId, aktørId, strukturertSkjema)
         try {
             log.info("Oppretter oppgave")
             return OppgaveResultat(opprettOppgave(opprettOppgaveRequest, MDCOperations.generateCallId(), stsClient.getOidcToken()).id, false)
