@@ -25,5 +25,6 @@ data class Refusjonskrav(
 enum class RefusjonskravStatus {
     MOTTATT,
     SENDT_TIL_BEHANDLING,
-    FEILET
+    FEILET,
+    AVBRUTT
 }

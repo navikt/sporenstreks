@@ -2,7 +2,6 @@ package no.nav.helse.sporenstreks.integrasjon.rest.sts
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.security.token.support.core.jwt.JwtToken
-import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.net.HttpURLConnection
