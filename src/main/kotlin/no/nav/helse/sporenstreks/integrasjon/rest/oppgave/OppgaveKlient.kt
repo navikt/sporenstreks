@@ -57,7 +57,8 @@ class OppgaveKlient constructor (
                 tema = "SYK",
                 oppgavetype = "Robotbehandling",
                 behandlingstema = "refusjonskrav dag 4",
-                aktivDato = LocalDate.now().plusDays(7),
+                aktivDato = LocalDate.now(),
+                fristFerdigstillelse= LocalDate.now().plusDays(7),
                 prioritet = "NORM"
         )
     }
