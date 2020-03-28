@@ -21,7 +21,7 @@ spec:
     periodSeconds: 3
     failureThreshold: 10
   ingresses:
-    - https://sporentreks.nais.preprod.local
+    - https://sporenstreks.nais.preprod.local
   replicas:
     max: 1
     min: 1
