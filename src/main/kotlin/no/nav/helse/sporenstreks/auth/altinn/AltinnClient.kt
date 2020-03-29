@@ -46,6 +46,8 @@ class AltinnClient(
                     headers.append("X-NAV-APIKEY", apiGwApiKey)
                     headers.append("APIKEY", altinnApiKey)
                 }
+                .filter { it.status != null && it.status == "Active" }
+                .toSet()
             } catch(ex: ServerResponseException) {
                 // midlertidig hook for å detektere at det tok for lang tid å hente rettigheter
                 // brukeren/klienten kan prøve igjen når dette skjer siden altinn svarer raskere gang nummer 2
