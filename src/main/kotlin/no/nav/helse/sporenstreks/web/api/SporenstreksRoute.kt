@@ -91,7 +91,7 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                         RefusjonskravStatus.MOTTATT
                 )
                 try {
-                    val id = service.opprettOppgave(refusjonskrav, dto.journalpostId, dto.sakId, dto.aktørId)
+                    val id = service.opprettOppgave(refusjonskrav, dto.journalpostId, dto.aktørId)
                     call.respond(HttpStatusCode.Accepted, "Opprettet oppgave id=$id")
                 } catch (e: OpprettOppgaveException) {
                     call.respond(HttpStatusCode.InternalServerError, e.message.toString())

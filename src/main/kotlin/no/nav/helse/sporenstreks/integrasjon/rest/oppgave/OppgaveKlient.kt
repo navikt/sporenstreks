@@ -26,11 +26,10 @@ class OppgaveKlient constructor (
         }
     }
 
-    fun mapOppgave(sakId: String, journalpostId: String, aktørId: String, beskrivelse: String): OpprettOppgaveRequest {
+    fun mapOppgave(journalpostId: String, aktørId: String, beskrivelse: String): OpprettOppgaveRequest {
         return OpprettOppgaveRequest(
                 aktoerId = aktørId,
                 journalpostId = journalpostId,
-                saksreferanse = sakId,
                 beskrivelse = beskrivelse,
                 tema = "SYK",
                 oppgavetype = "ROB_BEH",
@@ -42,12 +41,11 @@ class OppgaveKlient constructor (
     }
 
     suspend fun opprettOppgave(
-            sakId: String,
             journalpostId: String,
             aktørId: String,
             strukturertSkjema: String
     ): OppgaveResultat {
-        val opprettOppgaveRequest = mapOppgave(sakId, journalpostId, aktørId, strukturertSkjema)
+        val opprettOppgaveRequest = mapOppgave(journalpostId, aktørId, strukturertSkjema)
         try {
             log.info("Oppretter oppgave")
             return OppgaveResultat(

@@ -45,7 +45,7 @@ class RefusjonskravBehandlerTest {
     fun `skal ikke lage oppgave når det allerede foreligger en oppgaveId `() {
         refusjonskrav.oppgaveId = "ppggssv"
         refusjonskravBehandler.behandle(refusjonskrav)
-        verify(exactly = 0) { oppgaveMock.opprettOppgave(any(), any(), any(), any()) }
+        verify(exactly = 0) { oppgaveMock.opprettOppgave(any(), any(), any()) }
     }
 
     @Test
@@ -57,7 +57,7 @@ class RefusjonskravBehandlerTest {
 
         every { joarkMock.journalfør(refusjonskrav) } returns joarkref
 
-        every { oppgaveMock.opprettOppgave(refusjonskrav, joarkref, sakId, aktørId) } returns opgref
+        every { oppgaveMock.opprettOppgave(refusjonskrav, joarkref, aktørId) } returns opgref
 
         refusjonskravBehandler.behandle(refusjonskrav)
 
@@ -66,7 +66,7 @@ class RefusjonskravBehandlerTest {
         assertThat(refusjonskrav.oppgaveId).isEqualTo(opgref)
 
         verify(exactly = 1) { joarkMock.journalfør(any()) }
-        verify(exactly = 1) { oppgaveMock.opprettOppgave(any(), any(), any(), any()) }
+        verify(exactly = 1) { oppgaveMock.opprettOppgave(any(), any(), any()) }
         verify(exactly = 1) { repositoryMock.update(refusjonskrav) }
     }
 
@@ -74,12 +74,11 @@ class RefusjonskravBehandlerTest {
     @Test
     fun `Ved feil skal kravet lagres med feilstatus og joarkref om det finnes`() {
         val joarkref = "joarkref"
-        val sakId = "sakId"
         val aktørId = "aktørId"
 
         every { joarkMock.journalfør(refusjonskrav) } returns joarkref
 
-        every { oppgaveMock.opprettOppgave(refusjonskrav, joarkref, sakId, aktørId) } throws IOException()
+        every { oppgaveMock.opprettOppgave(refusjonskrav, joarkref, aktørId) } throws IOException()
 
         refusjonskravBehandler.behandle(refusjonskrav)
 
@@ -88,7 +87,7 @@ class RefusjonskravBehandlerTest {
         assertThat(refusjonskrav.oppgaveId).isNull()
 
         verify(exactly = 1) { joarkMock.journalfør(any()) }
-        verify(exactly = 1) { oppgaveMock.opprettOppgave(any(), any(), any(), any()) }
+        verify(exactly = 1) { oppgaveMock.opprettOppgave(any(), any(), any()) }
         verify(exactly = 1) { repositoryMock.update(refusjonskrav) }
     }
 }
