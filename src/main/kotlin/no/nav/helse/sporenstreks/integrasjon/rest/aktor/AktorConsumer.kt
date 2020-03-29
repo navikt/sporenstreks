@@ -10,7 +10,7 @@ interface AktorConsumer {
     fun getAktorId(fnr: String, callId: String): String
 }
 
-class MockAktorConsumer() : AktorConsumer {
+class MockAktorConsumer : AktorConsumer {
     override fun getAktorId(fnr: String, callId: String): String {
         return "aktorId"
     }
@@ -35,8 +35,8 @@ class AktorConsumerImpl(val stsClient: STSClient,
                 headers.append("Nav-Personidenter", sokeIdent)
             }
         }[sokeIdent]
-        if (response?.feilmelding?.isNotEmpty()!!) {
-            throw Exception("Feil ved henting av aktør: " + response.feilmelding)
+        response?.feilmelding?.isNotEmpty()?.let {
+            throw Exception("Feil ved henting av aktør: $it")
         }
         return response?.identer?.first { it.gjeldende!! }?.ident
                 ?: throw Exception("Finner ikke aktørId")
