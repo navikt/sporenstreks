@@ -25,7 +25,11 @@ class RefusjonskravBehandler(val joarkService: JoarkService,
             }
 
             if (refusjonskrav.oppgaveId.isNullOrBlank()) {
-                refusjonskrav.oppgaveId = oppgaveService.opprettOppgave(refusjonskrav, refusjonskrav.joarkReferanse!!)
+                refusjonskrav.oppgaveId = oppgaveService.opprettOppgave(
+                        refusjonskrav,
+                        refusjonskrav.joarkReferanse!!,
+                        "aktørId" // TODO Hardkodet
+                )
             }
 
             refusjonskrav.feilmelding = null
