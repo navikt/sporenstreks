@@ -88,26 +88,28 @@ fun Route.apiTest(aktorConsumer: AktorConsumer, config: ApplicationConfig) {
         }
         route("/oppgave") {
             post("/") {
-                val dto = call.receive<OpprettOppgaveDto>()
-                val service = application.getKoin().get<OppgaveService>();
-                val refusjonskrav = Refusjonskrav(
-                        "20015001543",
-                        "20015001543",
-                        "123456785",
-                        setOf(
-                                Arbeidsgiverperiode(
-                                        LocalDate.of(2020, 4, 1),
-                                        LocalDate.of(2020, 4, 6),
-                                        3, 1000.0
-                                ), Arbeidsgiverperiode(
-                                LocalDate.of(2020, 4, 10),
-                                LocalDate.of(2020, 4, 12),
-                                3, 1000.0
-                        )),
-                        RefusjonskravStatus.MOTTATT
-                )
-                val id = service.opprettOppgave(refusjonskrav, dto.journalpostId, dto.aktørId, MDCOperations.generateCallId())
-                call.respond(HttpStatusCode.Accepted, "Opprettet oppgave id=$id")
+                if (config.property("koin.profile").getString() == "PREPROD") {
+                    val dto = call.receive<OpprettOppgaveDto>()
+                    val service = application.getKoin().get<OppgaveService>();
+                    val refusjonskrav = Refusjonskrav(
+                            "20015001543",
+                            "20015001543",
+                            "123456785",
+                            setOf(
+                                    Arbeidsgiverperiode(
+                                            LocalDate.of(2020, 4, 1),
+                                            LocalDate.of(2020, 4, 6),
+                                            3, 1000.0
+                                    ), Arbeidsgiverperiode(
+                                    LocalDate.of(2020, 4, 10),
+                                    LocalDate.of(2020, 4, 12),
+                                    3, 1000.0
+                            )),
+                            RefusjonskravStatus.MOTTATT
+                    )
+                    val id = service.opprettOppgave(refusjonskrav, dto.journalpostId, dto.aktørId, MDCOperations.generateCallId())
+                    call.respond(HttpStatusCode.Accepted, "Opprettet oppgave id=$id")
+                }
             }
         }
     }
