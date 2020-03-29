@@ -52,7 +52,6 @@ class RefusjonskravBehandlerTest {
     fun `skal journalføre, opprette oppgave og oppdatere kravet i databasen`() {
         val joarkref = "joarkref"
         val opgref = "oppgaveref"
-        val sakId = "sakId"
         val aktørId = "aktørId"
 
         every { joarkMock.journalfør(refusjonskrav) } returns joarkref

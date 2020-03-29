@@ -28,7 +28,7 @@ class RefusjonskravBehandler(val joarkService: JoarkService,
                 refusjonskrav.oppgaveId = oppgaveService.opprettOppgave(
                         refusjonskrav,
                         refusjonskrav.joarkReferanse!!,
-                        "123" // TODO Hardkodet
+                        "aktørId" // TODO Hardkodet
                 )
             }
 

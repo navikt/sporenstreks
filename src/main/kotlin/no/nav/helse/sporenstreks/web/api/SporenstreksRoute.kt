@@ -22,7 +22,6 @@ import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.integrasjon.OppgaveService
 import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.OpprettOppgaveDto
-import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.OpprettOppgaveException
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
 import no.nav.helse.sporenstreks.metrics.REQUEST_TIME
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
@@ -90,12 +89,8 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                         )),
                         RefusjonskravStatus.MOTTATT
                 )
-                try {
                     val id = service.opprettOppgave(refusjonskrav, dto.journalpostId, dto.aktørId)
                     call.respond(HttpStatusCode.Accepted, "Opprettet oppgave id=$id")
-                } catch (e: OpprettOppgaveException) {
-                    call.respond(HttpStatusCode.InternalServerError, e.message.toString())
-                }
             }
         }
     }

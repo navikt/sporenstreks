@@ -46,7 +46,6 @@ class OppgaveKlient constructor (
             strukturertSkjema: String
     ): OppgaveResultat {
         val opprettOppgaveRequest = mapOppgave(journalpostId, aktørId, strukturertSkjema)
-        try {
             log.info("Oppretter oppgave")
             return OppgaveResultat(
                     opprettOppgave(
@@ -55,9 +54,6 @@ class OppgaveKlient constructor (
                             stsClient.getOidcToken()
                     ).id, false
             )
-        } catch (ex: Exception) {
-            throw OpprettOppgaveException(journalpostId)
-        }
     }
 
     companion object {
@@ -65,8 +61,6 @@ class OppgaveKlient constructor (
     }
 
 }
-
-class OpprettOppgaveException(message: String) : Exception(message)
 
 data class OpprettOppgaveRequest(
         val tildeltEnhetsnr: String? = null,
