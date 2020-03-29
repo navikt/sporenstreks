@@ -9,8 +9,8 @@ class JoarkService(val dokarkivKlient: DokarkivKlient) {
 
     val pdfGenerator = PDFGenerator()
 
-    fun journalfør(refusjonskrav: Refusjonskrav): String {
+    fun journalfør(refusjonskrav: Refusjonskrav, callId: String): String {
         val base64EnkodetPdf = Base64.getEncoder().encodeToString(pdfGenerator.lagPDF(refusjonskrav))
-        return dokarkivKlient.journalførDokument(base64EnkodetPdf, refusjonskrav)
+        return dokarkivKlient.journalførDokument(base64EnkodetPdf, refusjonskrav, callId)
     }
 }

@@ -6,7 +6,6 @@ import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
-import no.nav.helse.sporenstreks.utils.MDCOperations
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 
@@ -14,12 +13,13 @@ interface OppgaveKlient {
     suspend fun opprettOppgave(
             journalpostId: String,
             aktørId: String,
-            strukturertSkjema: String
+            strukturertSkjema: String,
+            callId: String
     ): OppgaveResultat
 }
 
 class MockOppgaveKlient : OppgaveKlient {
-    override suspend fun opprettOppgave(journalpostId: String, aktørId: String, strukturertSkjema: String): OppgaveResultat {
+    override suspend fun opprettOppgave(journalpostId: String, aktørId: String, strukturertSkjema: String, callId: String): OppgaveResultat {
         return OppgaveResultat(123, false)
     }
 }
@@ -55,14 +55,15 @@ class OppgaveKlientImpl(
     override suspend fun opprettOppgave(
             journalpostId: String,
             aktørId: String,
-            strukturertSkjema: String
+            strukturertSkjema: String,
+            callId: String
     ): OppgaveResultat {
         val opprettOppgaveRequest = mapOppgave(journalpostId, aktørId, strukturertSkjema)
         log.info("Oppretter oppgave")
         return OppgaveResultat(
                 opprettOppgave(
                         opprettOppgaveRequest,
-                        MDCOperations.generateCallId(), // TODO Må gjenbruke callId fra første kall i kjeden
+                        callId,
                         stsClient.getOidcToken()
                 ).id, false
         )

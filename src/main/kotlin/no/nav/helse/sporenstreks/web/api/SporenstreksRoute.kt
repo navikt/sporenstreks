@@ -24,6 +24,7 @@ import no.nav.helse.sporenstreks.integrasjon.OppgaveService
 import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.OpprettOppgaveDto
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
 import no.nav.helse.sporenstreks.metrics.REQUEST_TIME
+import no.nav.helse.sporenstreks.utils.MDCOperations
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import org.koin.ktor.ext.getKoin
 import java.time.LocalDate
@@ -89,7 +90,7 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                         )),
                         RefusjonskravStatus.MOTTATT
                 )
-                    val id = service.opprettOppgave(refusjonskrav, dto.journalpostId, dto.aktørId)
+                val id = service.opprettOppgave(refusjonskrav, dto.journalpostId, dto.aktørId, MDCOperations.generateCallId())
                     call.respond(HttpStatusCode.Accepted, "Opprettet oppgave id=$id")
             }
         }
