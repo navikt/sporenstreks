@@ -3,7 +3,6 @@ package no.nav.helse.sporenstreks.integrasjon.rest.aktor
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.url
-import io.ktor.http.contentType
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
 
@@ -34,7 +33,6 @@ class AktorConsumerImpl(val stsClient: STSClient,
                 headers.append("Nav-Consumer-Id", username)
                 headers.append("Nav-Call-Id", callId)
                 headers.append("Nav-Personidenter", sokeIdent)
-                contentType(io.ktor.http.ContentType.Application.FormUrlEncoded)
             }
         }[sokeIdent]
         if (response?.feilmelding?.isNotEmpty()!!) {
