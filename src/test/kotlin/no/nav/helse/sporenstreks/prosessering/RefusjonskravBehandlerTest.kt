@@ -8,7 +8,7 @@ import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.integrasjon.JoarkService
 import no.nav.helse.sporenstreks.integrasjon.OppgaveService
-import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumer
+import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumerImpl
 import no.nav.helse.sporenstreks.utils.MDCOperations
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -20,7 +20,7 @@ class RefusjonskravBehandlerTest {
     val joarkMock = mockk<JoarkService>(relaxed = true)
     val oppgaveMock = mockk<OppgaveService>(relaxed = true)
     val repositoryMock = mockk<PostgresRefusjonskravRepository>(relaxed = true)
-    val aktorConsumerMock = mockk<AktorConsumer>(relaxed = true)
+    val aktorConsumerMock = mockk<AktorConsumerImpl>(relaxed = true)
     val refusjonskravBehandler = RefusjonskravBehandler(joarkMock, oppgaveMock, repositoryMock, aktorConsumerMock)
     lateinit var refusjonskrav: Refusjonskrav
 

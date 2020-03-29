@@ -7,12 +7,22 @@ import io.ktor.http.contentType
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
 
-class AktorConsumer(val stsClient: STSClient,
-                    val username: String,
-                    val url: String,
-                    val httpClient: HttpClient) {
+interface AktorConsumer {
+    fun getAktorId(fnr: String, callId: String): String
+}
 
-    fun getAktorId(fnr: String, callId: String): String {
+class MockAktorConsumer() : AktorConsumer {
+    override fun getAktorId(fnr: String, callId: String): String {
+        return "aktorId"
+    }
+}
+
+class AktorConsumerImpl(val stsClient: STSClient,
+                        val username: String,
+                        val url: String,
+                        val httpClient: HttpClient) : AktorConsumer {
+
+    override fun getAktorId(fnr: String, callId: String): String {
         return getIdent(fnr, "AktoerId", callId)
     }
 

@@ -20,6 +20,8 @@ import no.nav.helse.sporenstreks.db.*
 import no.nav.helse.sporenstreks.integrasjon.JoarkService
 import no.nav.helse.sporenstreks.integrasjon.OppgaveService
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumer
+import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumerImpl
+import no.nav.helse.sporenstreks.integrasjon.rest.aktor.MockAktorConsumer
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.DokarkivKlient
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.DokarkivKlientImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.MockDokarkivKlient
@@ -88,6 +90,7 @@ fun buildAndTestConfig() = module {
     single { JoarkService(get()) as JoarkService }
     single { OppgaveService(get(), get()) as OppgaveService }
     single { MockOppgaveKlient() as OppgaveKlient }
+    single { MockAktorConsumer() as AktorConsumer }
 
     LocalOIDCWireMock.start()
 }
@@ -101,11 +104,11 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { DefaultAuthorizer(get()) as Authorizer }
     single { JoarkService(get()) as JoarkService }
     single {
-        AktorConsumer(get(),
+        AktorConsumerImpl(get(),
                 config.getString("service_user.username"),
                 config.getString("aktoerregister.url"),
                 get()
-        )
+        ) as AktorConsumer
     }
     single { OppgaveService(get(), get()) as OppgaveService }
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
@@ -137,11 +140,11 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { JoarkService(get()) as JoarkService }
     single { DefaultAuthorizer(get()) as Authorizer }
     single {
-        AktorConsumer(get(),
+        AktorConsumerImpl(get(),
                 config.getString("service_user.username"),
                 config.getString("aktoerregister.url"),
                 get()
-        )
+        ) as AktorConsumer
     }
     single { OppgaveService(get(), get()) as OppgaveService }
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
@@ -172,6 +175,13 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { DefaultAuthorizer(get()) as Authorizer }
     single { OppgaveService(get(), get()) as OppgaveService }
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
+    single {
+        AktorConsumerImpl(get(),
+                config.getString("service_user.username"),
+                config.getString("aktoerregister.url"),
+                get()
+        ) as AktorConsumer
+    }
 }
 
 // utils
