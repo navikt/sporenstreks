@@ -57,8 +57,9 @@ class RefusjonskravBehandlerTest {
         val aktørId = "aktørId"
 
         every { joarkMock.journalfør(refusjonskrav, any()) } returns joarkref
+        every { aktorConsumerMock.getAktorId(any(), any()) } returns aktørId
 
-        every { oppgaveMock.opprettOppgave(refusjonskrav, joarkref, aktørId, MDCOperations.generateCallId()) } returns opgref
+        every { oppgaveMock.opprettOppgave(refusjonskrav, joarkref, aktørId, any()) } returns opgref
 
         refusjonskravBehandler.behandle(refusjonskrav)
 
@@ -67,7 +68,7 @@ class RefusjonskravBehandlerTest {
         assertThat(refusjonskrav.oppgaveId).isEqualTo(opgref)
 
         verify(exactly = 1) { joarkMock.journalfør(any(), any()) }
-        verify(exactly = 1) { oppgaveMock.opprettOppgave(any(), any(), any(), MDCOperations.generateCallId()) }
+        verify(exactly = 1) { oppgaveMock.opprettOppgave(any(), any(), any(), any()) }
         verify(exactly = 1) { repositoryMock.update(refusjonskrav) }
     }
 
@@ -78,8 +79,9 @@ class RefusjonskravBehandlerTest {
         val aktørId = "aktørId"
 
         every { joarkMock.journalfør(refusjonskrav, any()) } returns joarkref
+        every { aktorConsumerMock.getAktorId(any(), any()) } returns aktørId
 
-        every { oppgaveMock.opprettOppgave(refusjonskrav, joarkref, aktørId, MDCOperations.generateCallId()) } throws IOException()
+        every { oppgaveMock.opprettOppgave(refusjonskrav, joarkref, aktørId, any()) } throws IOException()
 
         refusjonskravBehandler.behandle(refusjonskrav)
 
@@ -88,7 +90,7 @@ class RefusjonskravBehandlerTest {
         assertThat(refusjonskrav.oppgaveId).isNull()
 
         verify(exactly = 1) { joarkMock.journalfør(any(), any()) }
-        verify(exactly = 1) { oppgaveMock.opprettOppgave(any(), any(), any(), MDCOperations.generateCallId()) }
+        verify(exactly = 1) { oppgaveMock.opprettOppgave(any(), any(), any(), any()) }
         verify(exactly = 1) { repositoryMock.update(refusjonskrav) }
     }
 }
