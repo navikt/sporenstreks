@@ -45,17 +45,19 @@ class RefusjonskravBehandlerTest {
     fun `skal ikke lage oppgave når det allerede foreligger en oppgaveId `() {
         refusjonskrav.oppgaveId = "ppggssv"
         refusjonskravBehandler.behandle(refusjonskrav)
-        verify(exactly = 0) { oppgaveMock.opprettOppgave(any(), any()) }
+        verify(exactly = 0) { oppgaveMock.opprettOppgave(any(), any(), any(), any()) }
     }
 
     @Test
     fun `skal journalføre, opprette oppgave og oppdatere kravet i databasen`() {
         val joarkref = "joarkref"
         val opgref = "oppgaveref"
+        val sakId = "sakId"
+        val aktørId = "aktørId"
 
         every { joarkMock.journalfør(refusjonskrav) } returns joarkref
 
-        every { oppgaveMock.opprettOppgave(refusjonskrav, joarkref) } returns opgref
+        every { oppgaveMock.opprettOppgave(refusjonskrav, joarkref, sakId, aktørId) } returns opgref
 
         refusjonskravBehandler.behandle(refusjonskrav)
 
@@ -64,7 +66,7 @@ class RefusjonskravBehandlerTest {
         assertThat(refusjonskrav.oppgaveId).isEqualTo(opgref)
 
         verify(exactly = 1) { joarkMock.journalfør(any()) }
-        verify(exactly = 1) { oppgaveMock.opprettOppgave(any(), any()) }
+        verify(exactly = 1) { oppgaveMock.opprettOppgave(any(), any(), any(), any()) }
         verify(exactly = 1) { repositoryMock.update(refusjonskrav) }
     }
 
@@ -72,10 +74,12 @@ class RefusjonskravBehandlerTest {
     @Test
     fun `Ved feil skal kravet lagres med feilstatus og joarkref om det finnes`() {
         val joarkref = "joarkref"
+        val sakId = "sakId"
+        val aktørId = "aktørId"
 
         every { joarkMock.journalfør(refusjonskrav) } returns joarkref
 
-        every { oppgaveMock.opprettOppgave(refusjonskrav, joarkref) } throws IOException()
+        every { oppgaveMock.opprettOppgave(refusjonskrav, joarkref, sakId, aktørId) } throws IOException()
 
         refusjonskravBehandler.behandle(refusjonskrav)
 
@@ -84,7 +88,7 @@ class RefusjonskravBehandlerTest {
         assertThat(refusjonskrav.oppgaveId).isNull()
 
         verify(exactly = 1) { joarkMock.journalfør(any()) }
-        verify(exactly = 1) { oppgaveMock.opprettOppgave(any(), any()) }
+        verify(exactly = 1) { oppgaveMock.opprettOppgave(any(), any(), any(), any()) }
         verify(exactly = 1) { repositoryMock.update(refusjonskrav) }
     }
 }
