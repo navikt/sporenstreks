@@ -18,7 +18,7 @@ class MockAktorConsumer() : AktorConsumer {
 
 class AktorConsumerImpl(val stsClient: STSClient,
                         val username: String,
-                        val url: String,
+                        val baseUrl: String,
                         val httpClient: HttpClient) : AktorConsumer {
 
     override fun getAktorId(fnr: String, callId: String): String {
@@ -28,7 +28,7 @@ class AktorConsumerImpl(val stsClient: STSClient,
     private fun getIdent(sokeIdent: String, identgruppe: String, callId: String): String {
         val response = runBlocking {
             httpClient.get<AktorResponse> {
-                url("$url/identer?gjeldende=true&identgruppe=$identgruppe")
+                url("$baseUrl/identer?gjeldende=true&identgruppe=$identgruppe")
                 headers.append("Authorization", "Bearer " + stsClient.getOidcToken())
                 headers.append("Nav-Consumer-Id", username)
                 headers.append("Nav-Call-Id", callId)
