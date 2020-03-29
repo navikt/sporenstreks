@@ -52,11 +52,10 @@ class AltinnClientTests {
     }
 
     @Test
-    internal fun `valid answer from altinn returns properly serialized list of all org forms`() {
+    internal fun `valid answer from altinn returns properly serialized list of all active org forms`() {
         val altinnClient = AltinnClient("http://juice", "api-gw-key", "altinn-key", serviceCode, client)
         val authList = altinnClient.hentOrgMedRettigheterForPerson(identitetsnummer)
-        assertThat(authList).hasSize(5)
-        assertThat(authList.find { it.socialSecurityNumber == "01065500791" }).isNotNull
+        assertThat(authList).hasSize(4)
     }
 
 
