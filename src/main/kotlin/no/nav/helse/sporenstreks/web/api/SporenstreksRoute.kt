@@ -7,7 +7,6 @@ import io.ktor.config.ApplicationConfig
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
 import io.ktor.response.respond
-import io.ktor.response.respondText
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
@@ -23,7 +22,6 @@ import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.integrasjon.OppgaveService
-import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumer
 import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.OpprettOppgaveDto
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
 import no.nav.helse.sporenstreks.metrics.REQUEST_TIME
@@ -77,15 +75,8 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
 
 
 @KtorExperimentalAPI
-fun Route.apiTest(aktorConsumer: AktorConsumer, config: ApplicationConfig) {
+fun Route.apiTest(config: ApplicationConfig) {
     route("apitest/v1") {
-        route("/aktørId") {
-            get("/") {
-                if (config.property("koin.profile").getString() == "PREPROD") {
-                    call.respondText(aktorConsumer.getAktorId(call.request.queryParameters["aktorId"]!!, MDCOperations.generateCallId()))
-                }
-            }
-        }
         route("/oppgave") {
             post("/") {
                 if (config.property("koin.profile").getString() == "PREPROD") {
@@ -115,7 +106,7 @@ fun Route.apiTest(aktorConsumer: AktorConsumer, config: ApplicationConfig) {
     }
 }
 
-private suspend fun PipelineContext<Unit, ApplicationCall>.authorize(authorizer: Authorizer, arbeidsgiverId: String) {
+private fun PipelineContext<Unit, ApplicationCall>.authorize(authorizer: Authorizer, arbeidsgiverId: String) {
     val identitetsnummer = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
     if (!authorizer.hasAccess(identitetsnummer, arbeidsgiverId)) {
         throw ForbiddenException()
