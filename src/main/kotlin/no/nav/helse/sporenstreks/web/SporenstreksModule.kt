@@ -25,6 +25,7 @@ import io.ktor.util.DataConversionException
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.sporenstreks.auth.localCookieDispenser
 import no.nav.helse.sporenstreks.nais.nais
+import no.nav.helse.sporenstreks.web.api.apiTest
 import no.nav.helse.sporenstreks.web.api.sporenstreks
 import no.nav.helse.sporenstreks.web.dto.validation.Problem
 import no.nav.helse.sporenstreks.web.dto.validation.ValidationProblem
@@ -168,5 +169,6 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
         authenticate {
             sporenstreks(get(), get(), get())
         }
+        apiTest(get(), get())
     }
 }

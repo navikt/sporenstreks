@@ -3,9 +3,11 @@ package no.nav.helse.sporenstreks.web.api
 import io.ktor.application.ApplicationCall
 import io.ktor.application.application
 import io.ktor.application.call
+import io.ktor.config.ApplicationConfig
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
 import io.ktor.response.respond
+import io.ktor.response.respondText
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
@@ -21,6 +23,7 @@ import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.integrasjon.OppgaveService
+import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumer
 import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.OpprettOppgaveDto
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
 import no.nav.helse.sporenstreks.metrics.REQUEST_TIME
@@ -69,7 +72,20 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                 }
             }
         }
+    }
+}
 
+
+@KtorExperimentalAPI
+fun Route.apiTest(aktorConsumer: AktorConsumer, config: ApplicationConfig) {
+    route("apitest/v1") {
+        route("/aktørId") {
+            get("/") {
+                if (config.property("koin.profile").getString() == "PREPROD") {
+                    call.respondText(aktorConsumer.getAktorId(call.request.queryParameters["aktorId"]!!, MDCOperations.generateCallId()))
+                }
+            }
+        }
         route("/oppgave") {
             post("/") {
                 val dto = call.receive<OpprettOppgaveDto>()
@@ -91,7 +107,7 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                         RefusjonskravStatus.MOTTATT
                 )
                 val id = service.opprettOppgave(refusjonskrav, dto.journalpostId, dto.aktørId, MDCOperations.generateCallId())
-                    call.respond(HttpStatusCode.Accepted, "Opprettet oppgave id=$id")
+                call.respond(HttpStatusCode.Accepted, "Opprettet oppgave id=$id")
             }
         }
     }
