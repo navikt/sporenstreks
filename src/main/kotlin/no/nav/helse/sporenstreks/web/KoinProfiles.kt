@@ -199,8 +199,9 @@ fun prodConfig(config: ApplicationConfig) = module {
         ) as AktorConsumer
     }
 
+    single { RefusjonskravBehandler(get(), get(), get(), get())}
     single { ProcessMottatteRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1)) }
-    single { ProcessFeiledeRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(10)) }
+    single { ProcessFeiledeRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofHours(2)) }
 }
 
 // utils
