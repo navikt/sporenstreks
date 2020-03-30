@@ -126,13 +126,15 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
 
     single {
-        AltinnClient(
+        val altinnClient = AltinnClient(
                 config.getString("altinn.service_owner_api_url"),
                 config.getString("altinn.gw_api_key"),
                 config.getString("altinn.altinn_api_key"),
                 config.getString("altinn.service_id"),
                 get()
-        ) as AuthorizationsRepository
+        )
+
+        CachedAuthRepo(altinnClient) as AuthorizationsRepository
     }
 
     single { STSClient(config.getString("service_user.username"), config.getString("service_user.password"), config.getString("sts_url")) }
