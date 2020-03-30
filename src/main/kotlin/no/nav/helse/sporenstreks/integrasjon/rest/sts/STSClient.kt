@@ -37,12 +37,13 @@ class STSClient(username: String, password: String, stsEndpoint: String) {
 
 
     fun getOidcToken(): String {
-        if (isExpired()) {
+        return requestToken().tokenAsString
+      /*  if (isExpired()) {
             log.info("OIDC Token is expired, getting a new one from the STS")
             currentToken = requestToken()
             log.info("Hentet nytt token fra sts som går ut ${currentToken.jwtTokenClaims.expirationTime}")
         }
-        return currentToken.tokenAsString
+        return currentToken.tokenAsString*/
     }
 
     private fun isExpired(): Boolean {
@@ -55,7 +56,7 @@ class STSClient(username: String, password: String, stsEndpoint: String) {
                 .uri(endpointURI)
                 .header(HttpHeaders.AUTHORIZATION, basicAuth)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
-                .timeout(Duration.ofSeconds(5))
+                .timeout(Duration.ofSeconds(10))
                 .GET()
                 .build()
         try {
@@ -64,6 +65,7 @@ class STSClient(username: String, password: String, stsEndpoint: String) {
 
             val accessToken = ObjectMapper().readValue(response.body(), STSOidcResponse::class.java).access_token
                     ?: throw IllegalStateException("Feilet ved kall til STS")
+
 
             return JwtToken(accessToken)
         } catch (e: InterruptedException) {

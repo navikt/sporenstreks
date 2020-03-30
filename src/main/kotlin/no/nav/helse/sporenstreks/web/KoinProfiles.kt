@@ -2,9 +2,11 @@ package no.nav.helse.sporenstreks.web
 
 import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.cfg.MapperBuilder
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -14,6 +16,8 @@ import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.config.ApplicationConfig
 import io.ktor.util.KtorExperimentalAPI
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import no.nav.helse.sporenstreks.auth.*
 import no.nav.helse.sporenstreks.auth.altinn.AltinnClient
 import no.nav.helse.sporenstreks.db.*
@@ -29,11 +33,15 @@ import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.MockOppgaveKlient
 import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.OppgaveKlient
 import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.OppgaveKlientImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
+import no.nav.helse.sporenstreks.prosessering.ProcessFeiledeRefusjonskravJob
+import no.nav.helse.sporenstreks.prosessering.ProcessMottatteRefusjonskravJob
+import no.nav.helse.sporenstreks.prosessering.RefusjonskravBehandler
 import org.koin.core.Koin
 import org.koin.core.definition.Kind
 import org.koin.core.module.Module
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import java.time.Duration
 import javax.sql.DataSource
 
 
@@ -73,6 +81,7 @@ val common = module {
                 registerModule(JavaTimeModule())
                 disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 configure(SerializationFeature.INDENT_OUTPUT, true)
+                configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
             }
         }
@@ -140,6 +149,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { STSClient(config.getString("service_user.username"), config.getString("service_user.password"), config.getString("sts_url")) }
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
     single { JoarkService(get()) as JoarkService }
+
     single { DefaultAuthorizer(get()) as Authorizer }
     single {
         AktorConsumerImpl(get(),
@@ -150,6 +160,11 @@ fun preprodConfig(config: ApplicationConfig) = module {
     }
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
     single { OppgaveService(get(), get()) as OppgaveService }
+
+    single { RefusjonskravBehandler(get(), get(), get(), get())}
+    single { ProcessMottatteRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1)) }
+    single { ProcessFeiledeRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(10)) }
+
 }
 
 @KtorExperimentalAPI

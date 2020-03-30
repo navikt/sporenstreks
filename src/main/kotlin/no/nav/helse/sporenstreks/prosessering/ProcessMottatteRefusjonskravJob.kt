@@ -8,8 +8,9 @@ import java.time.Duration
 class ProcessMottatteRefusjonskravJob(
         private val db: RefusjonskravRepository,
         private val processor: RefusjonskravBehandler,
-        coroutineScope: CoroutineScope
-) : RecurringJob(coroutineScope, Duration.ofMinutes(5)) {
+        coroutineScope: CoroutineScope,
+        freq: Duration
+) : RecurringJob(coroutineScope, freq) {
 
     override fun doJob() {
         db.getByStatus(RefusjonskravStatus.MOTTATT)
