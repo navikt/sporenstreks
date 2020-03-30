@@ -3,6 +3,7 @@ package no.nav.helse.sporenstreks.web.dto
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.web.dto.validation.*
 import org.valiktor.functions.isGreaterThanOrEqualTo
+import org.valiktor.functions.isLessThanOrEqualTo
 import org.valiktor.functions.isPositiveOrZero
 import org.valiktor.functions.validateForEach
 import org.valiktor.validate
@@ -15,8 +16,6 @@ data class RefusjonskravDto(
 ) {
 
     init {
-        val grunnbeløp2019 = 99858
-        val seksG =  grunnbeløp2019 * 6.0
         val refusjonFraDato = LocalDate.of(2020, 3, 16)
 
         validate(this) {
@@ -29,9 +28,9 @@ data class RefusjonskravDto(
 
             validate(RefusjonskravDto::perioder).validateForEach {
                 validate(Arbeidsgiverperiode::tom).isGreaterThanOrEqualTo(it.fom)
+                validate(Arbeidsgiverperiode::tom).isLessThanOrEqualTo(LocalDate.now())
             }
 
-            validate(RefusjonskravDto::perioder).refusjonsbeløpKanIkkeOverstigeGrunnbeløp(seksG)
 
             // antall refusjonsdager kan ikke vøre lenger enn periodens lengde
             validate(RefusjonskravDto::perioder).refujonsDagerIkkeOverstigerPeriodelengder()

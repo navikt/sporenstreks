@@ -100,13 +100,6 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refujonsDagerIkkeO
             }
         }
 
-class RefusjonsbeløpKanIkkeOverstigeGrunnbeløpConstraint : CustomConstraint
-fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsbeløpKanIkkeOverstigeGrunnbeløp(g: Double) =
-        this.validate(RefusjonsbeløpKanIkkeOverstigeGrunnbeløpConstraint()) { ps ->
-            ps!!.all { p ->
-                ((p.antallDagerMedRefusjon * (g / 260.0)) >= p.beloep)
-            }
-        }
 
 class RefusjonsdagerInnenforGyldigPeriodeConstraint : CustomConstraint
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdagerInnenforGyldigPeriode(d: LocalDate) =
