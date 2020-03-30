@@ -1,6 +1,7 @@
 package no.nav.helse.sporenstreks.prosessering
 
 import no.nav.helse.sporenstreks.db.PostgresRefusjonskravRepository
+import no.nav.helse.sporenstreks.db.RefusjonskravRepository
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.integrasjon.JoarkService
@@ -12,7 +13,7 @@ import org.slf4j.LoggerFactory
 
 class RefusjonskravBehandler(val joarkService: JoarkService,
                              val oppgaveService: OppgaveService,
-                             val repository: PostgresRefusjonskravRepository,
+                             val repository: RefusjonskravRepository,
                              val aktorConsumer: AktorConsumer) {
 
     val logger = LoggerFactory.getLogger(RefusjonskravBehandler::class.java)
