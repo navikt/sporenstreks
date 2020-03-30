@@ -21,6 +21,8 @@ spec:
     failureThreshold: 10
   ingresses:
     - https://sporenstreks.nais.adeo.no
+  prometheus:
+    enabled: true
   replicas:
     max: 1
     min: 1
