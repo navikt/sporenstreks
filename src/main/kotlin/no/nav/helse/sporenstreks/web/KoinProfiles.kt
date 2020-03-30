@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.databind.cfg.MapperBuilder
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -199,6 +198,9 @@ fun prodConfig(config: ApplicationConfig) = module {
                 get()
         ) as AktorConsumer
     }
+
+    single { ProcessMottatteRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1)) }
+    single { ProcessFeiledeRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(10)) }
 }
 
 // utils

@@ -9,6 +9,8 @@ import io.ktor.server.netty.Netty
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.sporenstreks.prosessering.ProcessFeiledeRefusjonskravJob
 import no.nav.helse.sporenstreks.prosessering.ProcessMottatteRefusjonskravJob
+import no.nav.helse.sporenstreks.system.AppEnv
+import no.nav.helse.sporenstreks.system.getEnvironment
 import org.koin.ktor.ext.getKoin
 import org.slf4j.LoggerFactory
 
@@ -24,8 +26,10 @@ fun main() {
         app.start(wait = false)
         val koin = app.application.getKoin()
 
-        koin.get<ProcessMottatteRefusjonskravJob>().startAsync(retryOnFail = true)
-        koin.get<ProcessFeiledeRefusjonskravJob>().startAsync(retryOnFail = true)
+        if (app.environment.config.getEnvironment() == AppEnv.PREPROD) {
+            koin.get<ProcessMottatteRefusjonskravJob>().startAsync(retryOnFail = true)
+            koin.get<ProcessFeiledeRefusjonskravJob>().startAsync(retryOnFail = true)
+        }
 
         Runtime.getRuntime().addShutdownHook(Thread {
             app.stop(1000, 1000)
