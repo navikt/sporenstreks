@@ -26,11 +26,11 @@ spec:
     min: 1
   resources:
     limits:
-      cpu: 600m
-      memory: 512Mi
+      cpu: 1500m
+      memory: 2048Mi
     requests:
-      cpu: 400m
-      memory: 6128Mi
+      cpu: 200m
+      memory: 256Mi
   vault:
     enabled: true
     paths:
