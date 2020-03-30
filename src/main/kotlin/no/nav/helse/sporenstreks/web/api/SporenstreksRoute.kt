@@ -27,6 +27,7 @@ import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumer
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTER
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
 import no.nav.helse.sporenstreks.metrics.REQUEST_TIME
+import no.nav.helse.sporenstreks.metrics.TEST_COUNTER
 import no.nav.helse.sporenstreks.utils.MDCOperations
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import org.koin.ktor.ext.getKoin
@@ -88,6 +89,11 @@ fun Route.apiTest(config: ApplicationConfig) {
                     call.respondText(aktorConsumer.getAktorId(call.request.queryParameters["identitetsnummer"]!!, MDCOperations.generateCallId()))
                 }
             }
+        }
+
+        get("/test-metrics") {
+            TEST_COUNTER.inc()
+            call.respond(HttpStatusCode.OK)
         }
 
         route("/oppgave") {
