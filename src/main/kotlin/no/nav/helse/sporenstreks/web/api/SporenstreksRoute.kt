@@ -7,6 +7,7 @@ import io.ktor.config.ApplicationConfig
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
 import io.ktor.response.respond
+import io.ktor.response.respondText
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
@@ -77,6 +78,16 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
 @KtorExperimentalAPI
 fun Route.apiTest(config: ApplicationConfig) {
     route("apitest/v1") {
+
+        route("/aktørId") {
+            get("/") {
+                if (config.property("koin.profile").getString() == "PREPROD") {
+                    val aktorConsumer = application.getKoin().get<AktorConsumer>()
+                    call.respondText(aktorConsumer.getAktorId(call.request.queryParameters["identitetsnummer"]!!, MDCOperations.generateCallId()))
+                }
+            }
+        }
+
         route("/oppgave") {
             post("/") {
                 if (config.property("koin.profile").getString() != "PROD") {
