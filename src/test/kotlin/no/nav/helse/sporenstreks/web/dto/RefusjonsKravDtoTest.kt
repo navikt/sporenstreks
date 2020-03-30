@@ -15,12 +15,12 @@ internal class RefusjonsKravDtoTest {
                 TestData.validIdentitetsnummer,
                 TestData.validOrgNr,
                 setOf(Arbeidsgiverperiode(
-                        LocalDate.of(2020, 4, 1),
-                        LocalDate.of(2020, 4, 5),
+                        LocalDate.of(2020, 3, 18),
+                        LocalDate.of(2020, 3, 21),
                         2, 2.3
                 ), Arbeidsgiverperiode(
-                        LocalDate.of(2020, 4, 22),
-                        LocalDate.of(2020, 4, 29),
+                        LocalDate.of(2020, 3, 22),
+                        LocalDate.of(2020, 3, 29),
                         4, 2.4
                 ))
         )
@@ -32,12 +32,12 @@ internal class RefusjonsKravDtoTest {
                 TestData.validIdentitetsnummer,
                 TestData.validOrgNr,
                 setOf(Arbeidsgiverperiode(
-                        LocalDate.of(2020, 4, 1),
-                        LocalDate.of(2020, 4, 5),
+                        LocalDate.of(2020, 3, 16),
+                        LocalDate.of(2020, 3, 21),
                         2, 2.0
                 ), Arbeidsgiverperiode(
-                        LocalDate.of(2020, 4, 5),
-                        LocalDate.of(2020, 4, 10),
+                        LocalDate.of(2020, 3, 21),
+                        LocalDate.of(2020, 3, 25),
                         4, 2.0
                 ))
         )
@@ -144,12 +144,12 @@ internal class RefusjonsKravDtoTest {
                 TestData.validOrgNr,
                 setOf(
                         Arbeidsgiverperiode(
-                                LocalDate.of(2020, 4, 1),
-                                LocalDate.of(2020, 4, 6),
+                                LocalDate.of(2020, 3, 13),
+                                LocalDate.of(2020, 3, 17),
                                 2, 2.0
                         ), Arbeidsgiverperiode(
-                        LocalDate.of(2020, 4, 10),
-                        LocalDate.of(2020, 4, 19),
+                        LocalDate.of(2020, 3, 17),
+                        LocalDate.of(2020, 3, 27),
                         10, 2.0
                 ))
         )
@@ -277,6 +277,32 @@ internal class RefusjonsKravDtoTest {
                                 LocalDate.of(2020, 3, 10),
                                 LocalDate.of(2020, 3, 17),
                                 0, 0.0))
+        )
+    }
+
+    @Test
+    fun `Kan ikke søke refusjon frem i tid`() {
+        val today = LocalDate.now()
+        Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
+            RefusjonskravDto(
+                    TestData.validIdentitetsnummer,
+                    TestData.validOrgNr,
+                    setOf(
+                            Arbeidsgiverperiode(
+                                    today.minusDays(6),
+                                    today.plusDays(3),
+                                    3, 1000.0))
+            )
+        }
+
+        RefusjonskravDto(
+                TestData.validIdentitetsnummer,
+                TestData.validOrgNr,
+                setOf(
+                        Arbeidsgiverperiode(
+                                today.minusDays(10),
+                                today,
+                                5, 20.0))
         )
     }
 
