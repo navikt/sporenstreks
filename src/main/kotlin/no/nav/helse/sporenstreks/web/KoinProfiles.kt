@@ -148,8 +148,8 @@ fun preprodConfig(config: ApplicationConfig) = module {
                 get()
         ) as AktorConsumer
     }
-    single { OppgaveService(get(), get()) as OppgaveService }
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
+    single { OppgaveService(get(), get()) as OppgaveService }
 }
 
 @KtorExperimentalAPI
@@ -175,8 +175,8 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
     single { JoarkService(get()) as JoarkService }
     single { DefaultAuthorizer(get()) as Authorizer }
-    single { OppgaveService(get(), get()) as OppgaveService }
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
+    single { OppgaveService(get(), get()) as OppgaveService }
     single {
         AktorConsumerImpl(get(),
                 config.getString("service_user.username"),

@@ -22,7 +22,7 @@ import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.integrasjon.OppgaveService
-import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.OpprettOppgaveDto
+import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumer
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
 import no.nav.helse.sporenstreks.metrics.REQUEST_TIME
 import no.nav.helse.sporenstreks.utils.MDCOperations
@@ -79,12 +79,12 @@ fun Route.apiTest(config: ApplicationConfig) {
     route("apitest/v1") {
         route("/oppgave") {
             post("/") {
-                if (config.property("koin.profile").getString() == "PREPROD") {
-                    val dto = call.receive<OpprettOppgaveDto>()
+                if (config.property("koin.profile").getString() != "PROD") {
                     val service = application.getKoin().get<OppgaveService>();
+                    val aktorConsumer = application.getKoin().get<AktorConsumer>()
                     val refusjonskrav = Refusjonskrav(
                             "20015001543",
-                            "20015001543",
+                            "26058721211",
                             "123456785",
                             setOf(
                                     Arbeidsgiverperiode(
@@ -98,7 +98,9 @@ fun Route.apiTest(config: ApplicationConfig) {
                             )),
                             RefusjonskravStatus.MOTTATT
                     )
-                    val id = service.opprettOppgave(refusjonskrav, dto.journalpostId, dto.aktørId, MDCOperations.generateCallId())
+
+                    val aktørId = aktorConsumer.getAktorId(refusjonskrav.identitetsnummer, MDCOperations.generateCallId())
+                    val id = service.opprettOppgave(refusjonskrav, "test", aktørId, MDCOperations.generateCallId())
                     call.respond(HttpStatusCode.Accepted, "Opprettet oppgave id=$id")
                 }
             }
