@@ -37,13 +37,12 @@ class STSClient(username: String, password: String, stsEndpoint: String) {
 
 
     fun getOidcToken(): String {
-        return requestToken().tokenAsString
-      /*  if (isExpired()) {
+      if (isExpired()) {
             log.info("OIDC Token is expired, getting a new one from the STS")
             currentToken = requestToken()
             log.info("Hentet nytt token fra sts som går ut ${currentToken.jwtTokenClaims.expirationTime}")
         }
-        return currentToken.tokenAsString*/
+        return currentToken.tokenAsString
     }
 
     private fun isExpired(): Boolean {
