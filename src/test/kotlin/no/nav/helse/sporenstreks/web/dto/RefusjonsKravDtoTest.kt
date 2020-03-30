@@ -190,25 +190,6 @@ internal class RefusjonsKravDtoTest {
         }
     }
 
-    @Test
-    fun `Får ikke refusjon over 6G`() {
-        Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
-            RefusjonskravDto(
-                    TestData.validIdentitetsnummer,
-                    TestData.validOrgNr,
-                    setOf(
-                            Arbeidsgiverperiode(
-                                    LocalDate.of(2020, 4, 1),
-                                    LocalDate.of(2020, 4, 6),
-                                    3, 6000.0
-                            ), Arbeidsgiverperiode(
-                            LocalDate.of(2020, 4, 10),
-                            LocalDate.of(2020, 4, 15),
-                            3, 10000.0
-                    ))
-            )
-        }
-    }
 
     @Test
     fun `Dager uten refusjon kan være før 16 mars`() {

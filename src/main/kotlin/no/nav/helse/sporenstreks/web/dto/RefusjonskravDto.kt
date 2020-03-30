@@ -15,8 +15,6 @@ data class RefusjonskravDto(
 ) {
 
     init {
-        val grunnbeløp2019 = 99858
-        val seksG =  grunnbeløp2019 * 6.0
         val refusjonFraDato = LocalDate.of(2020, 3, 16)
 
         validate(this) {
@@ -31,7 +29,6 @@ data class RefusjonskravDto(
                 validate(Arbeidsgiverperiode::tom).isGreaterThanOrEqualTo(it.fom)
             }
 
-            validate(RefusjonskravDto::perioder).refusjonsbeløpKanIkkeOverstigeGrunnbeløp(seksG)
 
             // antall refusjonsdager kan ikke vøre lenger enn periodens lengde
             validate(RefusjonskravDto::perioder).refujonsDagerIkkeOverstigerPeriodelengder()
