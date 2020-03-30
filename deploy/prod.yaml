@@ -22,15 +22,15 @@ spec:
   ingresses:
     - https://sporenstreks.nais.adeo.no
   replicas:
-    max: 4
-    min: 2
+    max: 1
+    min: 1
   resources:
     limits:
-      cpu: 400m
-      memory: 256Mi
+      cpu: 600m
+      memory: 512Mi
     requests:
-      cpu: 200m
-      memory: 64Mi
+      cpu: 400m
+      memory: 6128Mi
   vault:
     enabled: true
     paths:
