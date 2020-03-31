@@ -6,7 +6,6 @@ import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.integrasjon.JoarkService
 import no.nav.helse.sporenstreks.integrasjon.OppgaveService
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumer
-import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
 import no.nav.helse.sporenstreks.metrics.FEIL_COUNTER
 import no.nav.helse.sporenstreks.metrics.JOURNALFOERING_COUNTER
 import no.nav.helse.sporenstreks.metrics.KRAV_TIME
@@ -28,6 +27,7 @@ class RefusjonskravBehandler(val joarkService: JoarkService,
         val timer = KRAV_TIME.startTimer()
         val callId = MDCOperations.generateCallId()
         log.info("Bruker callID $callId")
+        log.info("Prosesserer: ${refusjonskrav.id}")
         try {
 
             if (refusjonskrav.joarkReferanse.isNullOrBlank()) {
