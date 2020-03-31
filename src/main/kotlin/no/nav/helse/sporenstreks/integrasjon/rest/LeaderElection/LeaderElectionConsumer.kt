@@ -36,8 +36,9 @@ class LeaderElectionConsumerImpl(
         val response = httpClient.get<String> {
             url("http://$baseUrl")
         }
-        log.warn(response)
-        return HostInfo(response)
+        val hostInfo = HostInfo(response)
+        log.warn(hostInfo.name)
+        return hostInfo
     }
 
     fun getHostInfo(): HostInfo? {
@@ -54,7 +55,6 @@ class LeaderElectionConsumerImpl(
     }
 }
 
-
 data class HostInfo(
-        val name: String
+        val name: String? = null
 )
