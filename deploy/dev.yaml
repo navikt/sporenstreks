@@ -11,14 +11,14 @@ spec:
   liveness:
     path: isalive
     initialDelay: 10
-    timeout: 1
-    periodSeconds: 3
+    timeout: 2
+    periodSeconds: 30
     failureThreshold: 10
   readiness:
     path: isready
     initialDelay: 10
-    timeout: 1
-    periodSeconds: 3
+    timeout: 2
+    periodSeconds: 5
     failureThreshold: 10
   ingresses:
     - https://sporenstreks.nais.preprod.local
