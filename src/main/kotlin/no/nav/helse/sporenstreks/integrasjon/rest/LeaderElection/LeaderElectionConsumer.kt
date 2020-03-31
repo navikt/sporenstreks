@@ -33,12 +33,10 @@ class LeaderElectionConsumerImpl(
     }
 
     private suspend fun getLeader(): HostInfo? {
-        val response = httpClient.get<String> {
+        val response = httpClient.get<HostInfo> {
             url("http://$baseUrl")
         }
-        val hostInfo = HostInfo(response)
-        println(hostInfo.name)
-        return hostInfo
+        return response
     }
 
     fun getHostInfo(): HostInfo? {
