@@ -1,5 +1,6 @@
 package no.nav.helse.sporenstreks.integrasjon.rest.LeaderElection
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.url
@@ -20,7 +21,8 @@ class MockLeaderElectionConsumer : LeaderElectionConsumer {
 
 class LeaderElectionConsumerImpl(
         val baseUrl: String,
-        val httpClient: HttpClient) : LeaderElectionConsumer {
+        val httpClient: HttpClient,
+        val ob: ObjectMapper) : LeaderElectionConsumer {
 
     override suspend fun isLeader(): Boolean {
         return try {
@@ -33,10 +35,10 @@ class LeaderElectionConsumerImpl(
     }
 
     private suspend fun getLeader(): HostInfo? {
-        val response = httpClient.get<HostInfo> {
+        val response = httpClient.get<String> {
             url("http://$baseUrl")
         }
-        return response
+        return ob.readValue(response, HostInfo::class.java)
     }
 
     fun getHostInfo(): HostInfo? {

@@ -168,7 +168,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { RefusjonskravBehandler(get(), get(), get(), get()) }
     single { ProcessMottatteRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1), get()) }
     single { ProcessFeiledeRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(10), get()) }
-    single { LeaderElectionConsumerImpl(config.getString("leader_election.url"), get()) as LeaderElectionConsumer }
+    single { LeaderElectionConsumerImpl(config.getString("leader_election.url"), get(), get()) as LeaderElectionConsumer }
 
 }
 
@@ -210,7 +210,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { RefusjonskravBehandler(get(), get(), get(), get()) }
     single { ProcessMottatteRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1), get()) }
     single { ProcessFeiledeRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofHours(2), get()) }
-    single { LeaderElectionConsumerImpl(config.getString("leader_election.url"), get()) as LeaderElectionConsumer }
+    single { LeaderElectionConsumerImpl(config.getString("leader_election.url"), get(), get()) as LeaderElectionConsumer }
 }
 
 // utils
