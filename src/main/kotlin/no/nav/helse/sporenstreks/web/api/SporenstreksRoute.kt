@@ -5,7 +5,12 @@ import io.ktor.application.application
 import io.ktor.application.call
 import io.ktor.config.ApplicationConfig
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.PartData
+import io.ktor.http.content.forEachPart
+import io.ktor.http.content.readAllParts
+import io.ktor.http.content.streamProvider
 import io.ktor.request.receive
+import io.ktor.request.receiveMultipart
 import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.Route
@@ -18,6 +23,7 @@ import no.nav.helse.sporenstreks.auth.AuthorizationsRepository
 import no.nav.helse.sporenstreks.auth.Authorizer
 import no.nav.helse.sporenstreks.auth.altinn.AltinnBrukteForLangTidException
 import no.nav.helse.sporenstreks.auth.hentIdentitetsnummerFraLoginToken
+import no.nav.helse.sporenstreks.bulk.ExcelBulkService
 import no.nav.helse.sporenstreks.db.RefusjonskravRepository
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
@@ -28,9 +34,13 @@ import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTE
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
 import no.nav.helse.sporenstreks.metrics.REQUEST_TIME
 import no.nav.helse.sporenstreks.metrics.TEST_COUNTER
+import no.nav.helse.sporenstreks.system.AppEnv
+import no.nav.helse.sporenstreks.system.getEnvironment
 import no.nav.helse.sporenstreks.utils.MDCOperations
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import org.koin.ktor.ext.getKoin
+import java.io.InputStream
+import java.lang.IllegalArgumentException
 import java.time.LocalDate
 import javax.ws.rs.ForbiddenException
 
@@ -61,6 +71,33 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                 }
             }
         }
+
+        route("/bulk") {
+
+            get("/template") {
+                call.respond("TODO return Excel template from resources")
+            }
+
+            post("/upload") {
+                if (application.environment.config.getEnvironment() == AppEnv.PROD) {
+                    call.respond(HttpStatusCode.NotFound, "")
+                    return@post
+                }
+
+                val id = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
+                val multipart = call.receiveMultipart()
+                val fileItem = multipart.readAllParts()
+                        .filterIsInstance<PartData.FileItem>()
+                        .firstOrNull()
+                        ?: throw IllegalArgumentException()
+
+                ExcelBulkService(db, authorizer)
+                        .processExcelFile(fileItem.streamProvider(), id)
+
+                call.respond(HttpStatusCode.OK)
+            }
+        }
+
 
         route("/arbeidsgivere") {
             get("/") {

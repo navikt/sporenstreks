@@ -24,8 +24,8 @@ fun main() {
         app.start(wait = false)
         val koin = app.application.getKoin()
 
-        koin.get<ProcessMottatteRefusjonskravJob>().startAsync(retryOnFail = true)
-        koin.get<ProcessFeiledeRefusjonskravJob>().startAsync(retryOnFail = true)
+        // koin.get<ProcessMottatteRefusjonskravJob>().startAsync(retryOnFail = true)
+        // koin.get<ProcessFeiledeRefusjonskravJob>().startAsync(retryOnFail = true)
 
         Runtime.getRuntime().addShutdownHook(Thread {
             app.stop(1000, 1000)

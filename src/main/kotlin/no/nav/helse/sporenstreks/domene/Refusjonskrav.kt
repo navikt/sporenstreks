@@ -13,6 +13,7 @@ data class Refusjonskrav(
         var feilmelding: String? = null,
         var oppgaveId: String? = null,
         var joarkReferanse: String? = null,
+        var kilde: String = "SKJEMA",
 
         val opprettet: LocalDateTime = LocalDateTime.now(),
         val id: UUID = UUID.randomUUID(),

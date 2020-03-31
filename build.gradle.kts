@@ -18,6 +18,7 @@ val valiktorVersion = "0.10.0"
 val cxfVersion = "3.3.1"
 val jaxwsVersion = "2.3.1"
 val jaxwsToolsVersion = "2.3.1"
+val apachePoiVersion = "4.1.2"
 
 
 plugins {
@@ -73,18 +74,9 @@ dependencies {
     implementation("org.valiktor:valiktor-core:$valiktorVersion")
     implementation("org.valiktor:valiktor-javatime:$valiktorVersion")
 
-    implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:1.2019.09.25-00.21-49b69f0625e0")
-
-    implementation("javax.xml.ws:jaxws-api:$jaxwsVersion")
-    implementation("org.apache.cxf:cxf-rt-frontend-jaxws:$cxfVersion")
-    implementation("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
-    implementation("org.apache.cxf:cxf-rt-transports-http:$cxfVersion")
-    implementation("org.apache.cxf:cxf-rt-ws-security:$cxfVersion")
-    implementation("org.apache.ws.xmlschema:xmlschema-core:2.2.4") // Force newer version of XMLSchema to fix illegal reflective access warning
-    implementation("com.sun.xml.ws:jaxws-tools:$jaxwsToolsVersion") {
-        exclude(group = "com.sun.xml.ws", module = "policy")
-    }
     implementation("org.apache.pdfbox:pdfbox:2.0.19")
+    implementation("org.apache.poi:poi:$apachePoiVersion")
+    implementation("org.apache.poi:poi-ooxml:$apachePoiVersion")
 
     implementation("org.koin:koin-core:$koinVersion")
     implementation("org.koin:koin-ktor:$koinVersion")
