@@ -24,8 +24,10 @@ import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.integrasjon.OppgaveService
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumer
+import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTER
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
 import no.nav.helse.sporenstreks.metrics.REQUEST_TIME
+import no.nav.helse.sporenstreks.metrics.TEST_COUNTER
 import no.nav.helse.sporenstreks.utils.MDCOperations
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import org.koin.ktor.ext.getKoin
@@ -53,6 +55,7 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                     val saved = db.insert(domeneKrav)
                     call.respond(HttpStatusCode.OK, saved)
                     INNKOMMENDE_REFUSJONSKRAV_COUNTER.inc()
+                    INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTER.inc(refusjonskrav.perioder.sumByDouble { it.beloep }.div(1000))
                 } finally {
                     timer.observeDuration()
                 }
@@ -88,6 +91,11 @@ fun Route.apiTest(config: ApplicationConfig) {
             }
         }
 
+        get("/test-metrics") {
+            TEST_COUNTER.inc()
+            call.respond(HttpStatusCode.OK)
+        }
+
         route("/oppgave") {
             post("/") {
                 if (config.property("koin.profile").getString() != "PROD") {
@@ -116,6 +124,7 @@ fun Route.apiTest(config: ApplicationConfig) {
                 }
             }
         }
+        
     }
 }
 

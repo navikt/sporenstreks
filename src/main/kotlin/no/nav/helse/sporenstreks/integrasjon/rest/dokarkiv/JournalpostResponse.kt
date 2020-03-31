@@ -9,7 +9,7 @@ data class JournalpostResponse(
 )
 
 data class DokumentResponse(
-        val brevkode: String,
-        val dokumentInfoId: Int,
-        val tittel: String
+        val brevkode: String?,
+        val dokumentInfoId: Int?,
+        val tittel: String?
 )

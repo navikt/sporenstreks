@@ -7,6 +7,7 @@ data class JournalpostRequest(
         val bruker: Bruker,
         val avsenderMottaker: AvsenderMottaker,
         val tittel: String = "Refusjonskrav arbeidsgiverperiode korona",
+        val journalfoerendeEnhet: String = "9999",
         val dokumenter: List<Dokument>,
         val sak: Sak = Sak(),
         val datoMottatt: LocalDate = LocalDate.now()
