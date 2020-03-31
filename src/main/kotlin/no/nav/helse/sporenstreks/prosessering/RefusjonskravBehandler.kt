@@ -6,6 +6,7 @@ import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.integrasjon.JoarkService
 import no.nav.helse.sporenstreks.integrasjon.OppgaveService
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumer
+import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
 import no.nav.helse.sporenstreks.metrics.FEIL_COUNTER
 import no.nav.helse.sporenstreks.metrics.JOURNALFOERING_COUNTER
 import no.nav.helse.sporenstreks.metrics.KRAV_TIME
@@ -26,6 +27,7 @@ class RefusjonskravBehandler(val joarkService: JoarkService,
         }
         val timer = KRAV_TIME.startTimer()
         val callId = MDCOperations.generateCallId()
+        log.info("Bruker callID $callId")
         try {
 
             if (refusjonskrav.joarkReferanse.isNullOrBlank()) {
@@ -61,5 +63,9 @@ class RefusjonskravBehandler(val joarkService: JoarkService,
                 logger.error("Feilet i lagring av ${refusjonskrav.id} med  joarkRef: ${refusjonskrav.joarkReferanse} oppgaveId ${refusjonskrav.oppgaveId} ")
             }
         }
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(RefusjonskravBehandler::class.java)
     }
 }
