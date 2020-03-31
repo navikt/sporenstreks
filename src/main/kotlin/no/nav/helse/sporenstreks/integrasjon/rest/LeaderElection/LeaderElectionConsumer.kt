@@ -37,7 +37,7 @@ class LeaderElectionConsumerImpl(
             url("http://$baseUrl")
         }
         val hostInfo = HostInfo(response)
-        log.warn(hostInfo.name)
+        println(hostInfo.name)
         return hostInfo
     }
 
