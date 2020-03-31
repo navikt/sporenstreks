@@ -50,7 +50,9 @@ class PDFGenerator {
         contentStream.close()
         val out = ByteArrayOutputStream()
         doc.save(out)
-        return out.toByteArray()
+        val ba = out.toByteArray()
+        doc.close()
+        return ba
     }
 
 }
