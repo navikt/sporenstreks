@@ -49,5 +49,5 @@ abstract class RecurringJob(
         isRunning = false
     }
 
-    abstract fun doJob()
+    abstract suspend fun doJob()
 }

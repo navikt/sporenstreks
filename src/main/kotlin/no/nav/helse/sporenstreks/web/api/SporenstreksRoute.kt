@@ -23,11 +23,11 @@ import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.integrasjon.OppgaveService
+import no.nav.helse.sporenstreks.integrasjon.rest.LeaderElection.LeaderElectionConsumer
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumer
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTER
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
 import no.nav.helse.sporenstreks.metrics.REQUEST_TIME
-import no.nav.helse.sporenstreks.metrics.TEST_COUNTER
 import no.nav.helse.sporenstreks.utils.MDCOperations
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import org.koin.ktor.ext.getKoin
@@ -91,9 +91,9 @@ fun Route.apiTest(config: ApplicationConfig) {
             }
         }
 
-        get("/test-metrics") {
-            TEST_COUNTER.inc()
-            call.respond(HttpStatusCode.OK)
+        get("/isLeader") {
+            val leaderElectionConsumer = application.getKoin().get<LeaderElectionConsumer>()
+            call.respondText(leaderElectionConsumer.isLeader().toString())
         }
 
         route("/oppgave") {
@@ -124,7 +124,7 @@ fun Route.apiTest(config: ApplicationConfig) {
                 }
             }
         }
-        
+
     }
 }
 

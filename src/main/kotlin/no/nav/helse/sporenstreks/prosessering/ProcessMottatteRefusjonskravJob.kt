@@ -3,17 +3,41 @@ package no.nav.helse.sporenstreks.prosessering
 import kotlinx.coroutines.CoroutineScope
 import no.nav.helse.sporenstreks.db.RefusjonskravRepository
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
+import no.nav.helse.sporenstreks.integrasjon.rest.LeaderElection.LeaderElectionConsumer
 import java.time.Duration
+import java.util.concurrent.locks.ReentrantLock
 
 class ProcessMottatteRefusjonskravJob(
         private val db: RefusjonskravRepository,
         private val processor: RefusjonskravBehandler,
         coroutineScope: CoroutineScope,
-        freq: Duration
+        freq: Duration,
+        val leaderElectionConsumer: LeaderElectionConsumer
 ) : RecurringJob(coroutineScope, freq) {
 
-    override fun doJob() {
+    var shutdownSignalSent = false
+    val mutualLock = ReentrantLock()
+
+    init {
+        Runtime.getRuntime().addShutdownHook(Thread {
+            stop()
+            shutdownSignalSent = true
+            mutualLock.lock()
+        })
+    }
+
+    override suspend fun doJob() {
+        if (!leaderElectionConsumer.isLeader()) {
+            return
+        }
+        mutualLock.lock()
         db.getByStatus(RefusjonskravStatus.MOTTATT)
-                .forEach(processor::behandle)
+                .forEach {
+                    processor.behandle(it)
+                    if (shutdownSignalSent) {
+                        return@forEach
+                    }
+                }
+        mutualLock.unlock()
     }
 }
