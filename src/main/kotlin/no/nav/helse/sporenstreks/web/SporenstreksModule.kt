@@ -153,7 +153,7 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
                 else -> {
                     val errorId = UUID.randomUUID()
                     LOGGER.warn(errorId.toString(), cause)
-                    LOGGER.warn(errorId.toString(), call.request.headers["User-Agent"])
+                    LOGGER.warn(errorId.toString(), call.request.headers.get("User-Agent") ?: "Ukjent")
                     val problem = Problem(
                             title = "Feil ved prosessering av JSON-dataene som ble oppgitt",
                             detail = cause.message,
