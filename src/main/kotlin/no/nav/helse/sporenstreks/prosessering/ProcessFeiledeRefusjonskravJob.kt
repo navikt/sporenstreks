@@ -7,7 +7,7 @@ import no.nav.helse.sporenstreks.integrasjon.rest.LeaderElection.LeaderElectionC
 import java.time.Duration
 import java.util.concurrent.locks.ReentrantLock
 
-const val FEILEDE_TO_PROCESS_LIMIT = 1000
+const val FEILEDE_TO_PROCESS_LIMIT = 250
 
 class ProcessFeiledeRefusjonskravJob(
         private val db: RefusjonskravRepository,

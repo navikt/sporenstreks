@@ -7,7 +7,7 @@ import no.nav.helse.sporenstreks.integrasjon.rest.LeaderElection.LeaderElectionC
 import java.time.Duration
 import java.util.concurrent.locks.ReentrantLock
 
-const val KRAV_TO_PROCESS_LIMIT = 1000
+const val KRAV_TO_PROCESS_LIMIT = 250
 
 
 class ProcessMottatteRefusjonskravJob(
