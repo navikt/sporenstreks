@@ -25,7 +25,7 @@ class MockRefusjonskravRepo : RefusjonskravRepository {
         return Refusjonskrav("", "", "", emptySet())
     }
 
-    override fun getByStatus(status: RefusjonskravStatus): List<Refusjonskrav> {
+    override fun getByStatus(status: RefusjonskravStatus, limit: Int): List<Refusjonskrav> {
         return emptyList()
     }
 

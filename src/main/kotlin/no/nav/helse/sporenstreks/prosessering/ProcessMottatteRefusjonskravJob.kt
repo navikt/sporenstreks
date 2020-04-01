@@ -7,6 +7,9 @@ import no.nav.helse.sporenstreks.integrasjon.rest.LeaderElection.LeaderElectionC
 import java.time.Duration
 import java.util.concurrent.locks.ReentrantLock
 
+const val KRAV_TO_PROCESS_LIMIT = 1000
+
+
 class ProcessMottatteRefusjonskravJob(
         private val db: RefusjonskravRepository,
         private val processor: RefusjonskravBehandler,
@@ -31,7 +34,7 @@ class ProcessMottatteRefusjonskravJob(
             return
         }
         mutualLock.lock()
-        db.getByStatus(RefusjonskravStatus.MOTTATT)
+        db.getByStatus(RefusjonskravStatus.MOTTATT, KRAV_TO_PROCESS_LIMIT)
                 .forEach {
                     processor.behandle(it)
                     if (shutdownSignalSent) {

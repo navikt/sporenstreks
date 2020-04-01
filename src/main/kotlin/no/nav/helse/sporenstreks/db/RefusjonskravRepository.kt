@@ -10,6 +10,6 @@ interface RefusjonskravRepository {
     fun getExistingRefusjonskrav(identitetsnummer: String, virksomhetsnummer: String): List<Refusjonskrav>
     fun delete(id: UUID): Int
     fun getById(id: UUID): Refusjonskrav?
-    fun getByStatus(status: RefusjonskravStatus): List<Refusjonskrav>
+    fun getByStatus(status: RefusjonskravStatus, limit: Int): List<Refusjonskrav>
     fun update(krav: Refusjonskrav)
 }

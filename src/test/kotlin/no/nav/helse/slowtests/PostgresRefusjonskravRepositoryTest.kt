@@ -81,14 +81,49 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
 
     @Test
     fun `Kan hente fra status`() {
-        val krav = repo.getByStatus(RefusjonskravStatus.MOTTATT)
+        val krav = repo.getByStatus(RefusjonskravStatus.MOTTATT, 10)
         assertThat(krav.size).isEqualTo(1)
         assertThat(krav.first()).isEqualTo(refusjonskrav)
     }
 
     @Test
+    fun `Kan hente innenfor gitt limit fra status`() {
+
+        for (i in 1..19) {
+            repo.insert(Refusjonskrav(
+                    TestData.validIdentitetsnummer,
+                    TestData.notValidIdentitetsnummer,
+                    TestData.validOrgNr,
+                    setOf(
+                            Arbeidsgiverperiode(
+                                    LocalDate.of(2020, 4, 1),
+                                    LocalDate.of(2020, 4, 6),
+                                    3, 1000.0
+                            ), Arbeidsgiverperiode(
+                            LocalDate.of(2020, 4, 10),
+                            LocalDate.of(2020, 4, 12),
+                            3, 1000.0
+                    )),
+                    RefusjonskravStatus.MOTTATT,
+                    "oppgave-id-234234",
+                    "joark-ref-1232"
+            ))
+        }
+
+        val tiKrav = repo.getByStatus(RefusjonskravStatus.MOTTATT,10)
+        val tjueKrav = repo.getByStatus(RefusjonskravStatus.MOTTATT,20)
+
+        assertThat(tiKrav).hasSize(10)
+        assertThat(tjueKrav).hasSize(20)
+
+        tjueKrav.forEach {
+            repo.delete(it.id)
+        }
+    }
+
+    @Test
     fun `Kan oppdatere krav`() {
-        val res = repo.getByStatus(RefusjonskravStatus.MOTTATT)
+        val res = repo.getByStatus(RefusjonskravStatus.MOTTATT, 10)
         val krav = res.first()
 
         krav.joarkReferanse = "dette er en test"
