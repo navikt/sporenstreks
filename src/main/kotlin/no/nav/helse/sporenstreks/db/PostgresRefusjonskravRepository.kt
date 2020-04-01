@@ -7,6 +7,7 @@ import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import org.postgresql.jdbc.PgArray
 import org.slf4j.LoggerFactory
 import java.io.IOException
+import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.util.*
@@ -63,29 +64,42 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
         }
     }
 
-    fun bulkInsert(kravListe: List<Refusjonskrav>) {
+    override fun bulkInsert(kravListe: List<Refusjonskrav>): List<Int> {
+        logger.info("Starter serialisering av ${kravListe.size} krav")
+        val jsonListe = kravListe.map { mapper.writeValueAsString(it) } // hold denne utenfor connection.use
+        logger.info("Serialisering ferdig, starter en tilkobling og sender")
         ds.connection.use { con ->
             try {
                 con.autoCommit = false
 
-                for (refusjonskrav in kravListe) {
-                    val json = mapper.writeValueAsString(refusjonskrav)
-                    con.prepareStatement(saveStatement).apply {
-                        setString(1, json)
-                    }.executeUpdate()
+                val statement = con.prepareStatement(saveStatement, PreparedStatement.RETURN_GENERATED_KEYS)
+
+                for (json in jsonListe) {
+                    statement.setString(1, json)
+                    statement.addBatch()
                 }
 
+                statement.executeBatch()
                 con.commit()
+                logger.info("Comittet")
+
+                val referanseNummere = ArrayList<Int>(kravListe.size)
+                while (statement.generatedKeys.next()) {
+                    referanseNummere.add(statement.generatedKeys.getInt(2))
+                }
+
+                return@bulkInsert referanseNummere
             } catch (e: SQLException) {
-                logger.error("Ruller tilbake bulkinnsetting", e)
+                logger.error("Ruller tilbake bulkinnsetting")
                 try {
                     con.rollback()
                 } catch (ex: Exception) {
-                    logger.error("Klarte ikke rulle tilbake bulkinnsettingen", e)
+                    logger.error("Klarte ikke rulle tilbake bulkinnsettingen", ex)
                 }
+
+                throw e
             }
         }
-
     }
 
     override fun update(krav: Refusjonskrav) {

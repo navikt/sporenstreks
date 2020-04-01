@@ -32,4 +32,8 @@ class MockRefusjonskravRepo : RefusjonskravRepository {
     override fun update(krav: Refusjonskrav) {
 
     }
+
+    override fun bulkInsert(kravListe: List<Refusjonskrav>): List<Int> {
+        return emptyList()
+    }
 }

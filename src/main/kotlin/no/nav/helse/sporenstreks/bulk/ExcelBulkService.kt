@@ -12,21 +12,27 @@ import org.apache.poi.xssf.usermodel.XSSFCell
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.slf4j.LoggerFactory
 import org.valiktor.ConstraintViolation
+import org.valiktor.ConstraintViolationException
 import java.io.InputStream
+import java.io.OutputStream
 import java.time.LocalDate
+import java.util.*
 import javax.ws.rs.ForbiddenException
+import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
 
 
 class ExcelBulkService(private val db: RefusjonskravRepository, private val authorizer: Authorizer) {
     private val maxRowNum: Int = 5000
     val log = LoggerFactory.getLogger(ExcelBulkService::class.java)
 
-    fun processExcelFile(file: InputStream, opprettetAvIdentitetsnummer: String)  {
+    fun processExcelFile(file: InputStream, opprettetAvIdentitetsnummer: String, outputStream: OutputStream, excelUploadId: String = UUID.randomUUID().toString()) {
         log.info("Starter prosseseringen av Excel fil")
         val workbook: Workbook = XSSFWorkbook(file)
+
         val sheet = workbook.getSheetAt(0);
 
-        val refusjonsKrav = HashSet<Refusjonskrav>()
+        val refusjonsKrav = ArrayList<Refusjonskrav>()
         val errorRows = HashSet<ExcelFileRowError>()
 
         val startDataRow = 11
@@ -35,7 +41,7 @@ class ExcelBulkService(private val db: RefusjonskravRepository, private val auth
 
         while (row != null && row.getCell(0).stringCellValue != "") {
             try {
-                val krav = extractRefusjonsKravFromExcelRow(row, opprettetAvIdentitetsnummer)
+                val krav = extractRefusjonsKravFromExcelRow(row, opprettetAvIdentitetsnummer, excelUploadId)
                 refusjonsKrav.add(krav)
             } catch (ex: ForbiddenException) {
                 errorRows.add(ExcelFileRowError(
@@ -46,7 +52,7 @@ class ExcelBulkService(private val db: RefusjonskravRepository, private val auth
             } catch (ex: CellValueExtractionException) {
                 errorRows.add(ExcelFileRowError(
                         currentDataRow+1,
-                        "",
+                        ex.columnName,
                         ex.message ?: "Ukjent feil")
                 )
             } finally {
@@ -64,15 +70,21 @@ class ExcelBulkService(private val db: RefusjonskravRepository, private val auth
         }
 
         log.info("Lagrer ${refusjonsKrav.size} krav")
-        // TODO: bruk en spesialisert metode med transaksjon for dette
-        refusjonsKrav.forEach { db.insert(it) }
+
+        val referansenummere = db.bulkInsert(refusjonsKrav)
+
+        referansenummere.forEachIndexed { i, refNr ->
+            sheet.getRow(startDataRow + i).getCell(6, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).setCellValue(refNr.toString())
+        }
+
+         workbook.write(outputStream)
 
         log.info("Lagret  ${refusjonsKrav.size} krav")
         log.info("${refusjonsKrav.first()}")
 
     }
 
-    fun extractRefusjonsKravFromExcelRow(row: Row, opprettetAvIdentitetsnummer: String): Refusjonskrav {
+    fun extractRefusjonsKravFromExcelRow(row: Row, opprettetAv: String, excelUploadId: String): Refusjonskrav {
         // extract values
         val identitetsnummer = row.extract(0, "identitetsnummer")
         val virksomhetsNummer = row.extract(1, "virksomhetsnummer")
@@ -82,7 +94,7 @@ class ExcelBulkService(private val db: RefusjonskravRepository, private val auth
         val beloep = row.extract(5, "beløp").toDouble()
 
         // authorize the use
-        if (!authorizer.hasAccess(opprettetAvIdentitetsnummer, virksomhetsNummer)) {
+        if (!authorizer.hasAccess(opprettetAv, virksomhetsNummer)) {
             throw ForbiddenException("Har ikke tilgang til tjenesten for virksomhet '$virksomhetsNummer'")
         }
 
@@ -95,11 +107,11 @@ class ExcelBulkService(private val db: RefusjonskravRepository, private val auth
 
         // map to domain instance for insertion into Database
         return Refusjonskrav(
-                opprettetAvIdentitetsnummer,
+                opprettetAv,
                 refusjonskrav.identitetsnummer,
                 refusjonskrav.virksomhetsnummer,
                 refusjonskrav.perioder,
-                kilde = "EXCEL"
+                kilde = "XLSX-$excelUploadId"
         )
     }
 

@@ -4,6 +4,8 @@ import io.ktor.application.ApplicationCall
 import io.ktor.application.application
 import io.ktor.application.call
 import io.ktor.config.ApplicationConfig
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
 import io.ktor.http.content.forEachPart
@@ -11,7 +13,9 @@ import io.ktor.http.content.readAllParts
 import io.ktor.http.content.streamProvider
 import io.ktor.request.receive
 import io.ktor.request.receiveMultipart
+import io.ktor.response.header
 import io.ktor.response.respond
+import io.ktor.response.respondOutputStream
 import io.ktor.response.respondText
 import io.ktor.routing.Route
 import io.ktor.routing.get
@@ -86,15 +90,18 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
 
                 val id = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
                 val multipart = call.receiveMultipart()
-                val fileItem = multipart.readAllParts()
+                val fileItem = multipart.readAllParts() // TODO: Hånedhev en grense på 100KB
                         .filterIsInstance<PartData.FileItem>()
                         .firstOrNull()
                         ?: throw IllegalArgumentException()
 
-                ExcelBulkService(db, authorizer)
-                        .processExcelFile(fileItem.streamProvider(), id)
-
-                call.respond(HttpStatusCode.OK)
+                call.respondOutputStream(
+                        ContentType.parse("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+                        HttpStatusCode.OK
+                ) {
+                    ExcelBulkService(db, authorizer).processExcelFile(
+                            fileItem.streamProvider(), id, this)
+                }
             }
         }
 
