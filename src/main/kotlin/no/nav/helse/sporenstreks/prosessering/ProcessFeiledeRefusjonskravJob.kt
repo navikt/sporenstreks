@@ -3,6 +3,7 @@ package no.nav.helse.sporenstreks.prosessering
 import kotlinx.coroutines.CoroutineScope
 import no.nav.helse.sporenstreks.db.RefusjonskravRepository
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
+import no.nav.helse.sporenstreks.integrasjon.rest.LeaderElection.LeaderElectionConsumer
 import java.time.Duration
 import java.util.concurrent.locks.ReentrantLock
 
@@ -12,7 +13,8 @@ class ProcessFeiledeRefusjonskravJob(
         private val db: RefusjonskravRepository,
         private val processor: RefusjonskravBehandler,
         coroutineScope: CoroutineScope,
-        freq: Duration
+        freq: Duration,
+        val leaderElectionConsumer: LeaderElectionConsumer
 ) : RecurringJob(coroutineScope, freq) {
     var shutdownSignalSent = false
     val mutualLock = ReentrantLock()
@@ -25,7 +27,10 @@ class ProcessFeiledeRefusjonskravJob(
         })
     }
 
-    override fun doJob() {
+    override suspend fun doJob() {
+        if (!leaderElectionConsumer.isLeader()) {
+            return
+        }
         mutualLock.lock()
         db.getByStatus(RefusjonskravStatus.FEILET, FEILEDE_TO_PROCESS_LIMIT)
                 .forEach {

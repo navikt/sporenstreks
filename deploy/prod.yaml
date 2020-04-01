@@ -44,6 +44,7 @@ spec:
       - mountPath: /var/run/secrets/nais.io/service_user
         kvPath: /serviceuser/data/prod/srvsporenstreks
   webproxy: true
+  leaderElection: true
   env:
     - name: KOIN_PROFILE
       value: PROD

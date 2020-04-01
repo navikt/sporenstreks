@@ -26,6 +26,8 @@ class RefusjonskravBehandler(val joarkService: JoarkService,
         }
         val timer = KRAV_TIME.startTimer()
         val callId = MDCOperations.generateCallId()
+        log.info("Bruker callID $callId")
+        log.info("Prosesserer: ${refusjonskrav.id}")
         try {
 
             if (refusjonskrav.joarkReferanse.isNullOrBlank()) {
@@ -61,5 +63,9 @@ class RefusjonskravBehandler(val joarkService: JoarkService,
                 logger.error("Feilet i lagring av ${refusjonskrav.id} med  joarkRef: ${refusjonskrav.joarkReferanse} oppgaveId ${refusjonskrav.oppgaveId} ")
             }
         }
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(RefusjonskravBehandler::class.java)
     }
 }
