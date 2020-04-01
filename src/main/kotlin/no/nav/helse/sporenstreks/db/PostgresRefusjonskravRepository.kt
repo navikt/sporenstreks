@@ -8,6 +8,7 @@ import org.postgresql.jdbc.PgArray
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.sql.ResultSet
+import java.sql.SQLException
 import java.util.*
 import javax.sql.DataSource
 import kotlin.collections.ArrayList
@@ -62,6 +63,31 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
         }
     }
 
+    fun bulkInsert(kravListe: List<Refusjonskrav>) {
+        ds.connection.use { con ->
+            try {
+                con.autoCommit = false
+
+                for (refusjonskrav in kravListe) {
+                    val json = mapper.writeValueAsString(refusjonskrav)
+                    con.prepareStatement(saveStatement).apply {
+                        setString(1, json)
+                    }.executeUpdate()
+                }
+
+                con.commit()
+            } catch (e: SQLException) {
+                logger.error("Ruller tilbake bulkinnsetting", e)
+                try {
+                    con.rollback()
+                } catch (ex: Exception) {
+                    logger.error("Klarte ikke rulle tilbake bulkinnsettingen", e)
+                }
+            }
+        }
+
+    }
+
     override fun update(krav: Refusjonskrav) {
         val json = mapper.writeValueAsString(krav)
         ds.connection.use {
@@ -72,7 +98,7 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
         }
     }
 
-    override fun getById(id: UUID): Refusjonskrav? {
+    override fun getById(id: UUID): Refusjonskrav? {2
         ds.connection.use {
             val existingYpList = ArrayList<Refusjonskrav>()
             val res = it.prepareStatement(getByIdStatement).apply {
