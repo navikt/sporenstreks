@@ -81,7 +81,8 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
 
         suspend fun handleUnexpectedException(call: ApplicationCall, cause: Throwable) {
             val errorId = UUID.randomUUID()
-            LOGGER.error("Uventet feil, $errorId", cause)
+            val userAgent = call.request.headers.get("User-Agent") ?: "Ukjent"
+            LOGGER.error("Uventet feil, $errorId med useragent $userAgent", cause)
             val problem = Problem(
                     type = URI.create("urn:sporenstreks:uventet-feil"),
                     title = "Uventet feil",
