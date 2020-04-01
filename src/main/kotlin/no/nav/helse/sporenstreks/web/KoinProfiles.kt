@@ -177,7 +177,8 @@ fun prodConfig(config: ApplicationConfig) = module {
     single {
         getDataSource(createHikariConfig(config.getjdbcUrlFromProperties()),
                 config.getString("database.name"),
-                config.getString("database.vault.mountpath")) as DataSource
+                config.getString("database.vault.mountpath")
+        ) as DataSource
     }
 
     single {

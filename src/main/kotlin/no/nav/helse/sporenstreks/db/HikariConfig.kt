@@ -1,6 +1,7 @@
 package no.nav.helse.sporenstreks.db
 
 import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.metrics.prometheus.PrometheusMetricsTrackerFactory
 
 fun createHikariConfig(jdbcUrl: String, username: String? = null, password: String? = null) =
         HikariConfig().apply {
@@ -13,6 +14,8 @@ fun createHikariConfig(jdbcUrl: String, username: String? = null, password: Stri
             driverClassName = "org.postgresql.Driver"
             username?.let { this.username = it }
             password?.let { this.password = it }
+            poolName = "defaultPool"
+            metricsTrackerFactory = PrometheusMetricsTrackerFactory()
         }
 
 
