@@ -136,6 +136,7 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
         }
 
         exception<MissingKotlinParameterException> { cause ->
+            val userAgent = call.request.headers.get("User-Agent") ?: "Ukjent"
             call.respond(
                     HttpStatusCode.BadRequest,
                     ValidationProblem(setOf(
@@ -144,7 +145,7 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
                             }, "null"))
                     )
             )
-            LOGGER.warn("Feil med validering av ${cause.parameter.name ?: "Ukjent"}: ${cause.msg}")
+            LOGGER.warn("Feil med validering av ${cause.parameter.name ?: "Ukjent"} for ${userAgent}: ${cause.msg}")
         }
 
         exception<JsonMappingException> { cause ->
