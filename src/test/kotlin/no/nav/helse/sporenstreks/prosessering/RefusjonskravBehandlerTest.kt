@@ -27,7 +27,6 @@ class RefusjonskravBehandlerTest {
     @BeforeEach
     fun setup() {
         refusjonskrav = Refusjonskrav(
-                opprettetAv = "Lu Bu",
                 identitetsnummer = "123",
                 virksomhetsnummer = "213",
                 perioder = emptySet(),

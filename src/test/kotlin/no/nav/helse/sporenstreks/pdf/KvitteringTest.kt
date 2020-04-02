@@ -32,7 +32,6 @@ internal class KvitteringTest {
                 )),
                 opprettet = LocalDateTime.now(),
                 status = RefusjonskravStatus.MOTTATT,
-                opprettetAv = "NAV",
                 referansenummer = 12345
         )
         val kv = PDFGenerator()
@@ -57,7 +56,6 @@ internal class KvitteringTest {
                 )),
                 opprettet = LocalDateTime.now(),
                 status = RefusjonskravStatus.MOTTATT,
-                opprettetAv = "NAV",
                 referansenummer = 12345
         )
         val ba = kv.lagPDF(refusjonskrav)
