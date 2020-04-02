@@ -70,7 +70,6 @@ class DokarkivKlientTest {
     internal fun `valid answer from altinn returns properly serialized list of all org forms`() {
         val dokarkivKlient = DokarkivKlientImpl("http://juice", client, stsMock)
         val refusjonskrav = Refusjonskrav(
-                opprettetAv = "MEG",
                 identitetsnummer = identitetsnummer,
                 virksomhetsnummer = "123",
                 perioder = emptySet(),
