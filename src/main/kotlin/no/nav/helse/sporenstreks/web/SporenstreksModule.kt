@@ -129,18 +129,22 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
             call.respond(
                     HttpStatusCode.BadRequest,
                     ValidationProblem(setOf(
-                            ValidationProblemDetail("ParameterConversion", "Paramteret kunne konverteres til ${cause.type}", cause.parameterName, null))
+                            ValidationProblemDetail("ParameterConversion", "Parameteret kunne ikke  konverteres til ${cause.type}", cause.parameterName, null))
                     )
             )
+            LOGGER.warn("${cause.parameterName} kunne ikke konverteres")
         }
 
         exception<MissingKotlinParameterException> { cause ->
             call.respond(
                     HttpStatusCode.BadRequest,
                     ValidationProblem(setOf(
-                            ValidationProblemDetail("NotNull", "Det angitte feltet er påkrevd", cause.path.joinToString(".") { it.fieldName }, "null"))
+                            ValidationProblemDetail("NotNull", "Det angitte feltet er påkrevd", cause.path.joinToString(".") {
+                                it.fieldName ?: "Ukjent"
+                            }, "null"))
                     )
             )
+            LOGGER.warn("Feil med validering: ${cause.msg}")
         }
 
         exception<JsonMappingException> { cause ->
