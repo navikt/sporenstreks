@@ -34,7 +34,7 @@ class AltinnClient(
         """.trimIndent())
     }
 
-    private val baseUrl = "$altinnBaseUrl/reportees/?ForceEIAuthentication&serviceEdition=1&serviceCode=$serviceCode&subject="
+    private val baseUrl = "$altinnBaseUrl/reportees/?ForceEIAuthentication&\$top=500&&\$filter=Type+ne+'Person'+and+Status+eq+'Active'&serviceCode=$serviceCode&serviceEdition=1&&subject="
 
     /**
      * @return en liste over organisasjoner og/eller personer den angitte personen har rettigheten for
@@ -50,27 +50,18 @@ class AltinnClient(
                     headers.append("X-NAV-APIKEY", apiGwApiKey)
                     headers.append("APIKEY", altinnApiKey)
                 }
-                        .filter { it.status != null && it.status == "Active" }
                         .toSet()
 
                 logger.info("Altinn brukte ${Duration.between(start, LocalDateTime.now()).toMillis()}ms på å svare med ${result.size} rettigheter")
                 return@runBlocking result
-            } catch (ex: Exception) {
-                when (ex) {
-                    is ServerResponseException -> {
-                        // midlertidig hook for å detektere at det tok for lang tid å hente rettigheter
-                        // brukeren/klienten kan prøve igjen når dette skjer siden altinn svarer raskere gang nummer 2
-                        if (ex.response.status == HttpStatusCode.BadGateway) {
-                            logger.warn("Fikk en timeout fra Altinn som vi antar er fiksbar lagg hos dem", ex)
-                            throw AltinnBrukteForLangTidException()
-                        } else throw ex
-                    }
-                    is CancellationException -> {
-                        logger.warn("Fikk en timeout fra Altinn som vi antar er fiksbar lagg hos dem", ex)
-                        throw AltinnBrukteForLangTidException()
-                    }
-                    else -> throw ex
+            } catch(ex: ServerResponseException) {
+                // midlertidig hook for å detektere at det tok for lang tid å hente rettigheter
+                // brukeren/klienten kan prøve igjen når dette skjer siden altinn svarer raskere gang nummer 2
+                if (ex.response.status == HttpStatusCode.BadGateway) {
+                    logger.warn("Fikk en timeout fra Altinn som vi antar er fiksbar lagg hos dem", ex)
+                    throw AltinnBrukteForLangTidException()
                 }
+                else throw ex
             }
         }
     }
@@ -87,7 +78,6 @@ class AltinnClient(
         }
     }
 }
-
 class AltinnBrukteForLangTidException : Exception(
         "Altinn brukte for lang tid til å svare på forespørsleen om tilganger. Prøv igjen om litt."
 )
