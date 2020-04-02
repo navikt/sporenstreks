@@ -5,15 +5,12 @@ import io.ktor.application.application
 import io.ktor.application.call
 import io.ktor.config.ApplicationConfig
 import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
-import io.ktor.http.content.forEachPart
 import io.ktor.http.content.readAllParts
 import io.ktor.http.content.streamProvider
 import io.ktor.request.receive
 import io.ktor.request.receiveMultipart
-import io.ktor.response.header
 import io.ktor.response.respond
 import io.ktor.response.respondOutputStream
 import io.ktor.response.respondText
@@ -27,7 +24,8 @@ import no.nav.helse.sporenstreks.auth.AuthorizationsRepository
 import no.nav.helse.sporenstreks.auth.Authorizer
 import no.nav.helse.sporenstreks.auth.altinn.AltinnBrukteForLangTidException
 import no.nav.helse.sporenstreks.auth.hentIdentitetsnummerFraLoginToken
-import no.nav.helse.sporenstreks.bulk.ExcelBulkService
+import no.nav.helse.sporenstreks.excel.ExcelBulkService
+import no.nav.helse.sporenstreks.excel.ExcelParser
 import no.nav.helse.sporenstreks.db.RefusjonskravRepository
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
@@ -43,7 +41,6 @@ import no.nav.helse.sporenstreks.system.getEnvironment
 import no.nav.helse.sporenstreks.utils.MDCOperations
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import org.koin.ktor.ext.getKoin
-import java.io.InputStream
 import java.lang.IllegalArgumentException
 import java.time.LocalDate
 import javax.ws.rs.ForbiddenException
@@ -99,7 +96,7 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                         ContentType.parse("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
                         HttpStatusCode.OK
                 ) {
-                    ExcelBulkService(db, authorizer).processExcelFile(
+                    ExcelBulkService(db, ExcelParser(authorizer)).processExcelFile(
                             fileItem.streamProvider(), id, this)
                 }
             }

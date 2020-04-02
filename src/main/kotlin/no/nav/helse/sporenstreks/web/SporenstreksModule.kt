@@ -24,12 +24,11 @@ import io.ktor.routing.routing
 import io.ktor.util.DataConversionException
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.sporenstreks.auth.localCookieDispenser
+import no.nav.helse.sporenstreks.excel.ExcelFileParsingException
 import no.nav.helse.sporenstreks.nais.nais
 import no.nav.helse.sporenstreks.web.api.apiTest
 import no.nav.helse.sporenstreks.web.api.sporenstreks
-import no.nav.helse.sporenstreks.web.dto.validation.Problem
-import no.nav.helse.sporenstreks.web.dto.validation.ValidationProblem
-import no.nav.helse.sporenstreks.web.dto.validation.ValidationProblemDetail
+import no.nav.helse.sporenstreks.web.dto.validation.*
 import no.nav.security.token.support.ktor.tokenValidationSupport
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.get
@@ -137,8 +136,16 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
             call.respond(
                     HttpStatusCode.BadRequest,
                     ValidationProblem(setOf(
-                            ValidationProblemDetail("NotNull", "Det angitte feltet er påkrevd", cause.path.joinToString(".") { it.fieldName }, "null"))
+                            ValidationProblemDetail("NotNull", "Det angitte feltet er påkrevd", cause.path.joinToString(".") { it?.fieldName ?: "Ukjent"  }, "null"))
                     )
+            )
+        }
+
+        exception<ExcelFileParsingException> { cause ->
+            val excelproblems = cause.errors.map { ExcelProblemDetail(it.message, it.rowNumber.toString(), it.column) }.toSet()
+            call.respond(
+                    HttpStatusCode.UnprocessableEntity,
+                    ExcelProblem(excelproblems)
             )
         }
 

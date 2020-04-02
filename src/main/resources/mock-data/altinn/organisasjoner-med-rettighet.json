@@ -22,6 +22,7 @@
   {
     "Name": "ELTRODE AS",
     "Type": "Business",
+    "ParentOrganizationNumber": "917346380",
     "OrganizationNumber": "917404437",
     "OrganizationForm": "BEDR",
     "Status": "Active"

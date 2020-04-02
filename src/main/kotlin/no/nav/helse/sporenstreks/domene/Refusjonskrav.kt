@@ -13,7 +13,7 @@ data class Refusjonskrav(
         var feilmelding: String? = null,
         var oppgaveId: String? = null,
         var joarkReferanse: String? = null,
-        var kilde: String = "SKJEMA",
+        var kilde: String = "WEBSKJEMA",
 
         val opprettet: LocalDateTime = LocalDateTime.now(),
         val id: UUID = UUID.randomUUID(),
@@ -27,5 +27,5 @@ enum class RefusjonskravStatus {
     MOTTATT,
     SENDT_TIL_BEHANDLING,
     FEILET,
-    AVBRUTT
+    AVBRUTT // Denne er ment som en måte å skru av prosesseringen for krav som skal ignoreres, men ikke skal slettes
 }

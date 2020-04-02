@@ -35,3 +35,21 @@ class ValidationProblem(
 
 class ValidationProblemDetail(
         val validationType: String, val message: String, val propertyPath: String, val invalidValue: Any?)
+
+
+/**
+ * Problem extension for excel-validation-feil.
+ * Inneholder en liste over rader og kolonner som feilet parsing eller
+ */
+class ExcelProblem(
+        val problemDetails: Set<ExcelProblemDetail>
+) : Problem(
+        URI.create("urn:sporenstreks:excel-error"),
+        "Det var en eller flere feil med excelarket",
+        422,
+        "Ett eller flere rader/kolonner har feil."
+)
+
+class ExcelProblemDetail(
+        val message: String, val row: String, val column: String)
+
