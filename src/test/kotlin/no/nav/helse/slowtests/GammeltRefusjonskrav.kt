@@ -1,16 +1,16 @@
-package no.nav.helse.sporenstreks.domene
+package no.nav.helse.slowtests
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import java.time.LocalDateTime
 import java.util.*
 
-@JsonIgnoreProperties("opprettetAv")
-data class Refusjonskrav(
+data class GammeltRefusjonskrav(
+        val opprettetAv: String,
         val identitetsnummer: String,
         val virksomhetsnummer: String,
         val perioder: Set<Arbeidsgiverperiode>,
 
-        var status: RefusjonskravStatus = RefusjonskravStatus.MOTTATT,
+        var status: GammeltRefusjonskravStatus = GammeltRefusjonskravStatus.MOTTATT,
         var feilmelding: String? = null,
         var oppgaveId: String? = null,
         var joarkReferanse: String? = null,
@@ -23,7 +23,7 @@ data class Refusjonskrav(
         var referansenummer: Int = 0
 )
 
-enum class RefusjonskravStatus {
+enum class GammeltRefusjonskravStatus {
     MOTTATT,
     SENDT_TIL_BEHANDLING,
     FEILET,
