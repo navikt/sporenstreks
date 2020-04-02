@@ -37,16 +37,12 @@ class STSClient(username: String, password: String, stsEndpoint: String) {
 
 
     fun getOidcToken(): String {
-      if (isExpired()) {
+        if (isExpired(currentToken, Date.from(Instant.now().minusSeconds(300)))) {
             log.info("OIDC Token is expired, getting a new one from the STS")
             currentToken = requestToken()
             log.info("Hentet nytt token fra sts som går ut ${currentToken.jwtTokenClaims.expirationTime}")
         }
         return currentToken.tokenAsString
-    }
-
-    private fun isExpired(): Boolean {
-        return currentToken.jwtTokenClaims.expirationTime.after(Date.from(Instant.now().minusSeconds(300)))
     }
 
     private fun requestToken(): JwtToken {
@@ -82,6 +78,11 @@ class STSClient(username: String, password: String, stsEndpoint: String) {
     companion object {
         private val log = LoggerFactory.getLogger(STSClient::class.java)
     }
+}
+
+fun isExpired(jwtToken: JwtToken, date: Date): Boolean {
+    return date.after(jwtToken.jwtTokenClaims.expirationTime) &&
+            jwtToken.jwtTokenClaims.expirationTime.before(date)
 }
 
 
