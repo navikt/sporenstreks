@@ -13,6 +13,7 @@ import no.nav.helse.sporenstreks.selfcheck.HealthCheckType
 import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.LocalDateTime
+import java.util.concurrent.CancellationException
 
 class AltinnClient(
         altinnBaseUrl: String,
@@ -60,14 +61,22 @@ class AltinnClient(
 
                 logger.info("Altinn brukte ${Duration.between(start, LocalDateTime.now()).toMillis()}ms på å svare med ${allAccessRights.size} rettigheter")
                 return@runBlocking allAccessRights
-            } catch(ex: ServerResponseException) {
-                // midlertidig hook for å detektere at det tok for lang tid å hente rettigheter
-                // brukeren/klienten kan prøve igjen når dette skjer siden altinn svarer raskere gang nummer 2
-                if (ex.response.status == HttpStatusCode.BadGateway) {
-                    logger.warn("Fikk en timeout fra Altinn som vi antar er fiksbar lagg hos dem", ex)
-                    throw AltinnBrukteForLangTidException()
+            } catch (ex: Exception) {
+                when (ex) {
+                    is ServerResponseException -> {
+                        // midlertidig hook for å detektere at det tok for lang tid å hente rettigheter
+                        // brukeren/klienten kan prøve igjen når dette skjer siden altinn svarer raskere gang nummer 2
+                        if (ex.response.status == HttpStatusCode.BadGateway) {
+                            logger.warn("Fikk en timeout fra Altinn som vi antar er fiksbar lagg hos dem", ex)
+                            throw AltinnBrukteForLangTidException()
+                        } else throw ex
+                    }
+                    is CancellationException -> {
+                        logger.warn("Fikk en timeout fra Altinn som vi antar er fiksbar lagg hos dem", ex)
+                        throw AltinnBrukteForLangTidException()
+                    }
+                    else -> throw ex
                 }
-                else throw ex
             }
         }
     }
