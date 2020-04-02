@@ -5,11 +5,13 @@ import no.nav.helse.sporenstreks.excel.ExcelBulkService.Companion.startDataRow
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
+import no.nav.helse.sporenstreks.web.dto.validation.getContextualMessage
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFCell
 import org.valiktor.ConstraintViolation
+import org.valiktor.ConstraintViolationException
 import java.time.LocalDate
 import java.util.*
 import javax.ws.rs.ForbiddenException
@@ -28,7 +30,7 @@ class ExcelParser(private val authorizer: Authorizer) {
         val parseRunId = UUID.randomUUID().toString()
         var row :Row? = sheet.getRow(currentDataRow)
 
-        while (row != null && row.getCell(0).stringCellValue != "") {
+        while (row != null && row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).stringCellValue != "") {
             try {
                 val krav = extractRefusjonsKravFromExcelRow(row, opprettetAv, parseRunId)
                 refusjonsKrav.add(krav)
@@ -37,6 +39,12 @@ class ExcelParser(private val authorizer: Authorizer) {
                         currentDataRow+1,
                         "virksomhetsnummer",
                         "Du har ikke korrekte tilganger for denne virksomheten")
+                )
+            } catch(valErr: ConstraintViolationException) {
+                errorRows.addAll(
+                        valErr.constraintViolations.map { ExcelFileRowError(
+                            currentDataRow+1, it.property, it.getContextualMessage())
+                        }
                 )
             } catch (ex: CellValueExtractionException) {
                 errorRows.add(ExcelFileRowError(
@@ -56,10 +64,10 @@ class ExcelParser(private val authorizer: Authorizer) {
         // extract values
         val identitetsnummer = row.extract(0, "identitetsnummer")
         val virksomhetsNummer = row.extract(1, "virksomhetsnummer")
-        val fom = LocalDate.parse(row.extract(2, "fom"))
-        val tom = LocalDate.parse(row.extract(3, "tom"))
-        val antallDager = row.extract(4, "antall dager").toDouble().toInt()
-        val beloep = row.extract(5, "beløp").toDouble()
+        val fom = row.extractLocalDate(2, "fom")
+        val tom = row.extractLocalDate(3, "tom")
+        val antallDager = row.extractDouble(4, "antall dager").toInt()
+        val beloep = row.extractDouble(5, "beløp")
 
         // authorize the use
         if (!authorizer.hasAccess(opprettetAv, virksomhetsNummer)) {
@@ -98,6 +106,24 @@ class ExcelParser(private val authorizer: Authorizer) {
             }
         } catch (ex: Exception) {
             throw CellValueExtractionException(columnName, "En uventet feil oppsto under uthenting av celleverdien. Sjekk celletypen og påpass at den er Tekst", ex)
+        }
+    }
+
+    private fun Row.extractLocalDate(cellNum: Int, columnName: String): LocalDate {
+        val value = this.extract(cellNum, columnName)
+        try {
+            return LocalDate.parse(value)
+        } catch (ex: Exception) {
+            throw CellValueExtractionException(columnName, "Feil ved lesing av dato. Påse at datoformatet er riktig.", ex)
+        }
+    }
+
+    private fun Row.extractDouble(cellNum: Int, columnName: String): Double {
+        val value = this.extract(cellNum, columnName)
+        try {
+            return value.toDouble()
+        } catch (ex: Exception) {
+            throw CellValueExtractionException(columnName, "Feil ved lesing av tall. Påse at formatet er riktig.", ex)
         }
     }
 

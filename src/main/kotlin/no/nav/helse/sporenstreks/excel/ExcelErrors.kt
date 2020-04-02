@@ -10,6 +10,5 @@ class CellValueExtractionException(val columnName: String, message: String, caus
 data class ExcelFileRowError(
         val rowNumber: Int,
         val column: String,
-        val message: String,
-        val validationErrors: Set<ConstraintViolation> = emptySet()
+        val message: String
 )

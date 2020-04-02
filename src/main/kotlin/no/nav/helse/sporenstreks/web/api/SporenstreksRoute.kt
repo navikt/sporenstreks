@@ -12,6 +12,7 @@ import io.ktor.http.content.streamProvider
 import io.ktor.request.receive
 import io.ktor.request.receiveMultipart
 import io.ktor.response.respond
+import io.ktor.response.respondBytes
 import io.ktor.response.respondOutputStream
 import io.ktor.response.respondText
 import io.ktor.routing.Route
@@ -41,6 +42,7 @@ import no.nav.helse.sporenstreks.system.getEnvironment
 import no.nav.helse.sporenstreks.utils.MDCOperations
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import org.koin.ktor.ext.getKoin
+import java.io.ByteArrayOutputStream
 import java.lang.IllegalArgumentException
 import java.time.LocalDate
 import javax.ws.rs.ForbiddenException
@@ -92,13 +94,15 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                         .firstOrNull()
                         ?: throw IllegalArgumentException()
 
-                call.respondOutputStream(
+                val stream = ByteArrayOutputStream()
+                ExcelBulkService(db, ExcelParser(authorizer)).processExcelFile(
+                        fileItem.streamProvider(), id, stream)
+
+                call.respondBytes(
+                        stream.toByteArray(),
                         ContentType.parse("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
                         HttpStatusCode.OK
-                ) {
-                    ExcelBulkService(db, ExcelParser(authorizer)).processExcelFile(
-                            fileItem.streamProvider(), id, this)
-                }
+                )
             }
         }
 

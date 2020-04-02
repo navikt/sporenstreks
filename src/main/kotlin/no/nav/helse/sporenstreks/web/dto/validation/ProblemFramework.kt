@@ -1,5 +1,7 @@
 package no.nav.helse.sporenstreks.web.dto.validation
 
+import org.valiktor.ConstraintViolation
+import org.valiktor.i18n.toMessage
 import java.net.URI
 
 
@@ -36,6 +38,14 @@ class ValidationProblem(
 class ValidationProblemDetail(
         val validationType: String, val message: String, val propertyPath: String, val invalidValue: Any?)
 
+fun ConstraintViolation.getContextualMessage(): String {
+    return when {
+        (this.constraint.name =="GreaterOrEqual" && this.property.endsWith("beloep")) ->  "Refusjonsbeløpet må være et posthisivt tall"
+        (this.constraint.name =="GreaterOrEqual" && this.property.endsWith(".tom")) ->  "Fra-dato må være før til-dato"
+        (this.constraint.name =="LessOrEqual" && this.property.endsWith(".tom")) ->  "Det kan ikke kreves refusjon for datoer fremover i tid"
+        else -> this.toMessage().message
+    }
+}
 
 /**
  * Problem extension for excel-validation-feil.
