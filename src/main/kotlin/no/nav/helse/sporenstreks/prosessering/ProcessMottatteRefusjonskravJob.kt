@@ -31,6 +31,7 @@ class ProcessMottatteRefusjonskravJob(
 
     override suspend fun doJob() {
         if (!leaderElectionConsumer.isLeader()) {
+            logger.warn("Er ikke leader")
             return
         }
         mutualLock.lock()
