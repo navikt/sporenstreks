@@ -18,6 +18,7 @@ import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import no.nav.helse.sporenstreks.auth.*
+import no.nav.helse.sporenstreks.auth.altinn.AlternativAltinnClient
 import no.nav.helse.sporenstreks.auth.altinn.AltinnClient
 import no.nav.helse.sporenstreks.db.*
 import no.nav.helse.sporenstreks.integrasjon.JoarkService
@@ -139,7 +140,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
 
     single {
-        val altinnClient = AltinnClient(
+        val altinnClient = AlternativAltinnClient(
                 config.getString("altinn.service_owner_api_url"),
                 config.getString("altinn.gw_api_key"),
                 config.getString("altinn.altinn_api_key"),
