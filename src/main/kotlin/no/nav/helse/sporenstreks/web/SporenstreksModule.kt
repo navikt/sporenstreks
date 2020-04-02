@@ -139,12 +139,12 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
             call.respond(
                     HttpStatusCode.BadRequest,
                     ValidationProblem(setOf(
-                            ValidationProblemDetail("NotNull", "Det angitte feltet er påkrevd", cause.path.joinToString(".") {
-                                it.fieldName ?: "Ukjent"
+                            ValidationProblemDetail("NotNull", "Det angitte feltet er påkrevd", cause.path.filter { it.fieldName != null }.joinToString(".") {
+                                it.fieldName
                             }, "null"))
                     )
             )
-            LOGGER.warn("Feil med validering: ${cause.msg}")
+            LOGGER.warn("Feil med validering av ${cause.parameter.name ?: "Ukjent"}: ${cause.msg}")
         }
 
         exception<JsonMappingException> { cause ->
