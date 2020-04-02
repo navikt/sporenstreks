@@ -34,9 +34,7 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                     val refusjonskrav = call.receive<RefusjonskravDto>()
                     authorize(authorizer, refusjonskrav.virksomhetsnummer)
 
-                    val opprettetAv = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
                     val domeneKrav = Refusjonskrav(
-                            opprettetAv,
                             refusjonskrav.identitetsnummer,
                             refusjonskrav.virksomhetsnummer,
                             refusjonskrav.perioder

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.zaxxer.hikari.metrics.prometheus.PrometheusMetricsTrackerFactory
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
 import io.ktor.client.features.json.JacksonSerializer
@@ -132,7 +133,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
 @KtorExperimentalAPI
 fun preprodConfig(config: ApplicationConfig) = module {
     single {
-        getDataSource(createHikariConfig(config.getjdbcUrlFromProperties()),
+        getDataSource(createHikariConfig(config.getjdbcUrlFromProperties(), prometheusMetricsTrackerFactory = PrometheusMetricsTrackerFactory()),
                 config.getString("database.name"),
                 config.getString("database.vault.mountpath")) as DataSource
     }
@@ -175,7 +176,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
 @KtorExperimentalAPI
 fun prodConfig(config: ApplicationConfig) = module {
     single {
-        getDataSource(createHikariConfig(config.getjdbcUrlFromProperties()),
+        getDataSource(createHikariConfig(config.getjdbcUrlFromProperties(), prometheusMetricsTrackerFactory = PrometheusMetricsTrackerFactory()),
                 config.getString("database.name"),
                 config.getString("database.vault.mountpath")
         ) as DataSource
