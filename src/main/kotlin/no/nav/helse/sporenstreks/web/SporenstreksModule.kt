@@ -152,8 +152,9 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
                 is ConstraintViolationException -> handleValidationError(call, cause.cause as ConstraintViolationException)
                 else -> {
                     val errorId = UUID.randomUUID()
-                    LOGGER.warn(errorId.toString(), cause)
-                    LOGGER.warn(errorId.toString(), call.request.headers.get("User-Agent") ?: "Ukjent")
+                    val userAgent = call.request.headers.get("User-Agent") ?: "Ukjent"
+                    val locale = call.request.headers.get("Accept-Language") ?: "Ukjent"
+                    LOGGER.warn("$errorId : $userAgent : $locale", cause)
                     val problem = Problem(
                             title = "Feil ved prosessering av JSON-dataene som ble oppgitt",
                             detail = cause.message,
