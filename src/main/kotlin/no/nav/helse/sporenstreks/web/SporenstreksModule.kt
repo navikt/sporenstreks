@@ -19,6 +19,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.jackson.JacksonConverter
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.locations.Locations
+import io.ktor.request.receiveOrNull
 import io.ktor.response.respond
 import io.ktor.routing.routing
 import io.ktor.util.DataConversionException
@@ -26,6 +27,7 @@ import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.sporenstreks.auth.localCookieDispenser
 import no.nav.helse.sporenstreks.nais.nais
 import no.nav.helse.sporenstreks.web.api.sporenstreks
+import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import no.nav.helse.sporenstreks.web.dto.validation.Problem
 import no.nav.helse.sporenstreks.web.dto.validation.ValidationProblem
 import no.nav.helse.sporenstreks.web.dto.validation.ValidationProblemDetail
@@ -103,6 +105,10 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
                     }
                 }
             }.toSet()
+
+            call.receiveOrNull<RefusjonskravDto>()?.let {
+                LOGGER.warn("Valideringsfeil med perioder: ${it.perioder}")
+            }
 
             call.respond(HttpStatusCode.UnprocessableEntity, ValidationProblem(problems))
         }
