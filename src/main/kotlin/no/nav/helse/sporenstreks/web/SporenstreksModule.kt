@@ -19,7 +19,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.jackson.JacksonConverter
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.locations.Locations
-import io.ktor.request.receiveOrNull
 import io.ktor.response.respond
 import io.ktor.routing.routing
 import io.ktor.util.DataConversionException
@@ -27,7 +26,6 @@ import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.sporenstreks.auth.localCookieDispenser
 import no.nav.helse.sporenstreks.nais.nais
 import no.nav.helse.sporenstreks.web.api.sporenstreks
-import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import no.nav.helse.sporenstreks.web.dto.validation.Problem
 import no.nav.helse.sporenstreks.web.dto.validation.ValidationProblem
 import no.nav.helse.sporenstreks.web.dto.validation.ValidationProblemDetail
@@ -105,6 +103,14 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
                     }
                 }
             }.toSet()
+
+            problems
+                    .filter {
+                        it.propertyPath.contains("perioder")
+                    }
+                    .forEach {
+                        LOGGER.warn("Invalid ${it.propertyPath}: ${it.invalidValue} (${it.message})")
+                    }
 
             call.respond(HttpStatusCode.UnprocessableEntity, ValidationProblem(problems))
         }
