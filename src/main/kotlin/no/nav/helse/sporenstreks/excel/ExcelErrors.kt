@@ -1,8 +1,5 @@
 package no.nav.helse.sporenstreks.excel
 
-import org.valiktor.ConstraintViolation
-
-
 class ExcelFileParsingException(message: String, val errors: Set<ExcelFileRowError> = emptySet()) : Exception(message)
 
 class CellValueExtractionException(val columnName: String, message: String, cause: Exception? = null) : Exception(message, cause)

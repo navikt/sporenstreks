@@ -31,7 +31,6 @@ data class RefusjonskravDto(
                 validate(Arbeidsgiverperiode::tom).isLessThanOrEqualTo(LocalDate.now())
             }
 
-
             // antall refusjonsdager kan ikke være lenger enn periodens lengde
             validate(RefusjonskravDto::perioder).refujonsDagerIkkeOverstigerPeriodelengder()
 

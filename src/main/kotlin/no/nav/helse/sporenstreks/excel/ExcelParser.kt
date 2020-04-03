@@ -13,6 +13,8 @@ import org.apache.poi.xssf.usermodel.XSSFCell
 import org.valiktor.ConstraintViolation
 import org.valiktor.ConstraintViolationException
 import java.time.LocalDate
+import java.time.Period
+import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.ws.rs.ForbiddenException
 import kotlin.collections.ArrayList
@@ -62,12 +64,11 @@ class ExcelParser(private val authorizer: Authorizer) {
 
     private fun extractRefusjonsKravFromExcelRow(row: Row, opprettetAv: String, correlationId: String): Refusjonskrav {
         // extract values
-        val identitetsnummer = row.extract(0, "identitetsnummer")
-        val virksomhetsNummer = row.extract(1, "virksomhetsnummer")
-        val fom = row.extractLocalDate(2, "fom")
-        val tom = row.extractLocalDate(3, "tom")
-        val antallDager = row.extractDouble(4, "antall dager").toInt()
-        val beloep = row.extractDouble(5, "beløp")
+        val identitetsnummer = row.extract(0, "Fødselsnummer")
+        val virksomhetsNummer = row.extract(1, "Virksomhetsnummer")
+        val fom = row.extractLocalDate(2, "Fra og med")
+        val tom = row.extractLocalDate(3, "Til og med")
+        val beloep = row.extractDouble(4, "Beløp")
 
         // authorize the use
         if (!authorizer.hasAccess(opprettetAv, virksomhetsNummer)) {
@@ -78,7 +79,7 @@ class ExcelParser(private val authorizer: Authorizer) {
         val refusjonskrav = RefusjonskravDto(
                 identitetsnummer,
                 virksomhetsNummer,
-                setOf(Arbeidsgiverperiode(fom, tom, antallDager, beloep))
+                setOf(Arbeidsgiverperiode(fom, tom, Period.between(fom, tom.plusDays(1)).days - 3, beloep))
         )
 
         // map to domain instance for insertion into Database
@@ -112,7 +113,7 @@ class ExcelParser(private val authorizer: Authorizer) {
     private fun Row.extractLocalDate(cellNum: Int, columnName: String): LocalDate {
         val value = this.extract(cellNum, columnName)
         try {
-            return LocalDate.parse(value)
+            return LocalDate.parse(value.trim(), DateTimeFormatter.ofPattern("dd.MM.uuuu"))
         } catch (ex: Exception) {
             throw CellValueExtractionException(columnName, "Feil ved lesing av dato. Påse at datoformatet er riktig.", ex)
         }
