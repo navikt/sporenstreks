@@ -106,10 +106,6 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
                 }
             }.toSet()
 
-            call.receiveOrNull<RefusjonskravDto>()?.let {
-                LOGGER.warn("Valideringsfeil med perioder: ${it.perioder}")
-            }
-
             call.respond(HttpStatusCode.UnprocessableEntity, ValidationProblem(problems))
         }
 
