@@ -13,8 +13,8 @@ import io.ktor.request.receive
 import io.ktor.request.receiveMultipart
 import io.ktor.response.respond
 import io.ktor.response.respondBytes
-import io.ktor.response.respondOutputStream
 import io.ktor.response.respondText
+import io.ktor.response.respondFile
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
@@ -43,6 +43,7 @@ import no.nav.helse.sporenstreks.utils.MDCOperations
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import org.koin.ktor.ext.getKoin
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.lang.IllegalArgumentException
 import java.time.LocalDate
 import javax.ws.rs.ForbiddenException
@@ -78,7 +79,8 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
         route("/bulk") {
 
             get("/template") {
-                call.respond("TODO return Excel template from resources")
+                val template = javaClass.getResource("/bulk-upload/koronasykepengerefusjon_nav.xlsx").file
+                call.respondFile(File(template))
             }
 
             post("/upload") {
