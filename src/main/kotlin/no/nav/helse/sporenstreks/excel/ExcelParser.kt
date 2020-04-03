@@ -45,7 +45,7 @@ class ExcelParser(private val authorizer: Authorizer) {
             } catch(valErr: ConstraintViolationException) {
                 errorRows.addAll(
                         valErr.constraintViolations.map { ExcelFileRowError(
-                            currentDataRow+1, it.property, it.getContextualMessage())
+                            currentDataRow+1, valiktorPropertiesToExcelColumnNames(it.property), it.getContextualMessage())
                         }
                 )
             } catch (ex: CellValueExtractionException) {
@@ -54,6 +54,13 @@ class ExcelParser(private val authorizer: Authorizer) {
                         ex.columnName,
                         ex.message ?: "Ukjent feil")
                 )
+            } catch(ex: Exception) {
+                errorRows.add(ExcelFileRowError(
+                        currentDataRow+1,
+                        "Ukjent feil",
+                        ex.message ?: "Ukjent feil")
+                )
+
             } finally {
                 row = sheet.getRow(++currentDataRow)
             }
@@ -79,7 +86,8 @@ class ExcelParser(private val authorizer: Authorizer) {
         val refusjonskrav = RefusjonskravDto(
                 identitetsnummer,
                 virksomhetsNummer,
-                setOf(Arbeidsgiverperiode(fom, tom, Period.between(fom, tom.plusDays(1)).days - 3, beloep))
+                setOf(Arbeidsgiverperiode(fom, tom,
+                Arbeidsgiverperiode.maxAntallDagerMedRefusjon(fom, tom), beloep))
         )
 
         // map to domain instance for insertion into Database
@@ -125,6 +133,17 @@ class ExcelParser(private val authorizer: Authorizer) {
             return value.toDouble()
         } catch (ex: Exception) {
             throw CellValueExtractionException(columnName, "Feil ved lesing av tall. Påse at formatet er riktig.", ex)
+        }
+    }
+
+    private fun valiktorPropertiesToExcelColumnNames(valiktokProp: String): String {
+        return when(valiktokProp) {
+            "identitetsnummer" -> "Fødselsnummer"
+            "virksomhetsnummer" -> "Virksomhetsnummer"
+            "perioder[0].fom" -> "Fra og med"
+            "perioder[0].tom" -> "Til og med"
+            "beloep" -> "Totalbeløp som kreves refundert"
+            else -> "($valiktokProp)"
         }
     }
 

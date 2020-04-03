@@ -40,7 +40,7 @@ class ValidationProblemDetail(
 
 fun ConstraintViolation.getContextualMessage(): String {
     return when {
-        (this.constraint.name =="GreaterOrEqual" && this.property.endsWith("beloep")) ->  "Refusjonsbeløpet må være et posthisivt tall"
+        (this.constraint.name =="GreaterOrEqual" && this.property.endsWith("beloep")) ->  "Refusjonsbeløpet må være et posisivt tall eller null"
         (this.constraint.name =="GreaterOrEqual" && this.property.endsWith(".tom")) ->  "Fra-dato må være før til-dato"
         (this.constraint.name =="LessOrEqual" && this.property.endsWith(".tom")) ->  "Det kan ikke kreves refusjon for datoer fremover i tid"
         else -> this.toMessage().message

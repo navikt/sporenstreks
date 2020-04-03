@@ -27,17 +27,23 @@ internal class ExcelParserTest {
         val workbook: Workbook = XSSFWorkbook(validFile)
         val result = ExcelParser(authorizerMock).parseAndValidateExcelContent(workbook, TestData.validIdentitetsnummer)
 
-        assertThat(result.refusjonskrav.size).isEqualTo(12)
+        assertThat(result.refusjonskrav.size).isEqualTo(10)
         assertThat(result.errors).isEqualTo(0)
     }
 
     @Test
-    fun shouldReportErrors() {
+    fun `Parseren skal gi feil på riktig rad og kolonne`() {
         val workbook: Workbook = XSSFWorkbook(invalidFile)
         val result = ExcelParser(authorizerMock).parseAndValidateExcelContent(workbook, TestData.validIdentitetsnummer)
 
-        assertThat(result.refusjonskrav.size).isEqualTo(12)
-        assertThat(result.errors).isEqualTo(0)
+        assertThat(result.refusjonskrav.size).isEqualTo(0)
+        assertThat(result.errors.size).isEqualTo(9)
+
+        val rowErrors = result.errors.groupBy { it.rowNumber }
+
+        assertThat(rowErrors[11]?.size).isEqualTo(1)
+        assertThat(rowErrors[11]?.get(0)?.column).isEqualTo("Fødselsnummer")
+
 
 
     }

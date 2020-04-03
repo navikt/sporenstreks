@@ -98,6 +98,8 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                 ExcelBulkService(db, ExcelParser(authorizer)).processExcelFile(
                         fileItem.streamProvider(), id, stream)
 
+                call.response.headers.append("Content-Disposition", "attachment; filename=\"koronasykepenger_kvittering.xlsx\"")
+
                 call.respondBytes(
                         stream.toByteArray(),
                         ContentType.parse("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
