@@ -53,7 +53,7 @@ class AltinnClientTests {
 
     @Test
     internal fun `valid answer from altinn returns properly serialized list of all active org forms`() {
-        val altinnClient = PagingAltinnClient("http://juice", "api-gw-key", "altinn-key", serviceCode, client)
+        val altinnClient = AltinnClient("http://juice", "api-gw-key", "altinn-key", serviceCode, client)
         val authList = altinnClient.hentOrgMedRettigheterForPerson(identitetsnummer)
         assertThat(authList).hasSize(4)
     }
@@ -61,7 +61,7 @@ class AltinnClientTests {
 
     @Test
     internal fun `timeout from altinn throws exception`() {
-        val altinnClient = PagingAltinnClient("http://timeout", "api-gw-key", "altinn-key", serviceCode, client)
+        val altinnClient = AltinnClient("http://timeout", "api-gw-key", "altinn-key", serviceCode, client)
 
         assertThrows(ServerResponseException::class.java) {
             altinnClient.hentOrgMedRettigheterForPerson(identitetsnummer)
@@ -79,7 +79,7 @@ class AltinnClientTests {
 
     @Test
     internal fun `timeout from altinn throws AltinnBrukteForLangTidException`() {
-        val altinnClient = PagingAltinnClient("http://altinn-timeout", "api-gw-key", "altinn-key", serviceCode, client)
+        val altinnClient = AltinnClient("http://altinn-timeout", "api-gw-key", "altinn-key", serviceCode, client)
         assertThrows(AltinnBrukteForLangTidException::class.java) {
             runBlocking { altinnClient.hentOrgMedRettigheterForPerson(identitetsnummer) }
         }
@@ -87,7 +87,7 @@ class AltinnClientTests {
 
     @Test
     internal suspend fun `healthcheck passes with valid response from altinn`() {
-        val altinnClient = PagingAltinnClient("http://juice", "api-gw-key", "altinn-key", serviceCode, client)
+        val altinnClient = AltinnClient("http://juice", "api-gw-key", "altinn-key", serviceCode, client)
         altinnClient.doHealthCheck()
     }
 }

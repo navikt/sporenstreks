@@ -13,14 +13,14 @@ import no.nav.helse.sporenstreks.selfcheck.HealthCheckType
 import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.LocalDateTime
-import java.util.concurrent.CancellationException
 
 class AltinnClient(
         altinnBaseUrl: String,
         private val apiGwApiKey: String,
         private val altinnApiKey: String,
         serviceCode: String,
-        private val httpClient: HttpClient) : AuthorizationsRepository, HealthCheck {
+        private val httpClient: HttpClient,
+        private val pageSize: Int = 500) : AuthorizationsRepository, HealthCheck {
     override val healthCheckType = HealthCheckType.READYNESS
 
     private val logger: org.slf4j.Logger = LoggerFactory.getLogger("AltinnClient")
@@ -34,7 +34,7 @@ class AltinnClient(
         """.trimIndent())
     }
 
-    private val baseUrl = "$altinnBaseUrl/reportees/?ForceEIAuthentication&\$top=500&&\$filter=Type+ne+'Person'+and+Status+eq+'Active'&serviceCode=$serviceCode&serviceEdition=1&&subject="
+    private val baseUrl = "$altinnBaseUrl/reportees/?ForceEIAuthentication&\$filter=Type+ne+'Person'+and+Status+eq+'Active'&serviceCode=$serviceCode&serviceEdition=1&&subject="
 
     /**
      * @return en liste over organisasjoner og/eller personer den angitte personen har rettigheten for
@@ -45,15 +45,21 @@ class AltinnClient(
         val url = baseUrl + identitetsnummer
         return runBlocking {
             try {
+                val allAccessRights = HashSet<AltinnOrganisasjon>()
                 val start = LocalDateTime.now()
-                val result = httpClient.get<Set<AltinnOrganisasjon>>(url) {
-                    headers.append("X-NAV-APIKEY", apiGwApiKey)
-                    headers.append("APIKEY", altinnApiKey)
-                }
-                        .toSet()
+                var page = 0
+                do {
+                    val urlWithPagesizeAndOffset = url + "&\$top=" + pageSize + "&\$skip=" + page * pageSize
+                    val pageResults = httpClient.get<Set<AltinnOrganisasjon>>(urlWithPagesizeAndOffset) {
+                                        headers.append("X-NAV-APIKEY", apiGwApiKey)
+                                        headers.append("APIKEY", altinnApiKey)
+                                    }
+                    allAccessRights.addAll(pageResults)
+                    page++
+                } while(pageResults.size >= pageSize)
 
-                logger.info("Altinn brukte ${Duration.between(start, LocalDateTime.now()).toMillis()}ms på å svare med ${result.size} rettigheter")
-                return@runBlocking result
+                logger.info("Altinn brukte ${Duration.between(start, LocalDateTime.now()).toMillis()}ms på å svare med ${allAccessRights.size} rettigheter")
+                return@runBlocking allAccessRights
             } catch(ex: ServerResponseException) {
                 // midlertidig hook for å detektere at det tok for lang tid å hente rettigheter
                 // brukeren/klienten kan prøve igjen når dette skjer siden altinn svarer raskere gang nummer 2
@@ -78,6 +84,7 @@ class AltinnClient(
         }
     }
 }
+
 class AltinnBrukteForLangTidException : Exception(
         "Altinn brukte for lang tid til å svare på forespørsleen om tilganger. Prøv igjen om litt."
 )
