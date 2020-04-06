@@ -34,11 +34,11 @@ jobs:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
       - name: build docker image
-        run: docker build . --pull -t $(cat .docker_image):$(cat .docker_tag)
+        run: docker build . --pull -t $(cat .docker_image):$(cat .docker_tag) -t $(cat .docker_image):latest
       - name: push docker image
         run: |
           echo "$GITHUB_ACCESS_TOKEN" | docker login --username "x-access-token" --password-stdin https://docker.pkg.github.com
-          docker push $(cat .docker_image):$(cat .docker_tag)
+          docker push $(cat .docker_image)
         env:
           GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
       - name: deploy to dev
