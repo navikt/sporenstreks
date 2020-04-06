@@ -113,7 +113,7 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
         }
     }
 
-    override fun getById(id: UUID): Refusjonskrav? {2
+    override fun getById(id: UUID): Refusjonskrav? {
         ds.connection.use {
             val existingYpList = ArrayList<Refusjonskrav>()
             val res = it.prepareStatement(getByIdStatement).apply {
