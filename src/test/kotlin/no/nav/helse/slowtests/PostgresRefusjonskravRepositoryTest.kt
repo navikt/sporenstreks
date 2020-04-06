@@ -5,8 +5,8 @@ import no.nav.helse.TestData
 import no.nav.helse.sporenstreks.db.PostgresRefusjonskravRepository
 import no.nav.helse.sporenstreks.db.createLocalHikariConfig
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
-import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
+import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.web.common
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -17,6 +17,7 @@ import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.core.get
+import java.io.IOException
 import java.time.LocalDate
 
 internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
@@ -32,7 +33,6 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
         }
         repo = PostgresRefusjonskravRepository(HikariDataSource(createLocalHikariConfig()), get())
         refusjonskrav = repo.insert(Refusjonskrav(
-                TestData.validIdentitetsnummer,
                 TestData.notValidIdentitetsnummer,
                 TestData.validOrgNr,
                 setOf(
@@ -55,6 +55,42 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
     internal fun tearDown() {
         repo.delete(refusjonskrav.id)
         stopKoin()
+    }
+
+
+    @Test
+    fun kan_hente_ut_gammelt_refusjonskrav() {
+        val refusjonskrav2 = repo.insert(GammeltRefusjonskrav(
+                TestData.validIdentitetsnummer
+                , TestData.notValidIdentitetsnummer,
+                TestData.validOrgNr,
+                setOf(
+                        Arbeidsgiverperiode(
+                                LocalDate.of(2020, 4, 1),
+                                LocalDate.of(2020, 4, 6),
+                                3, 1000.0
+                        ), Arbeidsgiverperiode(
+                        LocalDate.of(2020, 4, 10),
+                        LocalDate.of(2020, 4, 12),
+                        3, 1000.0
+                )),
+                GammeltRefusjonskravStatus.MOTTATT,
+                "oppgave-id-234234",
+                "joark-ref-1232"
+        ))
+        repo.delete(refusjonskrav2.id)
+
+    }
+
+    fun PostgresRefusjonskravRepository.insert(refusjonskrav: GammeltRefusjonskrav): Refusjonskrav {
+        val json = mapper.writeValueAsString(refusjonskrav)
+        ds.connection.use {
+            it.prepareStatement("INSERT INTO refusjonskrav (data) VALUES (?::json);").apply {
+                setString(1, json)
+            }.executeUpdate()
+        }
+        return getById(refusjonskrav.id)
+                ?: throw IOException("Unable to read receipt for refusjonskrav with id ${refusjonskrav.id}")
     }
 
     @Test
@@ -81,14 +117,48 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
 
     @Test
     fun `Kan hente fra status`() {
-        val krav = repo.getByStatus(RefusjonskravStatus.MOTTATT)
+        val krav = repo.getByStatus(RefusjonskravStatus.MOTTATT, 10)
         assertThat(krav.size).isEqualTo(1)
         assertThat(krav.first()).isEqualTo(refusjonskrav)
     }
 
     @Test
+    fun `Kan hente innenfor gitt limit fra status`() {
+
+        for (i in 1..19) {
+            repo.insert(Refusjonskrav(
+                    TestData.notValidIdentitetsnummer,
+                    TestData.validOrgNr,
+                    setOf(
+                            Arbeidsgiverperiode(
+                                    LocalDate.of(2020, 4, 1),
+                                    LocalDate.of(2020, 4, 6),
+                                    3, 1000.0
+                            ), Arbeidsgiverperiode(
+                            LocalDate.of(2020, 4, 10),
+                            LocalDate.of(2020, 4, 12),
+                            3, 1000.0
+                    )),
+                    RefusjonskravStatus.MOTTATT,
+                    "oppgave-id-234234",
+                    "joark-ref-1232"
+            ))
+        }
+
+        val tiKrav = repo.getByStatus(RefusjonskravStatus.MOTTATT, 10)
+        val tjueKrav = repo.getByStatus(RefusjonskravStatus.MOTTATT, 20)
+
+        assertThat(tiKrav).hasSize(10)
+        assertThat(tjueKrav).hasSize(20)
+
+        tjueKrav.forEach {
+            repo.delete(it.id)
+        }
+    }
+
+    @Test
     fun `Kan oppdatere krav`() {
-        val res = repo.getByStatus(RefusjonskravStatus.MOTTATT)
+        val res = repo.getByStatus(RefusjonskravStatus.MOTTATT, 10)
         val krav = res.first()
 
         krav.joarkReferanse = "dette er en test"

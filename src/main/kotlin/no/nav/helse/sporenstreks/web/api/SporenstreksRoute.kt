@@ -28,11 +28,7 @@ import no.nav.helse.sporenstreks.auth.hentIdentitetsnummerFraLoginToken
 import no.nav.helse.sporenstreks.excel.ExcelBulkService
 import no.nav.helse.sporenstreks.excel.ExcelParser
 import no.nav.helse.sporenstreks.db.RefusjonskravRepository
-import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
-import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
-import no.nav.helse.sporenstreks.integrasjon.OppgaveService
-import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumer
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTER
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
 import no.nav.helse.sporenstreks.metrics.REQUEST_TIME
@@ -58,9 +54,7 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                     val refusjonskrav = call.receive<RefusjonskravDto>()
                     authorize(authorizer, refusjonskrav.virksomhetsnummer)
 
-                    val opprettetAv = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
                     val domeneKrav = Refusjonskrav(
-                            opprettetAv,
                             refusjonskrav.identitetsnummer,
                             refusjonskrav.virksomhetsnummer,
                             refusjonskrav.perioder
@@ -123,57 +117,6 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                 }
             }
         }
-    }
-}
-
-
-@KtorExperimentalAPI
-fun Route.apiTest(config: ApplicationConfig) {
-    route("apitest/v1") {
-
-        route("/aktørId") {
-            get("/") {
-                if (config.property("koin.profile").getString() == "PREPROD") {
-                    val aktorConsumer = application.getKoin().get<AktorConsumer>()
-                    call.respondText(aktorConsumer.getAktorId(call.request.queryParameters["identitetsnummer"]!!, MDCOperations.generateCallId()))
-                }
-            }
-        }
-
-        get("/test-metrics") {
-            TEST_COUNTER.inc()
-            call.respond(HttpStatusCode.OK)
-        }
-
-        route("/oppgave") {
-            post("/") {
-                if (config.property("koin.profile").getString() != "PROD") {
-                    val service = application.getKoin().get<OppgaveService>();
-                    val aktorConsumer = application.getKoin().get<AktorConsumer>()
-                    val refusjonskrav = Refusjonskrav(
-                            "20015001543",
-                            "26058721211",
-                            "123456785",
-                            setOf(
-                                    Arbeidsgiverperiode(
-                                            LocalDate.of(2020, 4, 1),
-                                            LocalDate.of(2020, 4, 6),
-                                            3, 1000.0
-                                    ), Arbeidsgiverperiode(
-                                    LocalDate.of(2020, 4, 10),
-                                    LocalDate.of(2020, 4, 12),
-                                    3, 1000.0
-                            )),
-                            RefusjonskravStatus.MOTTATT
-                    )
-
-                    val aktørId = aktorConsumer.getAktorId(refusjonskrav.identitetsnummer, MDCOperations.generateCallId())
-                    val id = service.opprettOppgave(refusjonskrav, "test", aktørId, MDCOperations.generateCallId())
-                    call.respond(HttpStatusCode.Accepted, "Opprettet oppgave id=$id")
-                }
-            }
-        }
-        
     }
 }
 

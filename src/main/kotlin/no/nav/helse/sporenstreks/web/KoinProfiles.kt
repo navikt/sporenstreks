@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.zaxxer.hikari.metrics.prometheus.PrometheusMetricsTrackerFactory
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
 import io.ktor.client.features.json.JacksonSerializer
@@ -22,6 +23,9 @@ import no.nav.helse.sporenstreks.auth.altinn.AltinnClient
 import no.nav.helse.sporenstreks.db.*
 import no.nav.helse.sporenstreks.integrasjon.JoarkService
 import no.nav.helse.sporenstreks.integrasjon.OppgaveService
+import no.nav.helse.sporenstreks.integrasjon.rest.LeaderElection.LeaderElectionConsumer
+import no.nav.helse.sporenstreks.integrasjon.rest.LeaderElection.LeaderElectionConsumerImpl
+import no.nav.helse.sporenstreks.integrasjon.rest.LeaderElection.MockLeaderElectionConsumer
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumer
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumerImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.MockAktorConsumer
@@ -99,6 +103,7 @@ fun buildAndTestConfig() = module {
     single { OppgaveService(get(), get()) as OppgaveService }
     single { MockOppgaveKlient() as OppgaveKlient }
     single { MockAktorConsumer() as AktorConsumer }
+    single { MockLeaderElectionConsumer() as LeaderElectionConsumer }
 
     LocalOIDCWireMock.start()
 }
@@ -120,6 +125,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     }
     single { OppgaveService(get(), get()) as OppgaveService }
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
+    single { MockLeaderElectionConsumer() as LeaderElectionConsumer }
 
     LocalOIDCWireMock.start()
 }
@@ -127,7 +133,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
 @KtorExperimentalAPI
 fun preprodConfig(config: ApplicationConfig) = module {
     single {
-        getDataSource(createHikariConfig(config.getjdbcUrlFromProperties()),
+        getDataSource(createHikariConfig(config.getjdbcUrlFromProperties(), prometheusMetricsTrackerFactory = PrometheusMetricsTrackerFactory()),
                 config.getString("database.name"),
                 config.getString("database.vault.mountpath")) as DataSource
     }
@@ -160,18 +166,20 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
     single { OppgaveService(get(), get()) as OppgaveService }
 
-    single { RefusjonskravBehandler(get(), get(), get(), get())}
-    single { ProcessMottatteRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1)) }
-    single { ProcessFeiledeRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(10)) }
+    single { RefusjonskravBehandler(get(), get(), get(), get()) }
+    single { ProcessMottatteRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1), get()) }
+    single { ProcessFeiledeRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(10), get()) }
+    single { LeaderElectionConsumerImpl(config.getString("leader_election.url"), get(), get()) as LeaderElectionConsumer }
 
 }
 
 @KtorExperimentalAPI
 fun prodConfig(config: ApplicationConfig) = module {
     single {
-        getDataSource(createHikariConfig(config.getjdbcUrlFromProperties()),
+        getDataSource(createHikariConfig(config.getjdbcUrlFromProperties(), prometheusMetricsTrackerFactory = PrometheusMetricsTrackerFactory()),
                 config.getString("database.name"),
-                config.getString("database.vault.mountpath")) as DataSource
+                config.getString("database.vault.mountpath")
+        ) as DataSource
     }
 
     single {
@@ -201,9 +209,10 @@ fun prodConfig(config: ApplicationConfig) = module {
         ) as AktorConsumer
     }
 
-    single { RefusjonskravBehandler(get(), get(), get(), get())}
-    single { ProcessMottatteRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1)) }
-    single { ProcessFeiledeRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofHours(2)) }
+    single { RefusjonskravBehandler(get(), get(), get(), get()) }
+    single { ProcessMottatteRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1), get()) }
+    single { ProcessFeiledeRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofHours(2), get()) }
+    single { LeaderElectionConsumerImpl(config.getString("leader_election.url"), get(), get()) as LeaderElectionConsumer }
 }
 
 // utils

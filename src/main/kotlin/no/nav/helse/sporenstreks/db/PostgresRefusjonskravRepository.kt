@@ -22,7 +22,7 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
             WHERE data ->> 'virksomhetsnummer' = ?;"""
 
     private val getByStatuses = """SELECT * FROM $tableName 
-            WHERE data ->> 'status' = ?;"""
+            WHERE data ->> 'status' = ? LIMIT ?;"""
 
     private val getByIdStatement = """SELECT * FROM $tableName WHERE data ->> 'id' = ?"""
 
@@ -50,11 +50,12 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
         }
     }
 
-    override fun getByStatus(status: RefusjonskravStatus): List<Refusjonskrav> {
+    override fun getByStatus(status: RefusjonskravStatus, limit: Int): List<Refusjonskrav> {
         ds.connection.use { con ->
             val resultList = ArrayList<Refusjonskrav>()
             val res = con.prepareStatement(getByStatuses).apply {
                 setString(1, status.toString())
+                setInt(2, limit)
             }.executeQuery()
 
             while (res.next()) {

@@ -26,7 +26,6 @@ import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.sporenstreks.auth.localCookieDispenser
 import no.nav.helse.sporenstreks.excel.ExcelFileParsingException
 import no.nav.helse.sporenstreks.nais.nais
-import no.nav.helse.sporenstreks.web.api.apiTest
 import no.nav.helse.sporenstreks.web.api.sporenstreks
 import no.nav.helse.sporenstreks.web.dto.validation.*
 import no.nav.security.token.support.ktor.tokenValidationSupport
@@ -81,7 +80,8 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
 
         suspend fun handleUnexpectedException(call: ApplicationCall, cause: Throwable) {
             val errorId = UUID.randomUUID()
-            LOGGER.error("Uventet feil, $errorId", cause)
+            val userAgent = call.request.headers.get("User-Agent") ?: "Ukjent"
+            LOGGER.error("Uventet feil, $errorId med useragent $userAgent", cause)
             val problem = Problem(
                     type = URI.create("urn:sporenstreks:uventet-feil"),
                     title = "Uventet feil",
@@ -95,6 +95,14 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
             val problems = cause.constraintViolations.map {
                 ValidationProblemDetail(it.constraint.name, it.getContextualMessage(), it.property, it.value)
             }.toSet()
+
+            problems
+                    .filter {
+                        it.propertyPath.contains("perioder")
+                    }
+                    .forEach {
+                        LOGGER.warn("Invalid ${it.propertyPath}: ${it.invalidValue} (${it.message})")
+                    }
 
             call.respond(HttpStatusCode.UnprocessableEntity, ValidationProblem(problems))
         }
@@ -121,18 +129,23 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
             call.respond(
                     HttpStatusCode.BadRequest,
                     ValidationProblem(setOf(
-                            ValidationProblemDetail("ParameterConversion", "Paramteret kunne konverteres til ${cause.type}", cause.parameterName, null))
+                            ValidationProblemDetail("ParameterConversion", "Parameteret kunne ikke  konverteres til ${cause.type}", cause.parameterName, null))
                     )
             )
+            LOGGER.warn("${cause.parameterName} kunne ikke konverteres")
         }
 
         exception<MissingKotlinParameterException> { cause ->
+            val userAgent = call.request.headers.get("User-Agent") ?: "Ukjent"
             call.respond(
                     HttpStatusCode.BadRequest,
                     ValidationProblem(setOf(
-                            ValidationProblemDetail("NotNull", "Det angitte feltet er påkrevd", cause.path.joinToString(".") { it?.fieldName ?: "Ukjent"  }, "null"))
+                            ValidationProblemDetail("NotNull", "Det angitte feltet er påkrevd", cause.path.filter { it.fieldName != null }.joinToString(".") {
+                                it.fieldName
+                            }, "null"))
                     )
             )
+            LOGGER.warn("Feil med validering av ${cause.parameter.name ?: "Ukjent"} for ${userAgent}: ${cause.msg}")
         }
 
         exception<ExcelFileParsingException> { cause ->
@@ -152,7 +165,9 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
                 is ConstraintViolationException -> handleValidationError(call, cause.cause as ConstraintViolationException)
                 else -> {
                     val errorId = UUID.randomUUID()
-                    LOGGER.warn(errorId.toString(), cause)
+                    val userAgent = call.request.headers.get("User-Agent") ?: "Ukjent"
+                    val locale = call.request.headers.get("Accept-Language") ?: "Ukjent"
+                    LOGGER.warn("$errorId : $userAgent : $locale", cause)
                     val problem = Problem(
                             title = "Feil ved prosessering av JSON-dataene som ble oppgitt",
                             detail = cause.message,
@@ -176,6 +191,5 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
         authenticate {
             sporenstreks(get(), get(), get())
         }
-        apiTest(config)
     }
 }

@@ -22,10 +22,10 @@ class MockRefusjonskravRepo : RefusjonskravRepository {
     }
 
     override fun getById(id: UUID): Refusjonskrav {
-        return Refusjonskrav("", "", "", emptySet())
+        return Refusjonskrav("", "", emptySet())
     }
 
-    override fun getByStatus(status: RefusjonskravStatus): List<Refusjonskrav> {
+    override fun getByStatus(status: RefusjonskravStatus, limit: Int): List<Refusjonskrav> {
         return emptyList()
     }
 

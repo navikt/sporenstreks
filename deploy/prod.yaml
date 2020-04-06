@@ -11,13 +11,14 @@ spec:
   liveness:
     path: isalive
     initialDelay: 10
-    periodSeconds: 3
+    periodSeconds: 30
+    timeout: 2
     failureThreshold: 10
   readiness:
     path: isready
     initialDelay: 10
-    timeout: 1
-    periodSeconds: 3
+    timeout: 2
+    periodSeconds: 5
     failureThreshold: 10
   ingresses:
     - https://sporenstreks.nais.adeo.no
@@ -28,10 +29,10 @@ spec:
     min: 1
   resources:
     limits:
-      cpu: 1500m
+      cpu: 5000m
       memory: 2048Mi
     requests:
-      cpu: 200m
+      cpu: 500m
       memory: 256Mi
   vault:
     enabled: true
@@ -43,6 +44,7 @@ spec:
       - mountPath: /var/run/secrets/nais.io/service_user
         kvPath: /serviceuser/data/prod/srvsporenstreks
   webproxy: true
+  leaderElection: true
   env:
     - name: KOIN_PROFILE
       value: PROD

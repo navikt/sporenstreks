@@ -150,8 +150,22 @@ internal class RefusjonsKravDtoTest {
                         ), Arbeidsgiverperiode(
                         LocalDate.of(2020, 3, 17),
                         LocalDate.of(2020, 3, 27),
-                        10, 2.0
+                        11, 2.0
                 ))
+        )
+    }
+
+    @Test
+    fun `13 dagers refusjon i samme periode er gyldig`() {
+        RefusjonskravDto(
+                TestData.validIdentitetsnummer,
+                TestData.validOrgNr,
+                setOf(
+                        Arbeidsgiverperiode(
+                                LocalDate.of(2020, 3, 16),
+                                LocalDate.of(2020, 3, 31),
+                                13, 2.0
+                        ))
         )
     }
 

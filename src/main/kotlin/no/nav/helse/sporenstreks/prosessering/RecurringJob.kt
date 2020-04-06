@@ -10,6 +10,7 @@ abstract class RecurringJob(
         private val coroutineScope: CoroutineScope,
         private val waitTimeBetweenRuns: Duration) {
 
+    private val initialDelay: Duration = Duration.ofMinutes(1L)
     protected val logger = LoggerFactory.getLogger(this::class.java)
 
     private var isRunning = false
@@ -22,6 +23,7 @@ abstract class RecurringJob(
 
     private fun scheduleAsyncJobRun(retryOnFail: Boolean) {
         coroutineScope.launch {
+            delay(initialDelay)
             try {
                 doJob()
             } catch (t: Throwable) {
@@ -49,5 +51,5 @@ abstract class RecurringJob(
         isRunning = false
     }
 
-    abstract fun doJob()
+    abstract suspend fun doJob()
 }
