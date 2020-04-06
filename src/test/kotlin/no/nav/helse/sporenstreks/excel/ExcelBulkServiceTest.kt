@@ -34,7 +34,6 @@ internal class ExcelBulkServiceTest {
     internal fun `Lagrer til databasen og setter inn referansenummere i excelarket ved feilfri parsing`() {
         val bulkservice = ExcelBulkService(dbMock, parserMock)
         val refusjonskrabParsedFromFile = listOf(Refusjonskrav(
-                "",
                 TestData.validIdentitetsnummer,
                 TestData.validOrgNr,
                 emptySet()

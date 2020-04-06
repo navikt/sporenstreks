@@ -90,7 +90,6 @@ class ExcelParser(private val authorizer: Authorizer) {
 
         // map to domain instance for insertion into Database
         return Refusjonskrav(
-                opprettetAv,
                 refusjonskrav.identitetsnummer,
                 refusjonskrav.virksomhetsnummer,
                 refusjonskrav.perioder,
