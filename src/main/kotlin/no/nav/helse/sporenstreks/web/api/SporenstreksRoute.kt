@@ -96,14 +96,14 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                         .firstOrNull()
                         ?: throw IllegalArgumentException()
 
-                val stream = ByteArrayOutputStream()
-                ExcelBulkService(db, ExcelParser(authorizer)).processExcelFile(
-                        fileItem.streamProvider(), id, stream)
+
+                val resultingFile = ExcelBulkService(db, ExcelParser(authorizer))
+                        .processExcelFile(fileItem.streamProvider(), id)
 
                 call.response.headers.append("Content-Disposition", "attachment; filename=\"koronasykepenger_kvittering.xlsx\"")
 
                 call.respondBytes(
-                        stream.toByteArray(),
+                        resultingFile,
                         ContentType.parse("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
                         HttpStatusCode.OK
                 )

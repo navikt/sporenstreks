@@ -1,7 +1,7 @@
 package no.nav.helse.sporenstreks.excel
 
 import no.nav.helse.sporenstreks.auth.Authorizer
-import no.nav.helse.sporenstreks.excel.ExcelBulkService.Companion.startDataRow
+import no.nav.helse.sporenstreks.excel.ExcelBulkService.Companion.startDataRowAt
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
@@ -10,10 +10,8 @@ import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFCell
-import org.valiktor.ConstraintViolation
 import org.valiktor.ConstraintViolationException
 import java.time.LocalDate
-import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.ws.rs.ForbiddenException
@@ -28,18 +26,18 @@ class ExcelParser(private val authorizer: Authorizer) {
         val refusjonsKrav = ArrayList<Refusjonskrav>()
         val errorRows = HashSet<ExcelFileRowError>()
 
-        var currentDataRow = startDataRow
+        var currentDataRow = startDataRowAt
         val parseRunId = UUID.randomUUID().toString()
         var row :Row? = sheet.getRow(currentDataRow)
 
-        while (row != null && row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).stringCellValue != "") {
+        while (row != null && row.extractRawValue(0) != "") {
             try {
                 val krav = extractRefusjonsKravFromExcelRow(row, opprettetAv, parseRunId)
                 refusjonsKrav.add(krav)
             } catch (ex: ForbiddenException) {
                 errorRows.add(ExcelFileRowError(
                         currentDataRow+1,
-                        "virksomhetsnummer",
+                        "Virksomhetsnummer",
                         "Du har ikke korrekte tilganger for denne virksomheten")
                 )
             } catch(valErr: ConstraintViolationException) {
@@ -75,7 +73,8 @@ class ExcelParser(private val authorizer: Authorizer) {
         val virksomhetsNummer = row.extract(1, "Virksomhetsnummer")
         val fom = row.extractLocalDate(2, "Fra og med")
         val tom = row.extractLocalDate(3, "Til og med")
-        val beloep = row.extractDouble(4, "Beløp")
+        val antallDager = row.extractDouble(4, "Antall arbeidsdager med refusjon").toInt()
+        val beloep = row.extractDouble(5, "Beløp")
 
         // authorize the use
         if (!authorizer.hasAccess(opprettetAv, virksomhetsNummer)) {
@@ -86,8 +85,7 @@ class ExcelParser(private val authorizer: Authorizer) {
         val refusjonskrav = RefusjonskravDto(
                 identitetsnummer,
                 virksomhetsNummer,
-                setOf(Arbeidsgiverperiode(fom, tom,
-                Arbeidsgiverperiode.maxAntallDagerMedRefusjon(fom, tom), beloep))
+                setOf(Arbeidsgiverperiode(fom, tom, antallDager, beloep))
         )
 
         // map to domain instance for insertion into Database
@@ -140,11 +138,17 @@ class ExcelParser(private val authorizer: Authorizer) {
         return when(valiktokProp) {
             "identitetsnummer" -> "Fødselsnummer"
             "virksomhetsnummer" -> "Virksomhetsnummer"
+            "perioder" -> "Arbeidsgiverperioden (fom+tom)"
             "perioder[0].fom" -> "Fra og med"
             "perioder[0].tom" -> "Til og med"
-            "beloep" -> "Totalbeløp som kreves refundert"
+            "perioder[0].antallDagerMedRefusjon" -> "Antall arbeidsdager med refusjon"
+            "perioder[0].beloep" -> "Totalbeløp som kreves refundert"
             else -> "($valiktokProp)"
         }
+    }
+
+    private fun Row.extractRawValue(cellNum: Int): Any {
+        return (this.getCell(cellNum, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK) as XSSFCell).rawValue ?: ""
     }
 
     data class ExcelParsingResult(val refusjonskrav: List<Refusjonskrav>, val errors: Set<ExcelFileRowError>) {

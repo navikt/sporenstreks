@@ -5,14 +5,14 @@ import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.slf4j.LoggerFactory
+import java.io.ByteArrayOutputStream
 import java.io.InputStream
-import java.io.OutputStream
 
 class ExcelBulkService(private val db: RefusjonskravRepository, private val parser: ExcelParser) {
     private val maxRowNum: Int = 5000
     private val log = LoggerFactory.getLogger(ExcelBulkService::class.java)
 
-    fun processExcelFile(file: InputStream, opprettetAvIdentitetsnummer: String, outputStream: OutputStream) {
+    fun processExcelFile(file: InputStream, opprettetAvIdentitetsnummer: String): ByteArray {
         log.info("Starter prosseseringen av Excel fil")
         val workbook: Workbook = XSSFWorkbook(file)
 
@@ -29,20 +29,27 @@ class ExcelBulkService(private val db: RefusjonskravRepository, private val pars
 
         log.info("Lagrer ${parsingResult.refusjonskrav.size} krav")
         val referenceNumbers = db.bulkInsert(parsingResult.refusjonskrav)
+        log.info("Lagret  ${parsingResult.refusjonskrav.size} krav")
 
         // Håndtere at vi har lagret men skriving tilbake til filen feiler
         val sheet = workbook.getSheetAt(0);
+        sheet.getRow(startDataRowAt-1)
+                .getCell(referenceNumberColumnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)
+                .setCellValue("Referansenummer hos NAV")
+
         referenceNumbers.forEachIndexed { i, refNr ->
-            sheet.getRow(startDataRow + i)
-                    .getCell(6, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)
+            sheet.getRow(startDataRowAt + i)
+                    .getCell(referenceNumberColumnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)
                     .setCellValue(refNr.toString())
         }
 
-         workbook.write(outputStream)
-        log.info("Lagret  ${parsingResult.refusjonskrav.size} krav")
+        val stream = ByteArrayOutputStream()
+        workbook.write(stream)
+        return stream.toByteArray()
     }
 
     companion object {
-        const val startDataRow = 11
+        const val startDataRowAt = 10
+        const val referenceNumberColumnIndex = 6
     }
 }
