@@ -110,7 +110,12 @@ fun buildAndTestConfig() = module {
 
 fun localDevConfig(config: ApplicationConfig) = module {
     single {
-        getDataSource(createHikariConfig(config.getjdbcUrlFromProperties()),
+        getDataSource(
+                createHikariConfig(
+                        config.getjdbcUrlFromProperties(),
+                        config.getString("database.username"),
+                        config.getString("database.password")
+                ),
             config.getString("database.name"),
             config.getString("database.vault.mountpath")) as DataSource
     }
