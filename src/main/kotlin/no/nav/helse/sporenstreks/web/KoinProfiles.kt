@@ -109,7 +109,11 @@ fun buildAndTestConfig() = module {
 }
 
 fun localDevConfig(config: ApplicationConfig) = module {
-    single { getDataSource(createLocalHikariConfig(), "sporenstreks", null) as DataSource }
+    single {
+        getDataSource(createHikariConfig(config.getjdbcUrlFromProperties()),
+            config.getString("database.name"),
+            config.getString("database.vault.mountpath")) as DataSource
+    }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
 
     single { MockDokarkivKlient() as DokarkivKlient }

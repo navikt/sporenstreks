@@ -3,7 +3,7 @@ package no.nav.helse.slowtests
 import com.zaxxer.hikari.HikariDataSource
 import no.nav.helse.TestData
 import no.nav.helse.sporenstreks.db.PostgresRefusjonskravRepository
-import no.nav.helse.sporenstreks.db.createLocalHikariConfig
+import no.nav.helse.sporenstreks.db.createNonVaultHikariConfig
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
@@ -31,7 +31,7 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
             loadKoinModules(common)
 
         }
-        repo = PostgresRefusjonskravRepository(HikariDataSource(createLocalHikariConfig()), get())
+        repo = PostgresRefusjonskravRepository(HikariDataSource(createNonVaultHikariConfig()), get())
         refusjonskrav = repo.insert(Refusjonskrav(
                 TestData.notValidIdentitetsnummer,
                 TestData.validOrgNr,

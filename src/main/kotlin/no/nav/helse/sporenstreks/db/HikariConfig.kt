@@ -3,7 +3,7 @@ package no.nav.helse.sporenstreks.db
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.metrics.prometheus.PrometheusMetricsTrackerFactory
 
-fun createHikariConfig(jdbcUrl: String, username: String? = null, password: String? = null, prometheusMetricsTrackerFactory: PrometheusMetricsTrackerFactory?) =
+fun createHikariConfig(jdbcUrl: String, username: String? = null, password: String? = null, prometheusMetricsTrackerFactory: PrometheusMetricsTrackerFactory? = null) =
         HikariConfig().apply {
             this.jdbcUrl = jdbcUrl
             maximumPoolSize = 3
@@ -19,5 +19,5 @@ fun createHikariConfig(jdbcUrl: String, username: String? = null, password: Stri
         }
 
 
-fun createLocalHikariConfig() =
+fun createNonVaultHikariConfig() =
         createHikariConfig("jdbc:postgresql://localhost:5432/sporenstreks", "sporenstreks", "sporenstreks", null)
