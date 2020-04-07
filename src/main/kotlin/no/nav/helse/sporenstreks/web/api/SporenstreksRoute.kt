@@ -1,15 +1,17 @@
 package no.nav.helse.sporenstreks.web.api
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.application.ApplicationCall
 import io.ktor.application.application
 import io.ktor.application.call
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
-import io.ktor.http.content.forEachPart
 import io.ktor.http.content.readAllParts
 import io.ktor.http.content.streamProvider
 import io.ktor.request.receive
+import io.ktor.request.receiveText
 import io.ktor.request.receiveMultipart
 import io.ktor.response.respond
 import io.ktor.response.respondBytes
@@ -37,11 +39,16 @@ import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
 import no.nav.helse.sporenstreks.metrics.REQUEST_TIME
 import no.nav.helse.sporenstreks.system.AppEnv
 import no.nav.helse.sporenstreks.system.getEnvironment
+import no.nav.helse.sporenstreks.web.dto.PostListResponseDto
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
+import no.nav.helse.sporenstreks.web.dto.validation.ValidationProblemDetail
+import no.nav.helse.sporenstreks.web.dto.validation.getContextualMessage
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import org.koin.ktor.ext.get
+import org.valiktor.ConstraintViolationException
 import javax.ws.rs.ForbiddenException
 
 @KtorExperimentalAPI
@@ -67,6 +74,49 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                 } finally {
                     timer.observeDuration()
                 }
+            }
+            post("/list") {
+                val refusjonskravJson = call.receiveText()
+                val om = application.get<ObjectMapper>()
+                val jsonTree = om.readTree(refusjonskravJson)
+                val responseBody = ArrayList<PostListResponseDto>(jsonTree.size())
+
+                for(i in 0 until jsonTree.size()) {
+                    try {
+                        val dto = om.readValue<RefusjonskravDto>(jsonTree[i].traverse())
+                        authorize(authorizer, dto.virksomhetsnummer)
+
+                        val domeneKrav = Refusjonskrav(
+                                dto.identitetsnummer,
+                                dto.virksomhetsnummer,
+                                dto.perioder
+                        )
+                        val saved = db.insert(domeneKrav)
+
+                        INNKOMMENDE_REFUSJONSKRAV_COUNTER.inc()
+                        INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTER.inc(domeneKrav.perioder.sumByDouble { it.beloep }.div(1000))
+
+                        responseBody.add(PostListResponseDto(status = PostListResponseDto.Status.OK, referenceNumber = "${saved.referansenummer}"))
+                    } catch(forbiddenEx: ForbiddenException) {
+                        responseBody.add(PostListResponseDto(status = PostListResponseDto.Status.GENERIC_ERROR, genericMessage = "Ingen tilgang til virksomheten"))
+                    } catch (validationEx: ConstraintViolationException) {
+                        val problems = validationEx.constraintViolations.map {
+                            ValidationProblemDetail(it.constraint.name, it.getContextualMessage(), it.property, it.value)
+                        }
+                        responseBody.add(PostListResponseDto(status = PostListResponseDto.Status.VALIDATION_ERRORS, validationErrors = problems))
+                    } catch(genericEx: Exception) {
+                        if (genericEx.cause is ConstraintViolationException) {
+                            val problems = (genericEx.cause as ConstraintViolationException).constraintViolations.map {
+                                ValidationProblemDetail(it.constraint.name, it.getContextualMessage(), it.property, it.value)
+                            }
+                            responseBody.add(PostListResponseDto(status = PostListResponseDto.Status.VALIDATION_ERRORS, validationErrors = problems))
+                        } else {
+                            responseBody.add(PostListResponseDto(status = PostListResponseDto.Status.GENERIC_ERROR, genericMessage = genericEx.message))
+                        }
+                    }
+                }
+
+                call.respond(HttpStatusCode.OK, responseBody)
             }
         }
 
