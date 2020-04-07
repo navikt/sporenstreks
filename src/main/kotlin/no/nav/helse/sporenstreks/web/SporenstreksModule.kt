@@ -24,11 +24,10 @@ import io.ktor.routing.routing
 import io.ktor.util.DataConversionException
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.sporenstreks.auth.localCookieDispenser
+import no.nav.helse.sporenstreks.excel.ExcelFileParsingException
 import no.nav.helse.sporenstreks.nais.nais
 import no.nav.helse.sporenstreks.web.api.sporenstreks
-import no.nav.helse.sporenstreks.web.dto.validation.Problem
-import no.nav.helse.sporenstreks.web.dto.validation.ValidationProblem
-import no.nav.helse.sporenstreks.web.dto.validation.ValidationProblemDetail
+import no.nav.helse.sporenstreks.web.dto.validation.*
 import no.nav.security.token.support.ktor.tokenValidationSupport
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.get
@@ -94,14 +93,7 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
 
         suspend fun handleValidationError(call: ApplicationCall, cause: ConstraintViolationException) {
             val problems = cause.constraintViolations.map {
-                when {
-                    (it.constraint.name == "GreaterOrEqual" && it.property.endsWith("beloep")) -> ValidationProblemDetail(it.constraint.name, "Refusjonsbeløpet må være et positivt tall", it.property, it.value)
-                    (it.constraint.name == "GreaterOrEqual" && it.property.endsWith(".tom")) -> ValidationProblemDetail(it.constraint.name, "Fra-dato må være før til-dato", it.property, it.value)
-                    (it.constraint.name == "LessOrEqual" && it.property.endsWith(".tom")) -> ValidationProblemDetail(it.constraint.name, "Det kan ikke kreves refusjon for datoer fremover i tid", it.property, it.value)
-                    else -> {
-                        ValidationProblemDetail(it.constraint.name, it.toMessage().message, it.property, it.value)
-                    }
-                }
+                ValidationProblemDetail(it.constraint.name, it.getContextualMessage(), it.property, it.value)
             }.toSet()
 
             problems
@@ -154,6 +146,14 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
                     )
             )
             LOGGER.warn("Feil med validering av ${cause.parameter.name ?: "Ukjent"} for ${userAgent}: ${cause.msg}")
+        }
+
+        exception<ExcelFileParsingException> { cause ->
+            val excelproblems = cause.errors.map { ExcelProblemDetail(it.message, it.rowNumber.toString(), it.column) }.toSet()
+            call.respond(
+                    HttpStatusCode.UnprocessableEntity,
+                    ExcelProblem(excelproblems)
+            )
         }
 
         exception<JsonMappingException> { cause ->

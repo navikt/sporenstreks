@@ -12,4 +12,5 @@ interface RefusjonskravRepository {
     fun getById(id: UUID): Refusjonskrav?
     fun getByStatus(status: RefusjonskravStatus, limit: Int): List<Refusjonskrav>
     fun update(krav: Refusjonskrav)
+    fun bulkInsert(kravListe: List<Refusjonskrav>): List<Int>
 }

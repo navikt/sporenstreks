@@ -232,7 +232,7 @@ fun ApplicationConfig.getString(path: String): String {
 
 @KtorExperimentalAPI
 fun ApplicationConfig.getjdbcUrlFromProperties(): String {
-    return String.format("jdbc:postgresql://%s:%s/%s",
+    return String.format("jdbc:postgresql://%s:%s/%s?reWriteBatchedInserts=true",
             this.property("database.host").getString(),
             this.property("database.port").getString(),
             this.property("database.name").getString())
