@@ -127,9 +127,9 @@ class ExcelParser(private val authorizer: Authorizer) {
     private fun Row.extractDouble(cellNum: Int, columnName: String): Double {
         val value = this.extract(cellNum, columnName)
         try {
-            return value.toDouble()
+            return value.replace(",", ".").replace(" ", "").toDouble()
         } catch (ex: Exception) {
-            throw CellValueExtractionException(columnName, "Feil ved lesing av tall. Påse at formatet er riktig.", ex)
+            throw CellValueExtractionException(columnName, "Feil ved lesing av tall. Påse at formatet er riktig. Bruk , for øre.", ex)
         }
     }
 
