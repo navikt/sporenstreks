@@ -16,6 +16,7 @@ import io.ktor.request.receiveMultipart
 import io.ktor.response.respond
 import io.ktor.response.respondBytes
 import io.ktor.response.respondFile
+import io.ktor.response.respondOutputStream
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
@@ -50,6 +51,8 @@ import java.io.OutputStream
 import org.koin.ktor.ext.get
 import org.valiktor.ConstraintViolationException
 import javax.ws.rs.ForbiddenException
+
+private val excelContentType = ContentType.parse("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
 @KtorExperimentalAPI
 fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepository, db: RefusjonskravRepository) {
@@ -123,8 +126,9 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
         route("/bulk") {
 
             get("/template") {
-                val template = javaClass.getResource("/bulk-upload/koronasykepengerefusjon_nav.xlsx").file
-                call.respondFile(File(template))
+                val template = javaClass.getResourceAsStream("/bulk-upload/koronasykepengerefusjon_nav.xlsx")
+                call.response.headers.append("Content-Disposition", "attachment; filename=\"koronasykepenger_nav.xlsx\"")
+                call.respondBytes(template.readAllBytes(), excelContentType)
             }
 
             post("/upload") {
@@ -156,7 +160,7 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
 
                 call.respondBytes(
                         resultingFile,
-                        ContentType.parse("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+                        excelContentType,
                         HttpStatusCode.OK
                 )
             }
