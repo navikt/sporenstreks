@@ -49,6 +49,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import org.koin.ktor.ext.get
+import org.slf4j.LoggerFactory
 import org.valiktor.ConstraintViolationException
 import javax.ws.rs.ForbiddenException
 
@@ -56,6 +57,8 @@ private val excelContentType = ContentType.parse("application/vnd.openxmlformats
 
 @KtorExperimentalAPI
 fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepository, db: RefusjonskravRepository) {
+    val logger = LoggerFactory.getLogger("API Route handler")
+
     route("api/v1") {
         route("/refusjonskrav") {
             post("/") {
@@ -172,6 +175,16 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                 val id = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
                 try {
                     val rettigheter = authRepo.hentOrgMedRettigheterForPerson(id)
+
+                    if (id.startsWith("161181")) {
+                        try {
+                            val serialized = this@route.get<ObjectMapper>().writeValueAsString(rettigheter)
+                            logger.info("Feilsøkingslogging: $serialized")
+                        } catch(ex: Exception) {
+                            logger.error("Feilsøkingslogging", ex)
+                        }
+                    }
+
                     call.respond(rettigheter)
                 } catch (ae: AltinnBrukteForLangTidException) {
                     // Midlertidig fiks for å la klienten prøve igjen når noe timer ut ifbm dette kallet til Altinn
@@ -186,31 +199,5 @@ private fun PipelineContext<Unit, ApplicationCall>.authorize(authorizer: Authori
     val identitetsnummer = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
     if (!authorizer.hasAccess(identitetsnummer, arbeidsgiverId)) {
         throw ForbiddenException()
-    }
-}
-
-
-// https://ktor.io/servers/uploads.html
-suspend fun InputStream.copyToSuspend(
-        out: OutputStream,
-        bufferSize: Int = DEFAULT_BUFFER_SIZE,
-        yieldSize: Int = 4 * 1024 * 1024,
-        dispatcher: CoroutineDispatcher = Dispatchers.IO
-): Long {
-    return withContext(dispatcher) {
-        val buffer = ByteArray(bufferSize)
-        var bytesCopied = 0L
-        var bytesAfterYield = 0L
-        while (true) {
-            val bytes = read(buffer).takeIf { it >= 0 } ?: break
-            out.write(buffer, 0, bytes)
-            if (bytesAfterYield >= yieldSize) {
-                yield()
-                bytesAfterYield %= yieldSize
-            }
-            bytesCopied += bytes
-            bytesAfterYield += bytes
-        }
-        return@withContext bytesCopied
     }
 }
