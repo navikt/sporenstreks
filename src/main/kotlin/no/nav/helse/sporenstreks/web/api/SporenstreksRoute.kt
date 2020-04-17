@@ -176,15 +176,6 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                 try {
                     val rettigheter = authRepo.hentOrgMedRettigheterForPerson(id)
 
-                    if (id.startsWith("161181")) {
-                        try {
-                            val serialized = this@route.get<ObjectMapper>().writeValueAsString(rettigheter)
-                            logger.info("Feilsøkingslogging: $serialized")
-                        } catch(ex: Exception) {
-                            logger.error("Feilsøkingslogging", ex)
-                        }
-                    }
-
                     call.respond(rettigheter)
                 } catch (ae: AltinnBrukteForLangTidException) {
                     // Midlertidig fiks for å la klienten prøve igjen når noe timer ut ifbm dette kallet til Altinn
