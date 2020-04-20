@@ -100,12 +100,11 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refujonsDagerIkkeO
             }
         }
 
-
 class RefusjonsdagerInnenforGyldigPeriodeConstraint : CustomConstraint
-fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdagerInnenforGyldigPeriode(d: LocalDate) =
+fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdagerInnenforGyldigPeriode(refusjonsdagerFom: LocalDate) =
         this.validate(RefusjonsdagerInnenforGyldigPeriodeConstraint()) { ps ->
             ps!!.all { p ->
-                val validDays = ChronoUnit.DAYS.between(d, p.tom.plusDays(1))
-                (p.antallDagerMedRefusjon == 0 || p.antallDagerMedRefusjon <= validDays)
+                val validDays = ChronoUnit.DAYS.between(refusjonsdagerFom, p.tom.plusDays(1))
+                ( p.fom <= refusjonsdagerFom ||(p.antallDagerMedRefusjon == 0 || p.antallDagerMedRefusjon <= validDays))
             }
         }
