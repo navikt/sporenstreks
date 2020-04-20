@@ -106,6 +106,6 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdagerInne
         this.validate(RefusjonsdagerInnenforGyldigPeriodeConstraint()) { ps ->
             ps!!.all { p ->
                 val validDays = ChronoUnit.DAYS.between(refusjonsdagerFom, p.tom.plusDays(1))
-                ( p.fom <= refusjonsdagerFom ||(p.antallDagerMedRefusjon == 0 || p.antallDagerMedRefusjon <= validDays))
+                ( p.fom >= refusjonsdagerFom ||(p.antallDagerMedRefusjon == 0 || p.antallDagerMedRefusjon <= validDays))
             }
         }
