@@ -130,7 +130,7 @@ class ExcelParser(private val authorizer: Authorizer) {
         try {
             return value.replace(",", ".").replace(" ", "").toDouble()
         } catch (ex: Exception) {
-            throw CellValueExtractionException(columnName, "Feil ved lesing av tall. Påse at formatet er riktig. Bruk , for øre.", ex)
+            throw CellValueExtractionException(columnName, "Feil ved lesing av tall. Påse at formatet er riktig.", ex)
         }
     }
 
