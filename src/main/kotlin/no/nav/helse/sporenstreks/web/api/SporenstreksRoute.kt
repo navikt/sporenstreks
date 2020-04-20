@@ -148,7 +148,7 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                         .firstOrNull()
                         ?: throw IllegalArgumentException()
 
-                val maxUploadSize = 100 * 1024
+                val maxUploadSize = 250 * 1024
 
                 val bytes = fileItem.streamProvider().readNBytes(maxUploadSize + 1)
 
