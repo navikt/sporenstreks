@@ -76,10 +76,6 @@ class ExcelParser(private val authorizer: Authorizer) {
         val antallDager = row.extractDouble(4, "Antall arbeidsdager med refusjon").toInt()
         val beloep = row.extractDouble(5, "Beløp")
 
-        // authorize the use
-        if (!authorizer.hasAccess(opprettetAv, virksomhetsNummer)) {
-            throw ForbiddenException("Du har ikke tilgang til tjenesten for virksomhet '$virksomhetsNummer'")
-        }
 
         // create DTO instance for validation
         val refusjonskrav = RefusjonskravDto(
@@ -87,6 +83,11 @@ class ExcelParser(private val authorizer: Authorizer) {
                 virksomhetsNummer,
                 setOf(Arbeidsgiverperiode(fom, tom, antallDager, beloep))
         )
+
+        // authorize the use
+        if (!authorizer.hasAccess(opprettetAv, virksomhetsNummer)) {
+            throw ForbiddenException("Du har ikke tilgang til tjenesten for virksomhet '$virksomhetsNummer'")
+        }
 
         // map to domain instance for insertion into Database
         return Refusjonskrav(
