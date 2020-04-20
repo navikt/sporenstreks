@@ -30,12 +30,13 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.arbeidsgiverBetale
             var arbeidsgiverdagerUtenRefusjon = 0
             ps!!.forEach() {
                 if (it.fom >= d) {
-                  refusjonsdager += Period.between(it.fom, it.tom.plusDays(1)).days
+
+                  refusjonsdager += ChronoUnit.DAYS.between(it.fom, it.tom.plusDays(1)).toInt()
                 } else if (it.tom < d){
-                    arbeidsgiverdagerUtenRefusjon += Period.between(it.fom, it.tom.plusDays(1)).days
+                    arbeidsgiverdagerUtenRefusjon += ChronoUnit.DAYS.between(it.fom, it.tom.plusDays(1)).toInt()
                 } else {
-                    refusjonsdager += Period.between(d, it.tom.plusDays(1)).days
-                    arbeidsgiverdagerUtenRefusjon += Period.between(it.fom, d).days
+                    refusjonsdager +=  ChronoUnit.DAYS.between(d, it.tom.plusDays(1)).toInt()
+                    arbeidsgiverdagerUtenRefusjon +=  ChronoUnit.DAYS.between(it.fom, d).toInt()
                 }
             }
             val oppgitteRefusjonsdager = ps!!.sumBy { it.antallDagerMedRefusjon }
@@ -62,9 +63,9 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.harMaksimaltOpphol
             for (i in 0..sorted.size - 2) {
                 val gapStartDate = sorted[i].tom.plusDays(1)
                 val firstDayNextPeriode = sorted[i + 1].fom
-                val gapPeriod = Period.between(gapStartDate, firstDayNextPeriode)
+                val gapPeriod =  ChronoUnit.DAYS.between(gapStartDate, firstDayNextPeriode).toInt()
 
-                if (gapPeriod.days > maksDagerMedOpphold) {
+                if (gapPeriod > maksDagerMedOpphold) {
                     return@validate false
                 }
             }
@@ -86,8 +87,8 @@ class MaksArbeidsgiverperiodeLengdeConstraint : CustomConstraint
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.totalPeriodeLengdeErMaks(maksDager: Int) =
         this.validate(MaksArbeidsgiverperiodeLengdeConstraint()) { ps ->
             val sum = ps!!.map {
-                Period.between(it.fom, it.tom.plusDays(1))
-            }.sumBy { it.days }
+                ChronoUnit.DAYS.between(it.fom, it.tom.plusDays(1))
+            }.sum()
             sum <= maksDager
         }
 
@@ -96,7 +97,7 @@ class RefusjonsdagerKanIkkeOverstigePeriodelengdenConstraint : CustomConstraint
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refujonsDagerIkkeOverstigerPeriodelengder() =
         this.validate(RefusjonsdagerKanIkkeOverstigePeriodelengdenConstraint()) { ps ->
             !ps!!.any { p ->
-                Period.between(p.fom, p.tom.plusDays(1)).days < p.antallDagerMedRefusjon
+                ChronoUnit.DAYS.between(p.fom, p.tom.plusDays(1)) < p.antallDagerMedRefusjon
             }
         }
 
