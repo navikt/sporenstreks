@@ -33,7 +33,6 @@ import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.get
 import org.slf4j.LoggerFactory
 import org.valiktor.ConstraintViolationException
-import org.valiktor.i18n.toMessage
 import java.lang.reflect.InvocationTargetException
 import java.net.URI
 import java.time.LocalDate
@@ -149,10 +148,18 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
         }
 
         exception<ExcelFileParsingException> { cause ->
-            val excelproblems = cause.errors.map { ExcelProblemDetail(it.message, it.rowNumber.toString(), it.column) }.toSet()
+
+            var excelproblems: ExcelProblem;
+
+            if (cause.errors.isEmpty()) {
+                excelproblems = ExcelProblem(emptySet(), cause.message)
+            } else {
+                excelproblems = ExcelProblem(cause.errors.map { ExcelProblemDetail(it.message, it.rowNumber.toString(), it.column) }.toSet())
+            }
+
             call.respond(
                     HttpStatusCode.UnprocessableEntity,
-                    ExcelProblem(excelproblems)
+                    excelproblems
             )
         }
 

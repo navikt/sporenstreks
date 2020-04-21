@@ -23,6 +23,10 @@ class ExcelBulkService(private val db: RefusjonskravRepository, private val pars
             throw ExcelFileParsingException("Det er feil i filen. Rett feilene nedenfor.", parsingResult.errors)
         }
 
+        if (parsingResult.refusjonskrav.isEmpty() && !parsingResult.hasErrors()) {
+            throw ExcelFileParsingException("Det er ingen rader i filen, malen må fylles ut.")
+        }
+
         if (parsingResult.refusjonskrav.size > maxRowNum) {
             throw ExcelFileParsingException("Det er for mange rader i filen. Maks er $maxRowNum")
         }
