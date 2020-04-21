@@ -39,7 +39,7 @@ internal class ExcelParserTest {
         val result = ExcelParser(authorizerMock).parseAndValidateExcelContent(workbook, TestData.validIdentitetsnummer)
 
         assertThat(result.refusjonskrav.size).isEqualTo(1)
-        assertThat(result.errors.size).isEqualTo(7)
+        assertThat(result.errors.size).isEqualTo(8)
 
         val rowErrors = result.errors.groupBy { it.rowNumber }
 
@@ -55,9 +55,10 @@ internal class ExcelParserTest {
         assertThat(rowErrors[15]?.size).isEqualTo(1)
         assertThat(rowErrors[15]?.get(0)?.column).isEqualTo("Til og med")
 
-        assertThat(rowErrors[16]?.size).isEqualTo(2)
+        assertThat(rowErrors[16]?.size).isEqualTo(3)
         assertThat(rowErrors[16]?.get(0)?.column).isEqualTo("Arbeidsgiverperioden (fom+tom)")
         assertThat(rowErrors[16]?.get(1)?.column).isEqualTo("Arbeidsgiverperioden (fom+tom)")
+        assertThat(rowErrors[16]?.get(2)?.column).isEqualTo("Arbeidsgiverperioden (fom+tom)")
 
         assertThat(rowErrors[17]?.size).isEqualTo(1)
         assertThat(rowErrors[17]?.get(0)?.column).isEqualTo("Beløp")
