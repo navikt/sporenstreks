@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - 'preprod/**'
+      -
+env:
+  IMAGE: docker.pkg.github.com/${{ github.repository }}/sporenstreks:${{ github.sha }}
 
 jobs:
   build:
@@ -30,20 +33,22 @@ jobs:
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
-      - name: build docker image
-        run: docker build . --pull -t $(cat .docker_image):$(cat .docker_tag)
-      - name: push docker image
+      - name: Build and publish Docker image
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "$GITHUB_ACCESS_TOKEN" | docker login --username "x-access-token" --password-stdin https://docker.pkg.github.com
-          docker push $(cat .docker_image):$(cat .docker_tag)
+          docker build --tag ${IMAGE} .
+          docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
+          docker push ${IMAGE}
+
+  deploy:
+    name: Deploy to PREPROD
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: nais/deploy/actions/deploy@v1
         env:
-          GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
-      - name: deploy to dev
-        uses: navikt/deployment-cli/action@0.4.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
-          AWAIT_SECONDS: 0
-        with:
-          cluster: dev-fss
-          team: helsearbeidsgiver
-          resources: deploy/dev.yaml
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-fss
+          RESOURCE: deploy/dev.yaml

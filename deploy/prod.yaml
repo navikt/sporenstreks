@@ -4,9 +4,9 @@ metadata:
   name: sporenstreks
   namespace: default
   labels:
-    team: {{team}}
+    team: helsearbeidsgiver
 spec:
-  image: {{image}}:{{tag}}
+  image: {{image}}
   port: 8080
   liveness:
     path: isalive
