@@ -27,6 +27,7 @@ data class RefusjonskravDto(
             validate(RefusjonskravDto::perioder).validateForEach {
                 validate(Arbeidsgiverperiode::beloep).isPositiveOrZero()
                 validate(Arbeidsgiverperiode::beloep).isLessThanOrEqualTo(1_000_000.0)
+                validate(Arbeidsgiverperiode::antallDagerMedRefusjon).isPositiveOrZero()
             }
 
             validate(RefusjonskravDto::perioder).validateForEach {

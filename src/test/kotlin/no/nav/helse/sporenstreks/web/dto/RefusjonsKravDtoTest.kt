@@ -320,4 +320,19 @@ internal class RefusjonsKravDtoTest {
         )
     }
 
+    @Test
+    fun `Antall dager det kreves refusjon for kan ikke være negativt`() {
+        Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
+            RefusjonskravDto(
+                    TestData.validIdentitetsnummer,
+                    TestData.validOrgNr,
+                    setOf(
+                            Arbeidsgiverperiode(
+                                    LocalDate.of(2020, 3, 10),
+                                    LocalDate.of(2020, 3, 20),
+                                    -5, 4000.0))
+            )
+        }
+    }
+
 }
