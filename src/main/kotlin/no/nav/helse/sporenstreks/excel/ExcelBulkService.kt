@@ -1,6 +1,7 @@
 package no.nav.helse.sporenstreks.excel
 
 import no.nav.helse.sporenstreks.db.RefusjonskravRepository
+import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
@@ -34,6 +35,7 @@ class ExcelBulkService(private val db: RefusjonskravRepository, private val pars
         log.info("Lagrer ${parsingResult.refusjonskrav.size} krav")
         val referenceNumbers = db.bulkInsert(parsingResult.refusjonskrav)
         log.info("Lagret  ${parsingResult.refusjonskrav.size} krav")
+        INNKOMMENDE_REFUSJONSKRAV_COUNTER.inc(parsingResult.refusjonskrav.size.toDouble())
 
         // Håndtere at vi har lagret men skriving tilbake til filen feiler
         val sheet = workbook.getSheetAt(0);
