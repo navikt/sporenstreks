@@ -43,6 +43,7 @@ fun ConstraintViolation.getContextualMessage(): String {
         (this.constraint.name =="GreaterOrEqual" && this.property.endsWith("beloep")) ->  "Refusjonsbeløpet må være et posisivt tall eller null"
         (this.constraint.name =="GreaterOrEqual" && this.property.endsWith(".tom")) ->  "Fra-dato må være før til-dato"
         (this.constraint.name =="LessOrEqual" && this.property.endsWith(".tom")) ->  "Det kan ikke kreves refusjon for datoer fremover i tid"
+        (this.constraint.name =="GreaterOrEqual" && this.property.endsWith("antallDagerMedRefusjon")) ->  "Antall dager det kreves refusjon for kan ikke være negativt tall"
         else -> this.toMessage().message
     }
 }
