@@ -10,15 +10,13 @@ import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.authenticate
 import io.ktor.config.ApplicationConfig
-import io.ktor.features.ContentNegotiation
-import io.ktor.features.DataConversion
-import io.ktor.features.ParameterConversionException
-import io.ktor.features.StatusPages
+import io.ktor.features.*
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.jackson.JacksonConverter
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.locations.Locations
+import io.ktor.request.path
 import io.ktor.response.respond
 import io.ktor.routing.routing
 import io.ktor.util.DataConversionException
@@ -32,6 +30,7 @@ import no.nav.security.token.support.ktor.tokenValidationSupport
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.get
 import org.slf4j.LoggerFactory
+import org.slf4j.event.Level
 import org.valiktor.ConstraintViolationException
 import java.lang.reflect.InvocationTargetException
 import java.net.URI
@@ -52,6 +51,28 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
     }
 
     install(Locations)
+
+    install(CallId) {
+
+        reply { call, callId -> }
+
+        header("Nav-Call-Id")
+        header("X-Correlation-ID")
+
+        generate {
+            UUID.randomUUID().toString()
+        }
+    }
+
+    install(CallLogging) {
+        level = Level.INFO
+        callIdMdc("call_id")
+        filter {
+            it.request.path() != "/isready"
+                    && it.request.path() != "/isalive"
+                    && it.request.path() != "/metrics"
+        }
+    }
 
     install(ContentNegotiation) {
         val commonObjectMapper = get<ObjectMapper>()
