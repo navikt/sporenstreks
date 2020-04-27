@@ -56,8 +56,8 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
 
         reply { call, callId -> }
 
-        header("Nav-Call-Id")
         header("X-Correlation-ID")
+        header("Nav-Call-Id")
 
         generate {
             UUID.randomUUID().toString()
