@@ -10,11 +10,11 @@ import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
 import org.slf4j.LoggerFactory
 
 interface DokarkivKlient {
-    fun journalførDokument(dokument: String, refusjonskrav: Refusjonskrav): String
+    fun journalførDokument(dokument: String, refusjonskrav: Refusjonskrav, callId: String): String
 }
 
 class MockDokarkivKlient : DokarkivKlient {
-    override fun journalførDokument(dokument: String, refusjonskrav: Refusjonskrav): String {
+    override fun journalførDokument(dokument: String, refusjonskrav: Refusjonskrav, callId: String): String {
         return "id"
     }
 }
@@ -27,13 +27,14 @@ class DokarkivKlientImpl(
     private val logger: org.slf4j.Logger = LoggerFactory.getLogger("DokarkivClient")
 
 
-    override fun journalførDokument(dokument: String, refusjonskrav: Refusjonskrav): String {
+    override fun journalførDokument(dokument: String, refusjonskrav: Refusjonskrav, callId: String): String {
         logger.debug("Journalfører dokument");
         val url = "$dokarkivBaseUrl/rest/journalpostapi/v1/journalpost?forsoekFerdigstill=true"
         val response = runBlocking {
             httpClient.post<JournalpostResponse> {
                 url(url)
                 headers.append("Authorization", "Bearer " + stsClient.getOidcToken())
+                headers.append("Nav-Call-Id", callId)
                 contentType(io.ktor.http.ContentType.Application.Json)
                 body = JournalpostRequest(
                         bruker = Bruker(

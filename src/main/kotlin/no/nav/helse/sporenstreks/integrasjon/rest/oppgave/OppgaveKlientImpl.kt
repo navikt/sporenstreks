@@ -13,12 +13,13 @@ interface OppgaveKlient {
     suspend fun opprettOppgave(
             journalpostId: String,
             aktørId: String,
-            strukturertSkjema: String
+            strukturertSkjema: String,
+            callId: String
     ): OppgaveResultat
 }
 
 class MockOppgaveKlient : OppgaveKlient {
-    override suspend fun opprettOppgave(journalpostId: String, aktørId: String, strukturertSkjema: String): OppgaveResultat {
+    override suspend fun opprettOppgave(journalpostId: String, aktørId: String, strukturertSkjema: String, callId: String): OppgaveResultat {
         return OppgaveResultat(123, false)
     }
 }
@@ -28,10 +29,11 @@ class OppgaveKlientImpl(
 ) : OppgaveKlient {
 
 
-    private suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest, token: String): OpprettOppgaveResponse {
+    private suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest, msgId: String, token: String): OpprettOppgaveResponse {
         return httpClient.post(url) {
             contentType(ContentType.Application.Json)
             this.header("Authorization", "Bearer $token")
+            this.header("X-Correlation-ID", msgId)
             body = opprettOppgaveRequest
         }
     }
@@ -53,13 +55,15 @@ class OppgaveKlientImpl(
     override suspend fun opprettOppgave(
             journalpostId: String,
             aktørId: String,
-            strukturertSkjema: String
+            strukturertSkjema: String,
+            callId: String
     ): OppgaveResultat {
         val opprettOppgaveRequest = mapOppgave(journalpostId, aktørId, strukturertSkjema)
         log.info("Oppretter oppgave")
         return OppgaveResultat(
                 opprettOppgave(
                         opprettOppgaveRequest,
+                        callId,
                         stsClient.getOidcToken()
                 ).id, false
         )
