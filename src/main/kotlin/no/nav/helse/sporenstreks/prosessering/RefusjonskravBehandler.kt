@@ -10,7 +10,6 @@ import no.nav.helse.sporenstreks.metrics.FEIL_COUNTER
 import no.nav.helse.sporenstreks.metrics.JOURNALFOERING_COUNTER
 import no.nav.helse.sporenstreks.metrics.KRAV_TIME
 import no.nav.helse.sporenstreks.metrics.OPPGAVE_COUNTER
-import no.nav.helse.sporenstreks.utils.MDCOperations
 import org.slf4j.LoggerFactory
 
 class RefusjonskravBehandler(val joarkService: JoarkService,
@@ -25,25 +24,22 @@ class RefusjonskravBehandler(val joarkService: JoarkService,
             return
         }
         val timer = KRAV_TIME.startTimer()
-        val callId = MDCOperations.generateCallId()
-        log.info("Bruker callID $callId")
         log.info("Prosesserer: ${refusjonskrav.id}")
         try {
 
             if (refusjonskrav.joarkReferanse.isNullOrBlank()) {
-                refusjonskrav.joarkReferanse = joarkService.journalfør(refusjonskrav, callId)
+                refusjonskrav.joarkReferanse = joarkService.journalfør(refusjonskrav)
                 JOURNALFOERING_COUNTER.inc()
             }
 
             if (refusjonskrav.oppgaveId.isNullOrBlank()) {
 
-                val aktørId = aktorConsumer.getAktorId(refusjonskrav.identitetsnummer, callId)
+                val aktørId = aktorConsumer.getAktorId(refusjonskrav.identitetsnummer)
 
                 refusjonskrav.oppgaveId = oppgaveService.opprettOppgave(
                         refusjonskrav,
                         refusjonskrav.joarkReferanse!!,
-                        aktørId,
-                        callId
+                        aktørId
                 )
                 OPPGAVE_COUNTER.inc()
             }

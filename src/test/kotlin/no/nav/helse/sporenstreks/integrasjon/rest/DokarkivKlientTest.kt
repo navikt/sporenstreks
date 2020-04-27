@@ -18,7 +18,6 @@ import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.DokarkivKlientImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.JournalpostResponse
 import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
-import no.nav.helse.sporenstreks.utils.MDCOperations
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -76,7 +75,7 @@ class DokarkivKlientTest {
                 joarkReferanse = "NUL",
                 oppgaveId = "NULL"
         )
-        val response = dokarkivKlient.journalførDokument("PDFDOKUMENT", refusjonskrav, MDCOperations.generateCallId())
+        val response = dokarkivKlient.journalførDokument("PDFDOKUMENT", refusjonskrav)
         assertThat(response).isNotNull()
     }
 

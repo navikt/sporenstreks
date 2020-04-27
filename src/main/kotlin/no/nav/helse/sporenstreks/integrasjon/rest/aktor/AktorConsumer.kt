@@ -7,11 +7,11 @@ import kotlinx.coroutines.runBlocking
 import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
 
 interface AktorConsumer {
-    fun getAktorId(fnr: String, callId: String): String
+    fun getAktorId(fnr: String): String
 }
 
 class MockAktorConsumer : AktorConsumer {
-    override fun getAktorId(fnr: String, callId: String): String {
+    override fun getAktorId(fnr: String): String {
         return "aktorId"
     }
 }
@@ -21,17 +21,16 @@ class AktorConsumerImpl(val stsClient: STSClient,
                         val baseUrl: String,
                         val httpClient: HttpClient) : AktorConsumer {
 
-    override fun getAktorId(fnr: String, callId: String): String {
-        return getIdent(fnr, "AktoerId", callId)
+    override fun getAktorId(fnr: String): String {
+        return getIdent(fnr, "AktoerId")
     }
 
-    private fun getIdent(sokeIdent: String, identgruppe: String, callId: String): String {
+    private fun getIdent(sokeIdent: String, identgruppe: String): String {
         val response = runBlocking {
             httpClient.get<AktorResponse> {
                 url("$baseUrl/identer?gjeldende=true&identgruppe=$identgruppe")
                 headers.append("Authorization", "Bearer " + stsClient.getOidcToken())
                 headers.append("Nav-Consumer-Id", username)
-                headers.append("Nav-Call-Id", callId)
                 headers.append("Nav-Personidenter", sokeIdent)
             }
         }[sokeIdent]
