@@ -25,6 +25,7 @@ import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.sporenstreks.auth.localCookieDispenser
 import no.nav.helse.sporenstreks.excel.ExcelFileParsingException
 import no.nav.helse.sporenstreks.nais.nais
+import no.nav.helse.sporenstreks.utils.MDCOperations.generateCallId
 import no.nav.helse.sporenstreks.web.api.sporenstreks
 import no.nav.helse.sporenstreks.web.dto.validation.*
 import no.nav.security.token.support.ktor.tokenValidationSupport
@@ -58,10 +59,11 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
         reply { call, callId ->
             call.response.header("Nav-Call-Id", callId)
             call.response.header("X-Correlation-ID", callId)
+            call.response.header("x_callId", callId)
         }
 
         generate {
-            UUID.randomUUID().toString()
+            generateCallId()
         }
     }
 
