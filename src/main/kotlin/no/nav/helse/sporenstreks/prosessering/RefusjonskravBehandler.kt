@@ -11,6 +11,7 @@ import no.nav.helse.sporenstreks.metrics.JOURNALFOERING_COUNTER
 import no.nav.helse.sporenstreks.metrics.KRAV_TIME
 import no.nav.helse.sporenstreks.metrics.OPPGAVE_COUNTER
 import no.nav.helse.sporenstreks.utils.MDCOperations
+import no.nav.helse.sporenstreks.utils.withMDC
 import org.slf4j.LoggerFactory
 
 class RefusjonskravBehandler(val joarkService: JoarkService,
@@ -21,12 +22,17 @@ class RefusjonskravBehandler(val joarkService: JoarkService,
     val logger = LoggerFactory.getLogger(RefusjonskravBehandler::class.java)
 
     fun behandle(refusjonskrav: Refusjonskrav) {
+        val callId = MDCOperations.generateCallId()
+        withMDC(mapOf("x_call_id" to callId)) {
+            behandle(refusjonskrav)
+        }
+    }
+
+    private fun behandle(refusjonskrav: Refusjonskrav, callId: String) {
         if (refusjonskrav.status == RefusjonskravStatus.SENDT_TIL_BEHANDLING) {
             return
         }
         val timer = KRAV_TIME.startTimer()
-        val callId = MDCOperations.generateCallId()
-        log.info("Bruker callID $callId")
         log.info("Prosesserer: ${refusjonskrav.id}")
         try {
 
