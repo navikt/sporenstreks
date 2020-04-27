@@ -24,7 +24,7 @@ class RefusjonskravBehandler(val joarkService: JoarkService,
     fun behandle(refusjonskrav: Refusjonskrav) {
         val callId = MDCOperations.generateCallId()
         withMDC(mapOf("x_call_id" to callId)) {
-            behandle(refusjonskrav)
+            behandle(refusjonskrav, callId)
         }
     }
 
