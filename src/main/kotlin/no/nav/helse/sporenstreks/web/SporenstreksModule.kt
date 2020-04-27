@@ -17,6 +17,7 @@ import io.ktor.jackson.JacksonConverter
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.locations.Locations
 import io.ktor.request.path
+import io.ktor.response.header
 import io.ktor.response.respond
 import io.ktor.routing.routing
 import io.ktor.util.DataConversionException
@@ -54,10 +55,10 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
 
     install(CallId) {
 
-        reply { call, callId -> }
-
-        header("X-Correlation-ID")
-        header("Nav-Call-Id")
+        reply { call, callId ->
+            call.response.header("Nav-Call-Id", callId)
+            call.response.header("X-Correlation-ID", callId)
+        }
 
         generate {
             UUID.randomUUID().toString()
