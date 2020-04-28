@@ -69,10 +69,10 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                     timer.observeDuration()
                 }
             }
-            get("/eksisterende/{virksomhet}") {
-                val virksomhet = requireNotNull(call.parameters["virksomhet"])
-                authorize(authorizer, virksomhet)
-                call.respond(HttpStatusCode.OK, db.getAllForVirksomhet(virksomhet)
+            get("/allerede-innsendte-krav/{virksomhetsnummer}") {
+                val virksomhetsnummer = requireNotNull(call.parameters["virksomhetsnummer"])
+                authorize(authorizer, virksomhetsnummer)
+                call.respond(HttpStatusCode.OK, db.getAllForVirksomhet(virksomhetsnummer)
                         .map {
                             RefusjonskravDto(it.identitetsnummer,
                                     it.virksomhetsnummer,
