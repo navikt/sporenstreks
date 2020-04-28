@@ -11,22 +11,16 @@ import io.ktor.http.content.PartData
 import io.ktor.http.content.readAllParts
 import io.ktor.http.content.streamProvider
 import io.ktor.request.receive
-import io.ktor.request.receiveText
 import io.ktor.request.receiveMultipart
+import io.ktor.request.receiveText
 import io.ktor.response.respond
 import io.ktor.response.respondBytes
-import io.ktor.response.respondFile
-import io.ktor.response.respondOutputStream
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.pipeline.PipelineContext
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.yield
 import no.nav.helse.sporenstreks.auth.AuthorizationsRepository
 import no.nav.helse.sporenstreks.auth.Authorizer
 import no.nav.helse.sporenstreks.auth.altinn.AltinnBrukteForLangTidException
@@ -44,21 +38,15 @@ import no.nav.helse.sporenstreks.web.dto.PostListResponseDto
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import no.nav.helse.sporenstreks.web.dto.validation.ValidationProblemDetail
 import no.nav.helse.sporenstreks.web.dto.validation.getContextualMessage
-import java.io.File
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
 import org.koin.ktor.ext.get
-import org.slf4j.LoggerFactory
 import org.valiktor.ConstraintViolationException
+import java.io.IOException
 import javax.ws.rs.ForbiddenException
 
 private val excelContentType = ContentType.parse("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
 @KtorExperimentalAPI
 fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepository, db: RefusjonskravRepository) {
-    val logger = LoggerFactory.getLogger("API Route handler")
-
     route("api/v1") {
         route("/refusjonskrav") {
             post("/") {
@@ -81,13 +69,24 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                     timer.observeDuration()
                 }
             }
+            get("/eksisterende/{virksomhet}") {
+                val virksomhet = requireNotNull(call.parameters["virksomhet"])
+                authorize(authorizer, virksomhet)
+                call.respond(HttpStatusCode.OK, db.getAllForVirksomhet(virksomhet)
+                        .map {
+                            RefusjonskravDto(it.identitetsnummer,
+                                    it.virksomhetsnummer,
+                                    it.perioder)
+                        })
+            }
+
             post("/list") {
                 val refusjonskravJson = call.receiveText()
                 val om = application.get<ObjectMapper>()
                 val jsonTree = om.readTree(refusjonskravJson)
                 val responseBody = ArrayList<PostListResponseDto>(jsonTree.size())
 
-                for(i in 0 until jsonTree.size()) {
+                for (i in 0 until jsonTree.size()) {
                     try {
                         val dto = om.readValue<RefusjonskravDto>(jsonTree[i].traverse())
                         authorize(authorizer, dto.virksomhetsnummer)
@@ -103,14 +102,14 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                         INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTER.inc(domeneKrav.perioder.sumByDouble { it.beloep }.div(1000))
 
                         responseBody.add(PostListResponseDto(status = PostListResponseDto.Status.OK, referenceNumber = "${saved.referansenummer}"))
-                    } catch(forbiddenEx: ForbiddenException) {
+                    } catch (forbiddenEx: ForbiddenException) {
                         responseBody.add(PostListResponseDto(status = PostListResponseDto.Status.GENERIC_ERROR, genericMessage = "Ingen tilgang til virksomheten"))
                     } catch (validationEx: ConstraintViolationException) {
                         val problems = validationEx.constraintViolations.map {
                             ValidationProblemDetail(it.constraint.name, it.getContextualMessage(), it.property, it.value)
                         }
                         responseBody.add(PostListResponseDto(status = PostListResponseDto.Status.VALIDATION_ERRORS, validationErrors = problems))
-                    } catch(genericEx: Exception) {
+                    } catch (genericEx: Exception) {
                         if (genericEx.cause is ConstraintViolationException) {
                             val problems = (genericEx.cause as ConstraintViolationException).constraintViolations.map {
                                 ValidationProblemDetail(it.constraint.name, it.getContextualMessage(), it.property, it.value)
