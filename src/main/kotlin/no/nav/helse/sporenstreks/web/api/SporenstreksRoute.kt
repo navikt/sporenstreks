@@ -185,6 +185,7 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
     }
 }
 
+@KtorExperimentalAPI
 private fun PipelineContext<Unit, ApplicationCall>.authorize(authorizer: Authorizer, arbeidsgiverId: String) {
     val identitetsnummer = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
     if (!authorizer.hasAccess(identitetsnummer, arbeidsgiverId)) {
