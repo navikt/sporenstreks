@@ -5,24 +5,36 @@ import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import java.util.*
 
 class MockRefusjonskravRepo : RefusjonskravRepository {
+
+    private val refusjonskravListe = mutableListOf<Refusjonskrav>()
+
     override fun getAllForVirksomhet(virksomhetsnummer: String): List<Refusjonskrav> {
-        return emptyList()
+        return refusjonskravListe.filter {
+            it.virksomhetsnummer == virksomhetsnummer
+        }
     }
 
     override fun insert(refusjonskrav: Refusjonskrav): Refusjonskrav {
-        return getById(UUID.randomUUID())
+        refusjonskravListe.add(refusjonskrav)
+        return refusjonskrav
     }
 
     override fun getExistingRefusjonskrav(identitetsnummer: String, virksomhetsnummer: String): List<Refusjonskrav> {
-        return emptyList()
+        return refusjonskravListe.filter {
+            it.virksomhetsnummer == virksomhetsnummer && it.identitetsnummer == identitetsnummer
+        }
     }
 
     override fun delete(id: UUID): Int {
-        return 0
+        return if (refusjonskravListe.removeIf {
+                    it.id == id
+                }) 1 else 0
     }
 
     override fun getById(id: UUID): Refusjonskrav {
-        return Refusjonskrav("", "", emptySet())
+        return refusjonskravListe.first {
+            it.id == id
+        }
     }
 
     override fun getByStatus(status: RefusjonskravStatus, limit: Int): List<Refusjonskrav> {

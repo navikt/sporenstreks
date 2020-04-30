@@ -2,6 +2,7 @@ package no.nav.helse.sporenstreks.web.integration
 
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.server.testing.handleRequest
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.sporenstreks.auth.StaticMockAuthRepo
@@ -12,6 +13,7 @@ import org.koin.ktor.ext.get
 
 @KtorExperimentalAPI
 class HealthCheckTests : ControllerIntegrationTestBase() {
+    @KtorExperimentalLocationsAPI
     @Test
     fun `HealthCheck Endpoint returns 500 When any HealthCheck Component Fail`() {
         configuredTestApplication({
@@ -26,6 +28,7 @@ class HealthCheckTests : ControllerIntegrationTestBase() {
         }
     }
 
+    @KtorExperimentalLocationsAPI
     @Test
     fun `HealthCheck Endpoint returns 200 When all HealthCheck Components are Ok`() {
         configuredTestApplication({
