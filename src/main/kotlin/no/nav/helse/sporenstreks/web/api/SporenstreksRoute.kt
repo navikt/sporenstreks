@@ -69,7 +69,7 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                     timer.observeDuration()
                 }
             }
-            get("/allerede-innsendte-krav/{virksomhetsnummer}") {
+            get("/virksomhet/{virksomhetsnummer}") {
                 val virksomhetsnummer = requireNotNull(call.parameters["virksomhetsnummer"])
                 authorize(authorizer, virksomhetsnummer)
                 call.respond(HttpStatusCode.OK, db.getAllForVirksomhet(virksomhetsnummer)

@@ -29,7 +29,7 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
         configuredTestApplication({
             sporenstreksModule()
         }) {
-            doAuthenticatedRequest(HttpMethod.Get, "api/v1/refusjonskrav/allerede-innsendte-krav/910020102") {
+            doAuthenticatedRequest(HttpMethod.Get, "api/v1/refusjonskrav/virksomhet/910020102") {
             }.apply {
                 Assertions.assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
                 Assertions.assertThat(response.content).isEqualTo("[ ]")
@@ -64,7 +64,7 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
             }
 
 
-            doAuthenticatedRequest(HttpMethod.Get, "api/v1/refusjonskrav/allerede-innsendte-krav/910020102") {
+            doAuthenticatedRequest(HttpMethod.Get, "api/v1/refusjonskrav/virksomhet/910020102") {
             }.apply {
                 Assertions.assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
                 val resultat: List<RefusjonskravDto> = om.readValue(response.content!!)
@@ -80,7 +80,7 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
         configuredTestApplication({
             sporenstreksModule()
         }) {
-            handleRequest(HttpMethod.Get, "api/v1/refusjonskrav/allerede-innsendte-krav/${TestData.validOrgNr}") {
+            handleRequest(HttpMethod.Get, "api/v1/refusjonskrav/virksomhet/${TestData.validOrgNr}") {
             }.apply {
                 Assertions.assertThat(response.status()).isEqualTo(HttpStatusCode.Unauthorized)
             }
