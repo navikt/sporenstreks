@@ -13,7 +13,7 @@ class ExcelBulkService(private val db: RefusjonskravRepository, private val pars
     private val maxRowNum: Int = 5000
     private val log = LoggerFactory.getLogger(ExcelBulkService::class.java)
 
-    fun processExcelFile(file: InputStream, opprettetAvIdentitetsnummer: String): ByteArray {
+    fun processExcelFile(file: InputStream, opprettetAvIdentitetsnummer: String) {
         log.info("Starter prosseseringen av Excel fil")
         val workbook: Workbook = XSSFWorkbook(file)
 
@@ -36,22 +36,6 @@ class ExcelBulkService(private val db: RefusjonskravRepository, private val pars
         val referenceNumbers = db.bulkInsert(parsingResult.refusjonskrav)
         log.info("Lagret  ${parsingResult.refusjonskrav.size} krav")
         INNKOMMENDE_REFUSJONSKRAV_COUNTER.inc(parsingResult.refusjonskrav.size.toDouble())
-
-        // Håndtere at vi har lagret men skriving tilbake til filen feiler
-        val sheet = workbook.getSheetAt(0);
-        sheet.getRow(startDataRowAt-1)
-                .getCell(referenceNumberColumnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)
-                .setCellValue("Referansenummer hos NAV")
-
-        referenceNumbers.forEachIndexed { i, refNr ->
-            sheet.getRow(startDataRowAt + i)
-                    .getCell(referenceNumberColumnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)
-                    .setCellValue(refNr.toString())
-        }
-
-        val stream = ByteArrayOutputStream()
-        workbook.write(stream)
-        return stream.toByteArray()
     }
 
     companion object {

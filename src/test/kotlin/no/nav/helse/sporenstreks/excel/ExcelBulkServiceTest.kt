@@ -31,7 +31,7 @@ internal class ExcelBulkServiceTest {
     }
 
     @Test
-    internal fun `Lagrer til databasen og setter inn referansenummere i excelarket ved feilfri parsing`() {
+    internal fun `Lagrer til databasen ved feilfri parsing`() {
         val bulkservice = ExcelBulkService(dbMock, parserMock)
         val refusjonskrabParsedFromFile = listOf(Refusjonskrav(
                 TestData.validIdentitetsnummer,
@@ -43,15 +43,9 @@ internal class ExcelBulkServiceTest {
         val refernceNumber = 123
         every { dbMock.bulkInsert(refusjonskrabParsedFromFile) } returns listOf(refernceNumber)
 
-        val excelWorkbookWithReferenceNumbers = bulkservice.processExcelFile(excelFile, TestData.validIdentitetsnummer)
+       bulkservice.processExcelFile(excelFile, TestData.validIdentitetsnummer)
 
         verify(exactly = 1) { dbMock.bulkInsert(refusjonskrabParsedFromFile) }
-
-        val workbook: Workbook = XSSFWorkbook(ByteArrayInputStream(excelWorkbookWithReferenceNumbers))
-        val sheet = workbook.getSheetAt(0)
-        val refNumberCell = sheet.getRow(startDataRowAt).getCell(referenceNumberColumnIndex)
-
-        assertThat(refNumberCell.stringCellValue).isEqualTo(refernceNumber.toString())
     }
 }
 
