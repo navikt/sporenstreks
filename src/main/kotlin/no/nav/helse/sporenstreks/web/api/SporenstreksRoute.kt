@@ -155,16 +155,9 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                     throw IOException("Den opplastede filen er for stor")
                 }
 
-                val resultingFile = ExcelBulkService(db, ExcelParser(authorizer))
-                        .processExcelFile(bytes.inputStream(), id)
+                ExcelBulkService(db, ExcelParser(authorizer)).processExcelFile(bytes.inputStream(), id)
 
-                call.response.headers.append("Content-Disposition", "attachment; filename=\"koronasykepenger_kvittering.xlsx\"")
-
-                call.respondBytes(
-                        resultingFile,
-                        excelContentType,
-                        HttpStatusCode.OK
-                )
+                call.respond(HttpStatusCode.OK, "Søknaden er mottatt.")
             }
         }
 
