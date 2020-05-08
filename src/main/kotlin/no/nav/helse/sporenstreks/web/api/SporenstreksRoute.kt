@@ -133,6 +133,8 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                 call.respondBytes(template.readAllBytes(), excelContentType)
             }
 
+            post("/upload") {
+
                 val id = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
                 val multipart = call.receiveMultipart()
 
