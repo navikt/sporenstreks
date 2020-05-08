@@ -128,7 +128,7 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
         route("/bulk") {
 
             get("/template") {
-                val template = javaClass.getResourceAsStream("/bulk-upload/koronasykepengerefusjon_nav.xlsx")
+                val template = javaClass.getResourceAsStream("/bulk-upload/sykepengerefusjon_mal_nav.xlsx")
                 call.response.headers.append("Content-Disposition", "attachment; filename=\"koronasykepenger_nav.xlsx\"")
                 call.respondBytes(template.readAllBytes(), excelContentType)
             }
