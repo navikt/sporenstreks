@@ -25,6 +25,7 @@ import no.nav.helse.sporenstreks.auth.AuthorizationsRepository
 import no.nav.helse.sporenstreks.auth.Authorizer
 import no.nav.helse.sporenstreks.auth.altinn.AltinnBrukteForLangTidException
 import no.nav.helse.sporenstreks.auth.hentIdentitetsnummerFraLoginToken
+import no.nav.helse.sporenstreks.auth.hentUtløpsdatoFraLoginToken
 import no.nav.helse.sporenstreks.db.RefusjonskravRepository
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.excel.ExcelBulkService
@@ -48,6 +49,13 @@ private val excelContentType = ContentType.parse("application/vnd.openxmlformats
 @KtorExperimentalAPI
 fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepository, db: RefusjonskravRepository) {
     route("api/v1") {
+
+        route("/login-expiry") {
+            get {
+                call.respond(HttpStatusCode.OK, hentUtløpsdatoFraLoginToken(application.environment.config, call.request))
+            }
+        }
+
         route("/refusjonskrav") {
             post("/") {
                 val timer = REQUEST_TIME.startTimer()
