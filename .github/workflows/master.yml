@@ -6,6 +6,7 @@ on:
       - master
 
 env:
+  LATEST_TAG: docker.pkg.github.com/${{ github.repository }}/sporenstreks:latest
   IMAGE: docker.pkg.github.com/${{ github.repository }}/sporenstreks:${{ github.sha }}
 
 jobs:
@@ -22,14 +23,6 @@ jobs:
       #          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
       #          restore-keys: |
       #            ${{ runner.os }}-gradle-
-      - name: create docker tag
-        env:
-          DOCKER_IMAGE: docker.pkg.github.com/${{ github.repository }}/sporenstreks
-        run: |
-          echo $DOCKER_IMAGE > .docker_image
-          echo $(echo $GITHUB_SHA | cut -c1-7) > .docker_tag
-      #      - name: compose up
-      #        run: cd docker/local && docker-compose up -d && sleep 10
       - name: test and build
         run: bash ./gradlew --console=plain build test
         env:
@@ -40,7 +33,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          docker build --tag ${IMAGE} .
+          docker build --tag ${IMAGE} --tag ${LATEST_TAG} .
           docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
           docker push ${IMAGE}
 
