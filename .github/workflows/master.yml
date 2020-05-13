@@ -6,6 +6,7 @@ on:
       - master
 
 env:
+  DOCKER_IMAGE_NAME: docker.pkg.github.com/${{ github.repository }}/sporenstreks
   LATEST_TAG: docker.pkg.github.com/${{ github.repository }}/sporenstreks:latest
   IMAGE: docker.pkg.github.com/${{ github.repository }}/sporenstreks:${{ github.sha }}
 
@@ -35,7 +36,7 @@ jobs:
         run: |
           docker build --tag ${IMAGE} --tag ${LATEST_TAG} .
           docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
-          docker push ${IMAGE}
+          docker push ${DOCKER_IMAGE_NAME}
 
   deploy:
     name: Deploy to PREPROD og PROD
