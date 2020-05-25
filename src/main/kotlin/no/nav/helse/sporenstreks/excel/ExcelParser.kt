@@ -38,7 +38,7 @@ class ExcelParser(private val authorizer: Authorizer) {
                 errorRows.add(ExcelFileRowError(
                         currentDataRow+1,
                         "Virksomhetsnummer",
-                        "Du har ikke korrekte tilganger for denne virksomheten")
+                        "Du har ikke korrekte tilganger for denne virksomheten, eller dette er ikke et virksomhetsnummer")
                 )
             } catch(valErr: ConstraintViolationException) {
                 errorRows.addAll(
