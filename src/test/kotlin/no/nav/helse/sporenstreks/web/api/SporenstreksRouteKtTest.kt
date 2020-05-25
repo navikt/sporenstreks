@@ -29,7 +29,7 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
         configuredTestApplication({
             sporenstreksModule()
         }) {
-            doAuthenticatedRequest(HttpMethod.Get, "api/v1/refusjonskrav/virksomhet/910020102") {
+            doAuthenticatedRequest(HttpMethod.Get, "api/v1/refusjonskrav/virksomhet/910098896") {
             }.apply {
                 Assertions.assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
                 Assertions.assertThat(response.content).isEqualTo("[ ]")
@@ -45,7 +45,7 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
         }) {
             val om = application.get<ObjectMapper>()
             val dto = RefusjonskravDto(identitetsnummer = TestData.validIdentitetsnummer,
-                    virksomhetsnummer = "910020102",
+                    virksomhetsnummer = "910098896",
                     perioder = setOf(Arbeidsgiverperiode(
                             fom = LocalDate.of(2020, 3, 17),
                             tom = LocalDate.of(2020, 3, 25),
@@ -64,7 +64,7 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
             }
 
 
-            doAuthenticatedRequest(HttpMethod.Get, "api/v1/refusjonskrav/virksomhet/910020102") {
+            doAuthenticatedRequest(HttpMethod.Get, "api/v1/refusjonskrav/virksomhet/910098896") {
             }.apply {
                 Assertions.assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
                 val resultat: List<RefusjonskravDto> = om.readValue(response.content!!)
