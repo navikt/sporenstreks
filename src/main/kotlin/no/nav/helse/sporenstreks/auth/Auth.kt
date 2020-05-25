@@ -11,10 +11,17 @@ interface Authorizer {
     fun hasAccess(identitetsnummer: String, arbeidsgiverId: String): Boolean
 }
 
+/**
+ * Standard Authorizer som sjekker at
+ *  * Den angitte brukeren har rettigheter til den angitte arbeidsgiverIDen
+ *  * Den angitte arbeidsgiver IDen er en underenhet
+ */
 class DefaultAuthorizer(private val authListRepo: AuthorizationsRepository) : Authorizer {
     override fun hasAccess(identitetsnummer: String, arbeidsgiverId: String): Boolean {
         return authListRepo.hentOrgMedRettigheterForPerson(identitetsnummer)
-                .any { (it.organizationNumber ?: it.socialSecurityNumber) == arbeidsgiverId }
+                .any {
+                    it.organizationNumber == arbeidsgiverId && it.parentOrganizationNumber != null
+                }
     }
 }
 

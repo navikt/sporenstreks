@@ -17,8 +17,8 @@ internal class DefaultAuthorizerTest {
     internal fun setUp() {
         val authRepoMock = mockk<AuthorizationsRepository>()
         every { authRepoMock.hentOrgMedRettigheterForPerson(subjectWithAccess) } returns setOf(
-                AltinnOrganisasjon("test", "Enterprise", organizationNumber = "123"),
-                AltinnOrganisasjon("test 2", "Enterprise", organizationNumber = "567"),
+                AltinnOrganisasjon("Juridisk enhet", "Enterprise", organizationNumber = "123"),
+                AltinnOrganisasjon("Undernehet", "Business", organizationNumber = "567", parentOrganizationNumber = "123"),
                 AltinnOrganisasjon("person ", "Person", socialSecurityNumber = "01028454321")
         )
 
@@ -28,8 +28,13 @@ internal class DefaultAuthorizerTest {
     }
 
     @Test
-    internal fun `access Is Given To Orgnumber In the Access List`() {
-        assertThat(authorizer.hasAccess(subjectWithAccess, "123")).isTrue()
+    internal fun `access denied for Juridisk Enhet`() {
+        assertThat(authorizer.hasAccess(subjectWithAccess, "123")).isFalse()
+    }
+
+    @Test
+    internal fun `access granted for Underenhet`() {
+        assertThat(authorizer.hasAccess(subjectWithAccess, "567")).isTrue()
     }
 
     @Test
@@ -43,7 +48,7 @@ internal class DefaultAuthorizerTest {
     }
 
     @Test
-    internal fun `It is valid to have access to an altinn socialSecurityNumber`() {
-        assertThat(authorizer.hasAccess(subjectWithAccess, "01028454321")).isTrue()
+    internal fun `socialSecurityNumber is not supported`() {
+        assertThat(authorizer.hasAccess(subjectWithAccess, "01028454321")).isFalse()
     }
 }
