@@ -1,6 +1,8 @@
 name: Daglig snyk
 
-on: '15 3 * * *'
+on:
+  schedule:
+    - cron: '15 3 * * *'
 
 jobs:
   snyk:
