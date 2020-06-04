@@ -144,7 +144,7 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
                             }, "null"))
                     )
             )
-            LOGGER.warn("Feil med validering av ${cause.parameter.name ?: "Ukjent"} for ${userAgent}: ${cause.msg}")
+            LOGGER.warn("Feil med validering av ${cause.parameter.name ?: "Ukjent"} for ${userAgent}: ${cause.message}")
         }
 
         exception<ExcelFileParsingException> { cause ->
