@@ -1,6 +1,7 @@
 name: Daglig snyk
 
 on:
+  tag: snyk/*
   schedule:
     - cron: '15 3 * * *'
 
@@ -13,3 +14,5 @@ jobs:
         uses: snyk/actions/gradle@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: monitor

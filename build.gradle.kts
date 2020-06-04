@@ -12,7 +12,7 @@ val mainClass = "no.nav.helse.sporenstreks.web.AppKt"
 val junitJupiterVersion = "5.5.0-RC2"
 val assertJVersion = "3.12.2"
 val mockKVersion = "1.9.3"
-val tokenSupportVersion = "1.1.4"
+val tokenSupportVersion = "1.1.5"
 val koinVersion = "2.0.1"
 val valiktorVersion = "0.10.0"
 val cxfVersion = "3.3.1"
@@ -112,7 +112,7 @@ dependencies {
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
 
     testImplementation("org.koin:koin-test:$koinVersion")
-    implementation("com.github.javafaker:javafaker:1.0.1") // flytt denne til test når generatorene ikke er nødvendige i prod-koden lenger
+    implementation("com.github.javafaker:javafaker:1.0.2") // flytt denne til test når generatorene ikke er nødvendige i prod-koden lenger
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.2")
     testImplementation("io.mockk:mockk:$mockKVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
