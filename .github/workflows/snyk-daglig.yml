@@ -1,7 +1,9 @@
 name: Daglig snyk
 
 on:
-  tag: snyk/*
+  push:
+    tags:
+      - snyk/*
   schedule:
     - cron: '15 3 * * *'
 
