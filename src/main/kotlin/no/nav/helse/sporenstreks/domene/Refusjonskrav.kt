@@ -18,6 +18,7 @@ data class Refusjonskrav(
 
         val opprettet: LocalDateTime = LocalDateTime.now(),
         val id: UUID = UUID.randomUUID(),
+        var indeksertInflux: Boolean = false,
 
         // Dette referansenummeret overskrives av postgres ved lagring
         // og holdes utenfor JSON-data-feltet der. Det er kun skrivbart for mapping fra databasen

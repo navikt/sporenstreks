@@ -18,6 +18,7 @@ psql -v ON_ERROR_STOP=1 --username "sporenstreks" --dbname "sporenstreks" <<-EOS
 
     CREATE INDEX status ON refusjonskrav ((data  ->> 'status'));
     CREATE INDEX id ON refusjonskrav ((data ->> 'id'));
+    CREATE INDEX influx on refusjonskrav ((data ->> 'indeksertInflux'));
     CREATE INDEX virksomhetsnummer ON refusjonskrav ((data ->> 'virksomhetsnummer'));
     CREATE INDEX identitetsnummer ON refusjonskrav ((data  ->> 'identitetsnummer'));
 EOSQL

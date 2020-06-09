@@ -35,10 +35,15 @@ import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.MockDokarkivKlient
 import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.MockOppgaveKlient
 import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.OppgaveKlient
 import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.OppgaveKlientImpl
+import no.nav.helse.sporenstreks.integrasjon.rest.sensu.SensuClient
+import no.nav.helse.sporenstreks.integrasjon.rest.sensu.SensuClientImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
 import no.nav.helse.sporenstreks.prosessering.ProcessFeiledeRefusjonskravJob
+import no.nav.helse.sporenstreks.prosessering.ProcessInfluxJob
 import no.nav.helse.sporenstreks.prosessering.ProcessMottatteRefusjonskravJob
 import no.nav.helse.sporenstreks.prosessering.RefusjonskravBehandler
+import no.nav.helse.sporenstreks.prosessering.metrics.InfluxReporter
+import no.nav.helse.sporenstreks.prosessering.metrics.InfluxReporterImpl
 import org.koin.core.Koin
 import org.koin.core.definition.Kind
 import org.koin.core.module.Module
@@ -160,6 +165,9 @@ fun preprodConfig(config: ApplicationConfig) = module {
         CachedAuthRepo(altinnClient) as AuthorizationsRepository
     }
 
+    single {SensuClientImpl("sensu.nais", 3000) as SensuClient }
+    single {InfluxReporterImpl("sporenstreks", "dev-fss", "default", get()) as InfluxReporter}
+
     single { STSClient(config.getString("service_user.username"), config.getString("service_user.password"), config.getString("sts_url")) }
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
     single { JoarkService(get()) as JoarkService }
@@ -178,6 +186,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { RefusjonskravBehandler(get(), get(), get(), get()) }
     single { ProcessMottatteRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1), get()) }
     single { ProcessFeiledeRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(10), get()) }
+    single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(10), get(), get()) }
     single { LeaderElectionConsumerImpl(config.getString("leader_election.url"), get(), get()) as LeaderElectionConsumer }
 
 }
@@ -203,6 +212,8 @@ fun prodConfig(config: ApplicationConfig) = module {
         CachedAuthRepo(altinn) as AuthorizationsRepository
     }
 
+    single {SensuClientImpl("sensu.nais", 3000) as SensuClient }
+    single {InfluxReporterImpl("sporenstreks", "prod-fss", "default", get()) as InfluxReporter}
     single { STSClient(config.getString("service_user.username"), config.getString("service_user.password"), config.getString("sts_url")) }
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
@@ -221,6 +232,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { RefusjonskravBehandler(get(), get(), get(), get()) }
     single { ProcessMottatteRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1), get()) }
     single { ProcessFeiledeRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofHours(2), get()) }
+    single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(10), get(), get()) }
     single { LeaderElectionConsumerImpl(config.getString("leader_election.url"), get(), get()) as LeaderElectionConsumer }
 }
 
