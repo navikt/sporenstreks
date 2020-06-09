@@ -73,6 +73,7 @@ val common = module {
     om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
     om.configure(SerializationFeature.INDENT_OUTPUT, true)
     om.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+    om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
     om.setDefaultPrettyPrinter(DefaultPrettyPrinter().apply {
         indentArraysWith(DefaultPrettyPrinter.FixedSpaceIndenter.instance)

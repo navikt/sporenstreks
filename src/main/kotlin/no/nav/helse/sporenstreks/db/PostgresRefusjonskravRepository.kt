@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
-import org.postgresql.jdbc.PgArray
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.sql.PreparedStatement
@@ -154,7 +153,8 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
             }.executeUpdate()
         }
 
-        return getById(refusjonskrav.id) ?: throw IOException("Unable to read receipt for refusjonskrav with id ${refusjonskrav.id}")
+        return getById(refusjonskrav.id)
+                ?: throw IOException("Unable to read receipt for refusjonskrav with id ${refusjonskrav.id}")
     }
 
     override fun getExistingRefusjonskrav(identitetsnummer: String, virksomhetsnummer: String): List<Refusjonskrav> {
