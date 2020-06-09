@@ -41,7 +41,7 @@ class InfluxReporterImpl(
 
     override fun registerRefusjonskrav(krav: Refusjonskrav) {
         registerPoint(
-                measurement = "refusjonskrav",
+                measurement = "sporenstreks.refusjonskrav",
                 tags = mapOf("kilde" to krav.kilde),
                 fields = mapOf(
                         "antallPerioder" to krav.perioder.size,
