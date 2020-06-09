@@ -166,7 +166,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
         CachedAuthRepo(altinnClient) as AuthorizationsRepository
     }
 
-    single {SensuClientImpl("sensu.nais", 3000) as SensuClient }
+    single {SensuClientImpl("sensu.nais", 3030) as SensuClient }
     single {InfluxReporterImpl("sporenstreks", "dev-fss", "default", get()) as InfluxReporter}
 
     single { STSClient(config.getString("service_user.username"), config.getString("service_user.password"), config.getString("sts_url")) }
@@ -213,7 +213,7 @@ fun prodConfig(config: ApplicationConfig) = module {
         CachedAuthRepo(altinn) as AuthorizationsRepository
     }
 
-    single {SensuClientImpl("sensu.nais", 3000) as SensuClient }
+    single {SensuClientImpl("sensu.nais", 3030) as SensuClient }
     single {InfluxReporterImpl("sporenstreks", "prod-fss", "default", get()) as InfluxReporter}
     single { STSClient(config.getString("service_user.username"), config.getString("service_user.password"), config.getString("sts_url")) }
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
