@@ -6,6 +6,7 @@ import no.nav.helse.sporenstreks.integrasjon.rest.sensu.SensuEvent
 import no.nav.helse.sporenstreks.prosessering.RefusjonskravBehandler
 import org.influxdb.dto.Point
 import org.slf4j.LoggerFactory
+import java.time.ZoneId
 import java.util.concurrent.TimeUnit
 
 interface InfluxReporter {
@@ -42,14 +43,16 @@ class InfluxReporterImpl(
             SensuEvent("helsearbeidsgiver-sporenstreks-events", output)
 
     override fun registerRefusjonskrav(krav: Refusjonskrav) {
+        val instant = krav.opprettet.atZone(ZoneId.systemDefault()).toInstant()
+        val nanos = TimeUnit.NANOSECONDS.convert(instant.epochSecond, TimeUnit.SECONDS)
         registerPoint(
                 measurement = "sporenstreks.refusjonskrav",
-                tags = mapOf("kilde" to krav.kilde),
+                tags = mapOf("kilde" to krav.kilde.substring(0,3)),
                 fields = mapOf(
                         "antallPerioder" to krav.perioder.size,
                         "antallDagerRefusjon" to krav.perioder.sumBy { it.antallDagerMedRefusjon },
                         "totalBeloep" to krav.perioder.sumByDouble { it.beloep }),
-                nanos = krav.opprettet.nano.toLong())
+                nanos = nanos + instant.nano)
         logger.info("registrerer info om krav ${krav.id} til influx")
     }
 }
