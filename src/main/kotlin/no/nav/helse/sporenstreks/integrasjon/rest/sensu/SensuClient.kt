@@ -25,12 +25,12 @@ class SensuClientImpl(
 }
 
 class SensuEvent(sensuName: String, output: String) {
-    val json = "{" +
-            "\"name\":\"" + sensuName + "\"," +
-            "\"type\":\"metric\"," +
-            "\"handlers\":[\"events_nano\"]," +
-            "\"output\":\"" + output + "\"," +
-            "\"status\":0" +
-            "}"
+    val json = """{
+        "name":"$sensuName",
+        "type":"metric",
+        "handlers":["events_nano"],
+        "output":"$output"
+}
+""".trimIndent()
 
 }
