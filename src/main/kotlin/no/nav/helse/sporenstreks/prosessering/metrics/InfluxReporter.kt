@@ -29,7 +29,7 @@ class InfluxReporterImpl(
                 .fields(fields)
                 .build().lineProtocol())
         sensuClient.write(sensuEvent)
-        logger.info("sensuEvent: $sensuEvent")
+        logger.info("sensuEvent: ${sensuEvent.json}")
     }
 
     private val DEFAULT_TAGS: Map<String, String> = java.util.Map.of(
