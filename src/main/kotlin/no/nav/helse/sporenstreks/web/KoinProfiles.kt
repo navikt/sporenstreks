@@ -233,7 +233,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { RefusjonskravBehandler(get(), get(), get(), get()) }
     single { ProcessMottatteRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1), get()) }
     single { ProcessFeiledeRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofHours(2), get()) }
-    single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(10), get(), get()) }
+    single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), Duration.ofSeconds(30), get(), get()) }
     single { LeaderElectionConsumerImpl(config.getString("leader_election.url"), get(), get()) as LeaderElectionConsumer }
 }
 
