@@ -177,4 +177,34 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
         val deletedCount = repo.delete(refusjonskrav.id)
         assertThat(deletedCount).isEqualTo(1)
     }
+
+    @Test
+    fun `Finner bare krav som er indeksert` (){
+        val ikkeIndeksertListe = repo.getByIkkeIndeksertInflux(100)
+        assertThat(ikkeIndeksertListe).hasSize(1)
+        val ikkeIndeksert = ikkeIndeksertListe.first()
+        ikkeIndeksert.indeksertInflux = true
+        repo.update(ikkeIndeksert)
+        assertThat(repo.getByIkkeIndeksertInflux(100)).isEmpty()
+        val krav2 = repo.insert(GammeltRefusjonskrav(
+                TestData.validIdentitetsnummer
+                , TestData.notValidIdentitetsnummer,
+                TestData.validOrgNr,
+                setOf(
+                        Arbeidsgiverperiode(
+                                LocalDate.of(2020, 4, 1),
+                                LocalDate.of(2020, 4, 6),
+                                3, 1000.0
+                        ), Arbeidsgiverperiode(
+                        LocalDate.of(2020, 4, 10),
+                        LocalDate.of(2020, 4, 12),
+                        3, 1000.0
+                )),
+                GammeltRefusjonskravStatus.MOTTATT,
+                "oppgave-id-234234",
+                "joark-ref-1232"
+        ))
+        assertThat(repo.getByIkkeIndeksertInflux(100)).hasSize(1)
+        repo.delete(krav2.id)
+    }
 }

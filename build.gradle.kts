@@ -19,6 +19,7 @@ val cxfVersion = "3.3.1"
 val jaxwsVersion = "2.3.1"
 val jaxwsToolsVersion = "2.3.1"
 val apachePoiVersion = "4.1.2"
+val influxVersion = "2.19"
 
 
 plugins {
@@ -110,6 +111,8 @@ dependencies {
 
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
+
+    implementation("org.influxdb:influxdb-java:${influxVersion}")
 
     testImplementation("org.koin:koin-test:$koinVersion")
     implementation("com.github.javafaker:javafaker:1.0.2") // flytt denne til test når generatorene ikke er nødvendige i prod-koden lenger

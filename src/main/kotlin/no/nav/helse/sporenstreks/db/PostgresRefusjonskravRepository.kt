@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
-import org.postgresql.jdbc.PgArray
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.sql.PreparedStatement
@@ -23,6 +22,9 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
 
     private val getByStatuses = """SELECT * FROM $tableName 
             WHERE data ->> 'status' = ? LIMIT ?;"""
+
+    private val getByIkkeIInflux = """SELECT * FROM $tableName 
+            WHERE data ->> 'indeksertInflux' IS NULL OR data ->> 'indeksertInflux' = '' OR data ->> 'indeksertInflux' = 'false' LIMIT ?;"""
 
     private val getByIdStatement = """SELECT * FROM $tableName WHERE data ->> 'id' = ?"""
 
@@ -56,6 +58,20 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
             val res = con.prepareStatement(getByStatuses).apply {
                 setString(1, status.toString())
                 setInt(2, limit)
+            }.executeQuery()
+
+            while (res.next()) {
+                resultList.add(extractRefusjonskrav(res))
+            }
+            return resultList
+        }
+    }
+
+    override fun getByIkkeIndeksertInflux(limit: Int): List<Refusjonskrav> {
+        ds.connection.use { con ->
+            val resultList = ArrayList<Refusjonskrav>()
+            val res = con.prepareStatement(getByIkkeIInflux).apply {
+                setInt(1, limit)
             }.executeQuery()
 
             while (res.next()) {
@@ -137,7 +153,8 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
             }.executeUpdate()
         }
 
-        return getById(refusjonskrav.id) ?: throw IOException("Unable to read receipt for refusjonskrav with id ${refusjonskrav.id}")
+        return getById(refusjonskrav.id)
+                ?: throw IOException("Unable to read receipt for refusjonskrav with id ${refusjonskrav.id}")
     }
 
     override fun getExistingRefusjonskrav(identitetsnummer: String, virksomhetsnummer: String): List<Refusjonskrav> {
