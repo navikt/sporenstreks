@@ -6,6 +6,7 @@ import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import org.slf4j.LoggerFactory
 import java.io.IOException
+import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
@@ -22,6 +23,15 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
 
     private val getByStatuses = """SELECT * FROM $tableName 
             WHERE data ->> 'status' = ? LIMIT ?;"""
+
+    private val getByNoKvitteringForVirksomhetStatement = """SELECT * FROM $tableName 
+            WHERE (data ->> 'kvitteringId' IS NULL OR data ->> 'kvitteringId' = '')
+            AND data ->> 'virksomhetsnummer' = ?;"""
+
+    private val getOneVirksomhetWithoutKvitteringStatement = """SELECT data->>'virksomhetsnummer' FROM $tableName 
+            WHERE data ->> 'kvitteringId' IS NULL OR data ->> 'kvitteringId' = ''
+            LIMIT 1;"""
+
 
     private val getByIkkeIInflux = """SELECT * FROM $tableName 
             WHERE data ->> 'indeksertInflux' IS NULL OR data ->> 'indeksertInflux' = '' OR data ->> 'indeksertInflux' = 'false' LIMIT ?;"""
@@ -49,6 +59,32 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
                 resultList.add(extractRefusjonskrav(res))
             }
             return resultList
+        }
+    }
+
+    override fun getAllForVirksomhetWithoutKvittering(virksomhetsnummer: String): List<Refusjonskrav> {
+        ds.connection.use { con ->
+            val resultList = ArrayList<Refusjonskrav>()
+            val res = con.prepareStatement(getByNoKvitteringForVirksomhetStatement).apply {
+                setString(1, virksomhetsnummer)
+            }.executeQuery()
+
+            while (res.next()) {
+                resultList.add(extractRefusjonskrav(res))
+            }
+            return resultList
+        }
+    }
+
+
+    override fun getRandomVirksomhetWithoutKvittering(): String? {
+        ds.connection.use { con ->
+            var result: String? = null
+            val res = con.prepareStatement(getOneVirksomhetWithoutKvitteringStatement).executeQuery()
+            while (res.next()) {
+                result = res.getString(1)
+            }
+            return result
         }
     }
 
@@ -119,6 +155,23 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
         }
     }
 
+    override fun bulkInsert(kravListe: List<Refusjonskrav>, connection: Connection): List<Int> {
+        logger.info("Starter serialisering av ${kravListe.size} krav")
+        val jsonListe = kravListe.map { mapper.writeValueAsString(it) } // hold denne utenfor connection.use
+        logger.info("Serialisering ferdig, starter en tilkobling og sender")
+        val statement = connection.prepareStatement(saveStatement, PreparedStatement.RETURN_GENERATED_KEYS)
+        for (json in jsonListe) {
+            statement.setString(1, json)
+            statement.addBatch()
+        }
+        statement.executeBatch()
+        val referanseNummere = ArrayList<Int>(kravListe.size)
+        while (statement.generatedKeys.next()) {
+            referanseNummere.add(statement.generatedKeys.getInt(2))
+        }
+        return@bulkInsert referanseNummere
+    }
+
     override fun update(krav: Refusjonskrav) {
         val json = mapper.writeValueAsString(krav)
         ds.connection.use {
@@ -127,6 +180,15 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
                 setString(2, krav.id.toString())
             }.executeUpdate()
         }
+    }
+
+    override fun update(krav: Refusjonskrav, connection: Connection) {
+        val json = mapper.writeValueAsString(krav)
+
+        connection.prepareStatement(updateStatement).apply {
+            setString(1, json)
+            setString(2, krav.id.toString())
+        }.executeUpdate()
     }
 
     override fun getById(id: UUID): Refusjonskrav? {
@@ -144,7 +206,6 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
         }
     }
 
-
     override fun insert(refusjonskrav: Refusjonskrav): Refusjonskrav {
         val json = mapper.writeValueAsString(refusjonskrav)
         ds.connection.use {
@@ -152,10 +213,20 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
                 setString(1, json)
             }.executeUpdate()
         }
-
         return getById(refusjonskrav.id)
                 ?: throw IOException("Unable to read receipt for refusjonskrav with id ${refusjonskrav.id}")
     }
+
+    override fun insert(refusjonskrav: Refusjonskrav, connection: Connection): Refusjonskrav {
+        val json = mapper.writeValueAsString(refusjonskrav)
+
+        connection.prepareStatement(saveStatement).apply {
+            setString(1, json)
+        }.executeUpdate()
+
+        return refusjonskrav
+    }
+
 
     override fun getExistingRefusjonskrav(identitetsnummer: String, virksomhetsnummer: String): List<Refusjonskrav> {
         ds.connection.use {

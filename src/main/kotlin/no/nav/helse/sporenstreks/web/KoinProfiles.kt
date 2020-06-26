@@ -18,6 +18,7 @@ import io.ktor.config.ApplicationConfig
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import no.altinn.services.serviceengine.correspondence._2009._10.ICorrespondenceAgencyExternalBasic
 import no.nav.helse.sporenstreks.auth.*
 import no.nav.helse.sporenstreks.auth.altinn.AltinnClient
 import no.nav.helse.sporenstreks.db.*
@@ -38,6 +39,13 @@ import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.OppgaveKlientImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.sensu.SensuClient
 import no.nav.helse.sporenstreks.integrasjon.rest.sensu.SensuClientImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
+import no.nav.helse.sporenstreks.integrasjon.rest.sts.configureFor
+import no.nav.helse.sporenstreks.integrasjon.rest.sts.wsStsClient
+import no.nav.helse.sporenstreks.kvittering.*
+import no.nav.helse.sporenstreks.prosessering.*
+import no.nav.helse.sporenstreks.service.MockRefusjonskravService
+import no.nav.helse.sporenstreks.service.PostgresRefusjonskravService
+import no.nav.helse.sporenstreks.service.RefusjonskravService
 import no.nav.helse.sporenstreks.prosessering.ProcessFeiledeRefusjonskravJob
 import no.nav.helse.sporenstreks.prosessering.ProcessInfluxJob
 import no.nav.helse.sporenstreks.prosessering.ProcessMottatteRefusjonskravJob
@@ -104,16 +112,20 @@ fun buildAndTestConfig() = module {
     single { StaticMockAuthRepo(get()) as AuthorizationsRepository } bind StaticMockAuthRepo::class
     single { DefaultAuthorizer(get()) as Authorizer }
     single { MockRefusjonskravRepo() as RefusjonskravRepository }
+    single { MockKvitteringRepository() as KvitteringRepository }
+    single { MockRefusjonskravService(get()) as RefusjonskravService }
     single { MockDokarkivKlient() as DokarkivKlient }
     single { JoarkService(get()) as JoarkService }
     single { OppgaveService(get(), get()) as OppgaveService }
     single { MockOppgaveKlient() as OppgaveKlient }
     single { MockAktorConsumer() as AktorConsumer }
     single { MockLeaderElectionConsumer() as LeaderElectionConsumer }
+    single { DummyKvitteringSender() as KvitteringSender }
 
     LocalOIDCWireMock.start()
 }
 
+@KtorExperimentalAPI
 fun localDevConfig(config: ApplicationConfig) = module {
     single {
         getDataSource(
@@ -122,10 +134,12 @@ fun localDevConfig(config: ApplicationConfig) = module {
                         config.getString("database.username"),
                         config.getString("database.password")
                 ),
-            config.getString("database.name"),
-            config.getString("database.vault.mountpath")) as DataSource
+                config.getString("database.name"),
+                config.getString("database.vault.mountpath")) as DataSource
     }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
+    single { PostgresKvitteringRepository(get(), get()) as KvitteringRepository }
+    single { PostgresRefusjonskravService(get(), get()) as RefusjonskravService }
 
     single { MockDokarkivKlient() as DokarkivKlient }
     single { StaticMockAuthRepo(get()) as AuthorizationsRepository }
@@ -141,7 +155,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { OppgaveService(get(), get()) as OppgaveService }
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
     single { MockLeaderElectionConsumer() as LeaderElectionConsumer }
-
+    single { DummyKvitteringSender() as KvitteringSender }
     LocalOIDCWireMock.start()
 }
 
@@ -153,6 +167,8 @@ fun preprodConfig(config: ApplicationConfig) = module {
                 config.getString("database.vault.mountpath")) as DataSource
     }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
+    single { PostgresKvitteringRepository(get(), get()) as KvitteringRepository }
+    single { PostgresRefusjonskravService(get(), get()) as RefusjonskravService }
 
     single {
         val altinnClient = AltinnClient(
@@ -169,7 +185,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single {SensuClientImpl("sensu.nais", 3030) as SensuClient }
     single {InfluxReporterImpl("sporenstreks", "dev-fss", "default", get()) as InfluxReporter}
 
-    single { STSClient(config.getString("service_user.username"), config.getString("service_user.password"), config.getString("sts_url")) }
+    single { STSClient(config.getString("service_user.username"), config.getString("service_user.password"), config.getString("sts_url_rest")) }
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
     single { JoarkService(get()) as JoarkService }
 
@@ -184,12 +200,38 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
     single { OppgaveService(get(), get()) as OppgaveService }
 
+
+
+    single {
+        val altinnMeldingWsClient = Clients.iCorrespondenceExternalBasic(
+                config.getString("altinn_melding.pep_gw_endpoint")
+        )
+        val sts = wsStsClient(
+                config.getString("sts_url_ws"),
+                config.getString("service_user.username") to config.getString("service_user.password")
+        )
+        sts.configureFor(altinnMeldingWsClient)
+        altinnMeldingWsClient as ICorrespondenceAgencyExternalBasic
+    }
+
+    single {
+        AltinnKvitteringSender(
+                AltinnKvitteringMapper(config.getString("altinn_melding.service_id")),
+                get(),
+                config.getString("altinn_melding.username"),
+                config.getString("altinn_melding.password"),
+                get())
+                as KvitteringSender
+    }
+
     single { RefusjonskravBehandler(get(), get(), get(), get()) }
     single { ProcessMottatteRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1), get()) }
     single { ProcessFeiledeRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofHours(5), get()) }
     single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1), get(), get()) }
+    single { ProcessOpprettedeKvitteringerJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1), get()) }
+    single { ProcessFeiledeKvitteringerJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(10), get()) }
+    single { SendKvitteringForEksisterendeKravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofSeconds(10), get()) }
     single { LeaderElectionConsumerImpl(config.getString("leader_election.url"), get(), get()) as LeaderElectionConsumer }
-
 }
 
 @KtorExperimentalAPI
@@ -215,9 +257,11 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single {SensuClientImpl("sensu.nais", 3030) as SensuClient }
     single {InfluxReporterImpl("sporenstreks", "prod-fss", "default", get()) as InfluxReporter}
-    single { STSClient(config.getString("service_user.username"), config.getString("service_user.password"), config.getString("sts_url")) }
+    single { STSClient(config.getString("service_user.username"), config.getString("service_user.password"), config.getString("sts_url_rest")) }
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
+    single { PostgresKvitteringRepository(get(), get()) as KvitteringRepository }
+    single { PostgresRefusjonskravService(get(), get()) as RefusjonskravService }
     single { JoarkService(get()) as JoarkService }
     single { DefaultAuthorizer(get()) as Authorizer }
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
@@ -230,9 +274,35 @@ fun prodConfig(config: ApplicationConfig) = module {
         ) as AktorConsumer
     }
 
+    single {
+        val altinnMeldingWsClient = Clients.iCorrespondenceExternalBasic(
+                config.getString("altinn_melding.pep_gw_endpoint")
+        )
+        val sts = wsStsClient(
+                config.getString("sts_url_ws"),
+                config.getString("service_user.username") to config.getString("service_user.password")
+        )
+        sts.configureFor(altinnMeldingWsClient)
+        altinnMeldingWsClient as ICorrespondenceAgencyExternalBasic
+    }
+
+    single {
+        AltinnKvitteringSender(
+                AltinnKvitteringMapper(config.getString("altinn_melding.service_id")),
+                get(),
+                config.getString("altinn_melding.username"),
+                config.getString("altinn_melding.password"),
+                get()
+        )
+                as KvitteringSender
+    }
+
     single { RefusjonskravBehandler(get(), get(), get(), get()) }
     single { ProcessMottatteRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1), get()) }
     single { ProcessFeiledeRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofHours(2), get()) }
+    single { ProcessOpprettedeKvitteringerJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1), get()) }
+    single { ProcessFeiledeKvitteringerJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofHours(2), get()) }
+    single { SendKvitteringForEksisterendeKravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofSeconds(10), get()) }
     single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(2), get(), get()) }
     single { LeaderElectionConsumerImpl(config.getString("leader_election.url"), get(), get()) as LeaderElectionConsumer }
 }

@@ -18,6 +18,7 @@ data class Refusjonskrav(
 
         val opprettet: LocalDateTime = LocalDateTime.now(),
         val id: UUID = UUID.randomUUID(),
+        var kvitteringId: UUID? = null,
         var indeksertInflux: Boolean = false,
 
         // Dette referansenummeret overskrives av postgres ved lagring
