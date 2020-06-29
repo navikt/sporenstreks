@@ -40,8 +40,8 @@ class AltinnKvitteringMapper(val altinnTjenesteKode: String) {
                                 <th style="padding:12px">Virksomhetsnummer</th>
                                 <th style="padding:12px">Mottatt</th>
                             </tr>
-                        ${kvittering.refusjonsListe.joinToString(separator = "") { krav ->
-            krav.perioder.joinToString(
+                        ${kvittering.refusjonsListe.sorted().joinToString(separator = "") { krav ->
+            krav.perioder.sorted().joinToString(
                     separator = "\n"
             ) {
                 """

@@ -24,7 +24,19 @@ data class Refusjonskrav(
         // Dette referansenummeret overskrives av postgres ved lagring
         // og holdes utenfor JSON-data-feltet der. Det er kun skrivbart for mapping fra databasen
         var referansenummer: Int = 0
-)
+): Comparable<Refusjonskrav> {
+    override fun compareTo(other: Refusjonskrav): Int {
+        if(other.identitetsnummer > identitetsnummer)
+            return -1
+        if(identitetsnummer > other.identitetsnummer)
+            return 1
+        if(other.perioder.first().fom.isAfter(perioder.first().fom))
+            return -1
+        if(other.perioder.first().fom.isBefore(perioder.first().fom))
+            return 1
+        return 0
+    }
+}
 
 enum class RefusjonskravStatus {
     MOTTATT,
