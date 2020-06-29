@@ -1,6 +1,5 @@
 package no.nav.helse.sporenstreks.kvittering
 
-import javafx.collections.transformation.SortedList
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import java.time.LocalDateTime
 import java.util.*
