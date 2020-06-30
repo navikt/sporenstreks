@@ -45,7 +45,7 @@ class PostgresRefusjonskravService(
             con.autoCommit = false
             val kvittering = Kvittering(
                     virksomhetsnummer = kravList.first().virksomhetsnummer,
-                    refusjonsListe = kravList.sorted(),
+                    refusjonsListe = kravList,
                     tidspunkt = LocalDateTime.now()
             )
             val savedKvittering = kvitteringRepository.insert(kvittering, con)
@@ -93,7 +93,7 @@ class PostgresRefusjonskravService(
                 }.forEach {
                     val savedKvittering = kvitteringRepository.insert(
                             Kvittering(virksomhetsnummer = it.key,
-                                    refusjonsListe = it.value.sorted(),
+                                    refusjonsListe = it.value,
                                     tidspunkt = LocalDateTime.now())
                             , con)
                     it.value.forEach { krav ->
