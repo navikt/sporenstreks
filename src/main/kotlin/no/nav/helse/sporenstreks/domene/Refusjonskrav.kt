@@ -26,13 +26,17 @@ data class Refusjonskrav(
         var referansenummer: Int = 0
 ): Comparable<Refusjonskrav> {
     override fun compareTo(other: Refusjonskrav): Int {
-        if(other.identitetsnummer > identitetsnummer)
+        if (other.identitetsnummer > identitetsnummer)
             return -1
-        if(identitetsnummer > other.identitetsnummer)
+        if (identitetsnummer > other.identitetsnummer)
             return 1
-        if(other.perioder.first().fom.isAfter(perioder.first().fom))
+        if (other.perioder.first().fom.isAfter(perioder.first().fom))
             return -1
-        if(other.perioder.first().fom.isBefore(perioder.first().fom))
+        if (other.perioder.first().fom.isBefore(perioder.first().fom))
+            return 1
+        if (other.opprettet.isAfter(opprettet))
+            return -1
+        if (other.opprettet.isBefore(opprettet))
             return 1
         return 0
     }
