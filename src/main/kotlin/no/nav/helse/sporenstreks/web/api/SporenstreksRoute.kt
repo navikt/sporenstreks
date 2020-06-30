@@ -26,7 +26,6 @@ import no.nav.helse.sporenstreks.auth.Authorizer
 import no.nav.helse.sporenstreks.auth.altinn.AltinnBrukteForLangTidException
 import no.nav.helse.sporenstreks.auth.hentIdentitetsnummerFraLoginToken
 import no.nav.helse.sporenstreks.auth.hentUtløpsdatoFraLoginToken
-import no.nav.helse.sporenstreks.db.RefusjonskravRepository
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.excel.ExcelBulkService
 import no.nav.helse.sporenstreks.excel.ExcelParser
@@ -34,8 +33,6 @@ import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTE
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
 import no.nav.helse.sporenstreks.metrics.REQUEST_TIME
 import no.nav.helse.sporenstreks.service.RefusjonskravService
-import no.nav.helse.sporenstreks.system.AppEnv
-import no.nav.helse.sporenstreks.system.getEnvironment
 import no.nav.helse.sporenstreks.web.dto.PostListResponseDto
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import no.nav.helse.sporenstreks.web.dto.validation.ValidationProblemDetail
@@ -122,11 +119,13 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                         }
                     }
                 }
-                val savedList = refusjonskravService.saveKravListWithKvittering(domeneListe)
-                savedList.forEach {
-                    INNKOMMENDE_REFUSJONSKRAV_COUNTER.inc()
-                    INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTER.inc(it.perioder.sumByDouble { it.beloep }.div(1000))
-                    responseBody.add(PostListResponseDto(status = PostListResponseDto.Status.OK, referenceNumber = "${it.referansenummer}"))
+                if (domeneListe.isNotEmpty()) {
+                    val savedList = refusjonskravService.saveKravListWithKvittering(domeneListe)
+                    savedList.forEach {
+                        INNKOMMENDE_REFUSJONSKRAV_COUNTER.inc()
+                        INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTER.inc(it.perioder.sumByDouble { it.beloep }.div(1000))
+                        responseBody.add(PostListResponseDto(status = PostListResponseDto.Status.OK, referenceNumber = "${it.referansenummer}"))
+                    }
                 }
                 call.respond(HttpStatusCode.OK, responseBody)
             }
@@ -158,7 +157,7 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                     throw IOException("Den opplastede filen er for stor")
                 }
 
-              ExcelBulkService(refusjonskravService, ExcelParser(authorizer))
+                ExcelBulkService(refusjonskravService, ExcelParser(authorizer))
                         .processExcelFile(bytes.inputStream(), id)
 
                 call.respond(HttpStatusCode.OK, "Søknaden er mottatt.")
