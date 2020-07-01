@@ -30,7 +30,7 @@ class SendKvitteringForEksisterendeKravJob(
 
     override suspend fun doJob() {
         if (!leaderElectionConsumer.isLeader()) {
-            logger.warn("Er ikke leader")
+            logger.info("Er ikke leader")
             return
         }
         mutualLock.lock()
