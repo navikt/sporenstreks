@@ -12,6 +12,7 @@ import io.ktor.server.testing.setBody
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.TestData
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
+import no.nav.helse.sporenstreks.web.dto.PostListResponseDto
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import no.nav.helse.sporenstreks.web.integration.ControllerIntegrationTestBase
 import no.nav.helse.sporenstreks.web.sporenstreksModule
@@ -76,6 +77,90 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
 
     @KtorExperimentalLocationsAPI
     @Test
+    fun `Gir ikke 500 selvom alle kravene feiler validering`() {
+        configuredTestApplication({
+            sporenstreksModule()
+        }) {
+            val om = application.get<ObjectMapper>()
+            val dtoListe = listOf(RefusjonskravDtoMock(identitetsnummer = TestData.validIdentitetsnummer,
+                    virksomhetsnummer = "910098896",
+                    perioder = setOf(Arbeidsgiverperiode(
+                            fom = LocalDate.of(2020, 3, 17),
+                            tom = LocalDate.of(2020, 3, 25),
+                            antallDagerMedRefusjon = 20,
+                            beloep = 6000.0
+                    ))
+            ))
+            doAuthenticatedRequest(HttpMethod.Post, "api/v1/refusjonskrav/list") {
+                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                setBody(
+                        om.writeValueAsString(
+                                dtoListe)
+                )
+            }.apply {
+                Assertions.assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
+                val resultat: List<PostListResponseDto> = om.readValue(response.content!!)
+                Assertions.assertThat(resultat).hasSize(1)
+                Assertions.assertThat(resultat.first().status == PostListResponseDto.Status.VALIDATION_ERRORS)
+            }
+
+        }
+    }
+
+    @KtorExperimentalLocationsAPI
+    @Test
+    fun `Beholder rekkefølgen på valideringer`() {
+        configuredTestApplication({
+            sporenstreksModule()
+        }) {
+            val om = application.get<ObjectMapper>()
+            val dtoListe = listOf(
+                    RefusjonskravDtoMock(identitetsnummer = TestData.validIdentitetsnummer,
+                            virksomhetsnummer = "910098896",
+                            perioder = setOf(Arbeidsgiverperiode(
+                                    fom = LocalDate.of(2020, 3, 20),
+                                    tom = LocalDate.of(2020, 3, 25),
+                                    antallDagerMedRefusjon = 1,
+                                    beloep = 6000.0
+                            ))),
+                    RefusjonskravDtoMock(identitetsnummer = TestData.validIdentitetsnummer,
+                            virksomhetsnummer = "910098896",
+                            perioder = setOf(Arbeidsgiverperiode(
+                                    fom = LocalDate.of(2020, 3, 17),
+                                    tom = LocalDate.of(2020, 3, 29),
+                                    antallDagerMedRefusjon = 4,
+                                    beloep = 6000.0
+                            ))),
+                    RefusjonskravDtoMock(identitetsnummer = TestData.validIdentitetsnummer,
+                            virksomhetsnummer = "910098896",
+                            perioder = setOf(Arbeidsgiverperiode(
+                                    fom = LocalDate.of(2020, 3, 27),
+                                    tom = LocalDate.of(2020, 3, 29),
+                                    antallDagerMedRefusjon = 1,
+                                    beloep = 9000.0
+                            )))
+            )
+            doAuthenticatedRequest(HttpMethod.Post, "api/v1/refusjonskrav/list") {
+                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                setBody(
+                        om.writeValueAsString(
+                                dtoListe)
+                )
+            }.apply {
+                Assertions.assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
+                val resultat: List<PostListResponseDto> = om.readValue(response.content!!)
+                Assertions.assertThat(resultat).hasSize(3)
+                Assertions.assertThat(resultat[0].status == PostListResponseDto.Status.OK)
+                Assertions.assertThat(resultat[1].status == PostListResponseDto.Status.VALIDATION_ERRORS)
+                Assertions.assertThat(resultat[2].status == PostListResponseDto.Status.OK)
+            }
+
+        }
+    }
+
+
+    @KtorExperimentalLocationsAPI
+    @Test
     fun `Returnerer 401 hvis ikke autentisert`() {
         configuredTestApplication({
             sporenstreksModule()
@@ -88,3 +173,9 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
     }
 
 }
+
+data class RefusjonskravDtoMock(
+        val identitetsnummer: String,
+        val virksomhetsnummer: String,
+        val perioder: Set<Arbeidsgiverperiode>
+)
