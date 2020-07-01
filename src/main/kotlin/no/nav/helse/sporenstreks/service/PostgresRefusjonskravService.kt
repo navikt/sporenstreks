@@ -39,24 +39,23 @@ class PostgresRefusjonskravService(
         }
     }
 
-    override fun saveKravListWithKvittering(kravList: List<Refusjonskrav>): List<Refusjonskrav> {
+    override fun saveKravListWithKvittering(kravListeMedIndex: Map<Int, Refusjonskrav>): Map<Int, Refusjonskrav> {
         //Alle innsendingene må være på samme virksomhet
         ds.connection.use { con ->
             con.autoCommit = false
             val kvittering = Kvittering(
-                    virksomhetsnummer = kravList.first().virksomhetsnummer,
-                    refusjonsListe = kravList,
+                    virksomhetsnummer = kravListeMedIndex.values.first().virksomhetsnummer,
+                    refusjonsListe = kravListeMedIndex.values.toList(),
                     tidspunkt = LocalDateTime.now()
             )
             val savedKvittering = kvitteringRepository.insert(kvittering, con)
-            val savedList = mutableListOf<Refusjonskrav>()
-            kravList.forEach {
-                it.kvitteringId = savedKvittering.id
-                val saved = refusjonskravRepository.insert(it, con)
-                savedList.add(saved)
+            val savedMap = mutableMapOf<Int, Refusjonskrav>()
+            kravListeMedIndex.forEach {
+                it.value.kvitteringId = savedKvittering.id
+                savedMap[it.key] = refusjonskravRepository.insert(it.value, con)
             }
             con.commit()
-            return savedList
+            return savedMap
         }
 
     }

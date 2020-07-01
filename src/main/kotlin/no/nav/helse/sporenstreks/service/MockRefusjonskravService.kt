@@ -9,12 +9,13 @@ class MockRefusjonskravService(val refusjonskravRepo: RefusjonskravRepository) :
         return refusjonskravRepo.insert(krav)
     }
 
-    override fun saveKravListWithKvittering(kravList: List<Refusjonskrav>): List<Refusjonskrav> {
-        var savedList = mutableListOf<Refusjonskrav>()
+    override fun saveKravListWithKvittering(kravList: Map<Int, Refusjonskrav>): Map<Int, Refusjonskrav> {
+        var savedMap = mutableMapOf<Int, Refusjonskrav>()
+        var i = 0
         kravList.forEach {
-            savedList.add(refusjonskravRepo.insert(it))
+            savedMap[i++] = (refusjonskravRepo.insert(it.value))
         }
-        return savedList
+        return savedMap
     }
 
     override fun getAllForVirksomhet(virksomhetsnummer: String): List<Refusjonskrav> {

@@ -90,41 +90,44 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                 val om = application.get<ObjectMapper>()
                 val jsonTree = om.readTree(refusjonskravJson)
                 val responseBody = ArrayList<PostListResponseDto>(jsonTree.size())
-                val domeneListe = mutableListOf<Refusjonskrav>()
+                val domeneListeMedIndex = mutableMapOf<Int, Refusjonskrav>()
+
+                for (i in 0 until jsonTree.size())
+                    responseBody.add(i, PostListResponseDto(PostListResponseDto.Status.GENERIC_ERROR))
 
                 for (i in 0 until jsonTree.size()) {
                     try {
                         val dto = om.readValue<RefusjonskravDto>(jsonTree[i].traverse())
                         authorize(authorizer, dto.virksomhetsnummer)
-                        domeneListe.add(Refusjonskrav(
+                        domeneListeMedIndex[i] = Refusjonskrav(
                                 dto.identitetsnummer,
                                 dto.virksomhetsnummer,
                                 dto.perioder
-                        ))
+                        )
                     } catch (forbiddenEx: ForbiddenException) {
-                        responseBody.add(PostListResponseDto(status = PostListResponseDto.Status.GENERIC_ERROR, genericMessage = "Ingen tilgang til virksomheten"))
+                        responseBody.set(i, PostListResponseDto(status = PostListResponseDto.Status.GENERIC_ERROR, genericMessage = "Ingen tilgang til virksomheten"))
                     } catch (validationEx: ConstraintViolationException) {
                         val problems = validationEx.constraintViolations.map {
                             ValidationProblemDetail(it.constraint.name, it.getContextualMessage(), it.property, it.value)
                         }
-                        responseBody.add(PostListResponseDto(status = PostListResponseDto.Status.VALIDATION_ERRORS, validationErrors = problems))
+                        responseBody.set(i, PostListResponseDto(status = PostListResponseDto.Status.VALIDATION_ERRORS, validationErrors = problems))
                     } catch (genericEx: Exception) {
                         if (genericEx.cause is ConstraintViolationException) {
                             val problems = (genericEx.cause as ConstraintViolationException).constraintViolations.map {
                                 ValidationProblemDetail(it.constraint.name, it.getContextualMessage(), it.property, it.value)
                             }
-                            responseBody.add(PostListResponseDto(status = PostListResponseDto.Status.VALIDATION_ERRORS, validationErrors = problems))
+                            responseBody.set(i, PostListResponseDto(status = PostListResponseDto.Status.VALIDATION_ERRORS, validationErrors = problems))
                         } else {
-                            responseBody.add(PostListResponseDto(status = PostListResponseDto.Status.GENERIC_ERROR, genericMessage = genericEx.message))
+                            responseBody.set(i, PostListResponseDto(status = PostListResponseDto.Status.GENERIC_ERROR, genericMessage = genericEx.message))
                         }
                     }
                 }
-                if (domeneListe.isNotEmpty()) {
-                    val savedList = refusjonskravService.saveKravListWithKvittering(domeneListe)
+                if (domeneListeMedIndex.isNotEmpty()) {
+                    val savedList = refusjonskravService.saveKravListWithKvittering(domeneListeMedIndex)
                     savedList.forEach {
                         INNKOMMENDE_REFUSJONSKRAV_COUNTER.inc()
-                        INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTER.inc(it.perioder.sumByDouble { it.beloep }.div(1000))
-                        responseBody.add(PostListResponseDto(status = PostListResponseDto.Status.OK, referenceNumber = "${it.referansenummer}"))
+                        INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTER.inc(it.value.perioder.sumByDouble { it.beloep }.div(1000))
+                        responseBody.set(it.key, PostListResponseDto(status = PostListResponseDto.Status.OK, referenceNumber = "${it.value.referansenummer}"))
                     }
                 }
                 call.respond(HttpStatusCode.OK, responseBody)
