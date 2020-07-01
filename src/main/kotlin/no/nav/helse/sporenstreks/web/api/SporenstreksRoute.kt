@@ -105,20 +105,20 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                                 dto.perioder
                         )
                     } catch (forbiddenEx: ForbiddenException) {
-                        responseBody.set(i, PostListResponseDto(status = PostListResponseDto.Status.GENERIC_ERROR, genericMessage = "Ingen tilgang til virksomheten"))
+                        responseBody[i] = PostListResponseDto(status = PostListResponseDto.Status.GENERIC_ERROR, genericMessage = "Ingen tilgang til virksomheten")
                     } catch (validationEx: ConstraintViolationException) {
                         val problems = validationEx.constraintViolations.map {
                             ValidationProblemDetail(it.constraint.name, it.getContextualMessage(), it.property, it.value)
                         }
-                        responseBody.set(i, PostListResponseDto(status = PostListResponseDto.Status.VALIDATION_ERRORS, validationErrors = problems))
+                        responseBody[i] = PostListResponseDto(status = PostListResponseDto.Status.VALIDATION_ERRORS, validationErrors = problems)
                     } catch (genericEx: Exception) {
                         if (genericEx.cause is ConstraintViolationException) {
                             val problems = (genericEx.cause as ConstraintViolationException).constraintViolations.map {
                                 ValidationProblemDetail(it.constraint.name, it.getContextualMessage(), it.property, it.value)
                             }
-                            responseBody.set(i, PostListResponseDto(status = PostListResponseDto.Status.VALIDATION_ERRORS, validationErrors = problems))
+                            responseBody[i] = PostListResponseDto(status = PostListResponseDto.Status.VALIDATION_ERRORS, validationErrors = problems)
                         } else {
-                            responseBody.set(i, PostListResponseDto(status = PostListResponseDto.Status.GENERIC_ERROR, genericMessage = genericEx.message))
+                            responseBody[i] = PostListResponseDto(status = PostListResponseDto.Status.GENERIC_ERROR, genericMessage = genericEx.message)
                         }
                     }
                 }
@@ -127,7 +127,7 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                     savedList.forEach {
                         INNKOMMENDE_REFUSJONSKRAV_COUNTER.inc()
                         INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTER.inc(it.value.perioder.sumByDouble { it.beloep }.div(1000))
-                        responseBody.set(it.key, PostListResponseDto(status = PostListResponseDto.Status.OK, referenceNumber = "${it.value.referansenummer}"))
+                        responseBody[it.key] = PostListResponseDto(status = PostListResponseDto.Status.OK, referenceNumber = "${it.value.referansenummer}")
                     }
                 }
                 call.respond(HttpStatusCode.OK, responseBody)
