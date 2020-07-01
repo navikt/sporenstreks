@@ -127,7 +127,7 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
                             virksomhetsnummer = "910098896",
                             perioder = setOf(Arbeidsgiverperiode(
                                     fom = LocalDate.of(2020, 3, 17),
-                                    tom = LocalDate.of(2020, 3, 29),
+                                    tom = LocalDate.of(2020, 3, 18),
                                     antallDagerMedRefusjon = 4,
                                     beloep = 6000.0
                             ))),
@@ -138,6 +138,14 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
                                     tom = LocalDate.of(2020, 3, 29),
                                     antallDagerMedRefusjon = 1,
                                     beloep = 9000.0
+                            ))),
+                    RefusjonskravDtoMock(identitetsnummer = TestData.validIdentitetsnummer,
+                            virksomhetsnummer = "910098896",
+                            perioder = setOf(Arbeidsgiverperiode(
+                                    fom = LocalDate.of(2020, 4, 1),
+                                    tom = LocalDate.of(2020, 4, 3),
+                                    antallDagerMedRefusjon = 1,
+                                    beloep = 999999999999.0
                             )))
             )
             doAuthenticatedRequest(HttpMethod.Post, "api/v1/refusjonskrav/list") {
@@ -149,10 +157,13 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
             }.apply {
                 Assertions.assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
                 val resultat: List<PostListResponseDto> = om.readValue(response.content!!)
-                Assertions.assertThat(resultat).hasSize(3)
+                Assertions.assertThat(resultat).hasSize(4)
                 Assertions.assertThat(resultat[0].status == PostListResponseDto.Status.OK)
                 Assertions.assertThat(resultat[1].status == PostListResponseDto.Status.VALIDATION_ERRORS)
+                Assertions.assertThat(resultat[1].validationErrors?.map { it.validationType }).contains("RefusjonsdagerKanIkkeOverstigePeriodelengdenConstraint")
                 Assertions.assertThat(resultat[2].status == PostListResponseDto.Status.OK)
+                Assertions.assertThat(resultat[3].status == PostListResponseDto.Status.VALIDATION_ERRORS)
+                Assertions.assertThat(resultat[3].validationErrors?.map { it.validationType }).contains("LessOrEqual")
             }
 
         }
