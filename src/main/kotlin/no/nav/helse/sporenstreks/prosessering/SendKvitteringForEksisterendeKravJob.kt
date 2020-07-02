@@ -2,20 +2,21 @@ package no.nav.helse.sporenstreks.prosessering
 
 import kotlinx.coroutines.CoroutineScope
 import no.nav.helse.sporenstreks.db.RefusjonskravRepository
-import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.integrasjon.rest.LeaderElection.LeaderElectionConsumer
+import no.nav.helse.sporenstreks.service.RefusjonskravService
+import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.util.concurrent.locks.ReentrantLock
 
-const val FEILEDE_TO_PROCESS_LIMIT = 250
 
-class ProcessFeiledeRefusjonskravJob(
-        private val db: RefusjonskravRepository,
-        private val processor: RefusjonskravBehandler,
+class SendKvitteringForEksisterendeKravJob(
+        private val refusjonskravService: RefusjonskravService,
+        private val refusjonskravRepository: RefusjonskravRepository,
         coroutineScope: CoroutineScope,
         freq: Duration,
         val leaderElectionConsumer: LeaderElectionConsumer
 ) : RecurringJob(coroutineScope, freq) {
+
     var shutdownSignalSent = false
     val mutualLock = ReentrantLock()
 
@@ -33,13 +34,16 @@ class ProcessFeiledeRefusjonskravJob(
             return
         }
         mutualLock.lock()
-        db.getByStatus(RefusjonskravStatus.FEILET, FEILEDE_TO_PROCESS_LIMIT)
-                .forEach {
-                    processor.behandle(it)
-                    if (shutdownSignalSent) {
-                        return@forEach
-                    }
-                }
+
+        refusjonskravRepository.getRandomVirksomhetWithoutKvittering()?.let {
+            val kravListe = refusjonskravRepository.getAllForVirksomhetWithoutKvittering(it)
+            logger.info("Oppretter kvittering for ${kravListe.size} krav")
+            refusjonskravService.updateKravListWithKvittering(kravListe)
+        }
         mutualLock.unlock()
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(SendKvitteringForEksisterendeKravJob::class.java)
     }
 }

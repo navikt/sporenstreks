@@ -64,11 +64,15 @@ spec:
       value: 0090b6e1-ffcc-4c37-bc21-049f7d1f0fe5
     - name: ALTINN_SERVICE_OWNER_GW_URL
       value: https://api-gw-q1.adeo.no/ekstern/altinn/api/serviceowner
-    - name: SECURITYTOKENSERVICE_URL
+    - name: SECURITYTOKENSERVICE_URL_REST
       value: https://security-token-service.nais.preprod.local/rest/v1/sts/token
+    - name: SECURITYTOKENSERVICE_URL_WS
+      value: https://sts-q1.preprod.local/SecurityTokenServiceProvider/
     - name: DOKARKIV_URL
       value: https://dokarkiv-q1.nais.preprod.local
     - name: AKTOERREGISTER_URL
       value: https://app-q1.adeo.no/aktoerregister/api/v1
     - name: OPPGAVEBEHANDLING_URL
       value: http://oppgave.default.svc.nais.local/api/v1/oppgaver
+    - name: PARTNER_GATEWAY_ALTINN_ENDPOINT
+      value: https://pep-gw-q1.oera-q.local:9443/ekstern/altinn/BehandleAltinnMelding/v1

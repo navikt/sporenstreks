@@ -1,7 +1,7 @@
 package no.nav.helse.sporenstreks.excel
 
-import no.nav.helse.sporenstreks.db.RefusjonskravRepository
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
+import no.nav.helse.sporenstreks.service.RefusjonskravService
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
-class ExcelBulkService(private val db: RefusjonskravRepository, private val parser: ExcelParser) {
+class ExcelBulkService(private val service: RefusjonskravService, private val parser: ExcelParser) {
     private val maxRowNum: Int = 5000
     private val log = LoggerFactory.getLogger(ExcelBulkService::class.java)
 
@@ -33,7 +33,7 @@ class ExcelBulkService(private val db: RefusjonskravRepository, private val pars
         }
 
         log.info("Lagrer ${parsingResult.refusjonskrav.size} krav")
-        val referenceNumbers = db.bulkInsert(parsingResult.refusjonskrav)
+        val referenceNumbers = service.bulkInsert(parsingResult.refusjonskrav)
         log.info("Lagret  ${parsingResult.refusjonskrav.size} krav")
         INNKOMMENDE_REFUSJONSKRAV_COUNTER.inc(parsingResult.refusjonskrav.size.toDouble())
     }

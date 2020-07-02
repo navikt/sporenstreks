@@ -7,9 +7,7 @@ import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.util.KtorExperimentalAPI
-import no.nav.helse.sporenstreks.prosessering.ProcessFeiledeRefusjonskravJob
-import no.nav.helse.sporenstreks.prosessering.ProcessInfluxJob
-import no.nav.helse.sporenstreks.prosessering.ProcessMottatteRefusjonskravJob
+import no.nav.helse.sporenstreks.prosessering.*
 import no.nav.helse.sporenstreks.system.AppEnv
 import no.nav.helse.sporenstreks.system.getEnvironment
 import org.koin.ktor.ext.getKoin
@@ -30,6 +28,10 @@ fun main() {
             koin.get<ProcessMottatteRefusjonskravJob>().startAsync(retryOnFail = true)
             koin.get<ProcessFeiledeRefusjonskravJob>().startAsync(retryOnFail = true)
             koin.get<ProcessInfluxJob>().startAsync(retryOnFail = true)
+            koin.get<ProcessOpprettedeKvitteringerJob>().startAsync(retryOnFail = true)
+            koin.get<ProcessFeiledeKvitteringerJob>().startAsync(retryOnFail = true)
+            koin.get<SendKvitteringForEksisterendeKravJob>().startAsync(retryOnFail = true)
+
         }
         Runtime.getRuntime().addShutdownHook(Thread {
             app.stop(1000, 1000)

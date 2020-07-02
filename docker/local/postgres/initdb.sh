@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
@@ -21,4 +21,14 @@ psql -v ON_ERROR_STOP=1 --username "sporenstreks" --dbname "sporenstreks" <<-EOS
     CREATE INDEX influx on refusjonskrav ((data ->> 'indeksertInflux'));
     CREATE INDEX virksomhetsnummer ON refusjonskrav ((data ->> 'virksomhetsnummer'));
     CREATE INDEX identitetsnummer ON refusjonskrav ((data  ->> 'identitetsnummer'));
+EOSQL
+
+psql -v ON_ERROR_STOP=1 --username "sporenstreks" --dbname "sporenstreks" <<-EOSQL
+    CREATE TABLE kvittering (
+                           data jsonb NOT NULL
+    );
+
+    CREATE INDEX idx_kvittering_status ON kvittering ((data  ->> 'status'));
+    CREATE INDEX idx_kvittering_id ON kvittering ((data ->> 'id'));
+    CREATE INDEX idx_kvittering_virksomhetsnummer ON kvittering ((data ->> 'virksomhetsnummer'));
 EOSQL

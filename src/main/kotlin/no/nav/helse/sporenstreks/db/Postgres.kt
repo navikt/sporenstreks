@@ -13,6 +13,7 @@ enum class Role {
 }
 
 
+@KtorExperimentalAPI
 fun getDataSource(hikariConfig: HikariConfig, dbName: String, vaultMountpath: String?) =
         if (!vaultMountpath.isNullOrEmpty()) {
             dataSourceFromVault(hikariConfig, dbName, vaultMountpath, Role.user)

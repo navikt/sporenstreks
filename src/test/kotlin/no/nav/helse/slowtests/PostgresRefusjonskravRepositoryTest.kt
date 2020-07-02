@@ -54,9 +54,24 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
     @AfterEach
     internal fun tearDown() {
         repo.delete(refusjonskrav.id)
+        val rs = repo.getAllForVirksomhet(refusjonskrav.virksomhetsnummer)
+        rs.forEach {
+            repo.delete(it.id)
+        }
         stopKoin()
     }
 
+
+    @Test
+    fun kan_finne_virksomhet_uten_kvittering() {
+        val vnr = repo.getRandomVirksomhetWithoutKvittering()
+        assertThat(vnr).isEqualTo(refusjonskrav.virksomhetsnummer)
+    }
+
+    @Test
+    fun kan_finne_krav_uten_kvittering() {
+        assertThat(repo.getAllForVirksomhetWithoutKvittering(refusjonskrav.virksomhetsnummer)).hasSize(1)
+    }
 
     @Test
     fun kan_hente_ut_gammelt_refusjonskrav() {

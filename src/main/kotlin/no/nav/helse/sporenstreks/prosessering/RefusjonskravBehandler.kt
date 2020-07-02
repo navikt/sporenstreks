@@ -6,6 +6,8 @@ import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.integrasjon.JoarkService
 import no.nav.helse.sporenstreks.integrasjon.OppgaveService
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumer
+import no.nav.helse.sporenstreks.kvittering.Kvittering
+import no.nav.helse.sporenstreks.kvittering.KvitteringSender
 import no.nav.helse.sporenstreks.metrics.FEIL_COUNTER
 import no.nav.helse.sporenstreks.metrics.JOURNALFOERING_COUNTER
 import no.nav.helse.sporenstreks.metrics.KRAV_TIME

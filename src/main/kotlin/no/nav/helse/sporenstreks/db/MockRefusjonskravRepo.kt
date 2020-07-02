@@ -2,6 +2,7 @@ package no.nav.helse.sporenstreks.db
 
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
+import java.sql.Connection
 import java.util.*
 
 class MockRefusjonskravRepo : RefusjonskravRepository {
@@ -12,6 +13,27 @@ class MockRefusjonskravRepo : RefusjonskravRepository {
         return refusjonskravListe.filter {
             it.virksomhetsnummer == virksomhetsnummer
         }
+    }
+
+    override fun insert(refusjonskrav: Refusjonskrav, connection: Connection): Refusjonskrav {
+        TODO("Not yet implemented")
+    }
+
+
+    override fun update(krav: Refusjonskrav, connection: Connection) {
+        TODO("Not yet implemented")
+    }
+
+    override fun bulkInsert(kravListe: List<Refusjonskrav>, connection: Connection): List<Int> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getAllForVirksomhetWithoutKvittering(virksomhetsnummer: String): List<Refusjonskrav> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getRandomVirksomhetWithoutKvittering(): String? {
+        TODO("Not yet implemented")
     }
 
     override fun insert(refusjonskrav: Refusjonskrav): Refusjonskrav {

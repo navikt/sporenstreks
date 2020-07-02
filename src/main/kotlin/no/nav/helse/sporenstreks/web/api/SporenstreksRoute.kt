@@ -26,15 +26,13 @@ import no.nav.helse.sporenstreks.auth.Authorizer
 import no.nav.helse.sporenstreks.auth.altinn.AltinnBrukteForLangTidException
 import no.nav.helse.sporenstreks.auth.hentIdentitetsnummerFraLoginToken
 import no.nav.helse.sporenstreks.auth.hentUtløpsdatoFraLoginToken
-import no.nav.helse.sporenstreks.db.RefusjonskravRepository
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.excel.ExcelBulkService
 import no.nav.helse.sporenstreks.excel.ExcelParser
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTER
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
 import no.nav.helse.sporenstreks.metrics.REQUEST_TIME
-import no.nav.helse.sporenstreks.system.AppEnv
-import no.nav.helse.sporenstreks.system.getEnvironment
+import no.nav.helse.sporenstreks.service.RefusjonskravService
 import no.nav.helse.sporenstreks.web.dto.PostListResponseDto
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import no.nav.helse.sporenstreks.web.dto.validation.ValidationProblemDetail
@@ -47,7 +45,7 @@ import javax.ws.rs.ForbiddenException
 private val excelContentType = ContentType.parse("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
 @KtorExperimentalAPI
-fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepository, db: RefusjonskravRepository) {
+fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepository, refusjonskravService: RefusjonskravService) {
     route("api/v1") {
 
         route("/login-expiry") {
@@ -68,8 +66,7 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                             refusjonskrav.virksomhetsnummer,
                             refusjonskrav.perioder
                     )
-
-                    val saved = db.insert(domeneKrav)
+                    val saved = refusjonskravService.saveKravWithKvittering(domeneKrav)
                     call.respond(HttpStatusCode.OK, saved)
                     INNKOMMENDE_REFUSJONSKRAV_COUNTER.inc()
                     INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTER.inc(refusjonskrav.perioder.sumByDouble { it.beloep }.div(1000))
@@ -80,7 +77,7 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
             get("/virksomhet/{virksomhetsnummer}") {
                 val virksomhetsnummer = requireNotNull(call.parameters["virksomhetsnummer"])
                 authorize(authorizer, virksomhetsnummer)
-                call.respond(HttpStatusCode.OK, db.getAllForVirksomhet(virksomhetsnummer)
+                call.respond(HttpStatusCode.OK, refusjonskravService.getAllForVirksomhet(virksomhetsnummer)
                         .map {
                             RefusjonskravDto(it.identitetsnummer,
                                     it.virksomhetsnummer,
@@ -93,42 +90,46 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                 val om = application.get<ObjectMapper>()
                 val jsonTree = om.readTree(refusjonskravJson)
                 val responseBody = ArrayList<PostListResponseDto>(jsonTree.size())
+                val domeneListeMedIndex = mutableMapOf<Int, Refusjonskrav>()
+
+                for (i in 0 until jsonTree.size())
+                    responseBody.add(i, PostListResponseDto(PostListResponseDto.Status.GENERIC_ERROR))
 
                 for (i in 0 until jsonTree.size()) {
                     try {
                         val dto = om.readValue<RefusjonskravDto>(jsonTree[i].traverse())
                         authorize(authorizer, dto.virksomhetsnummer)
-
-                        val domeneKrav = Refusjonskrav(
+                        domeneListeMedIndex[i] = Refusjonskrav(
                                 dto.identitetsnummer,
                                 dto.virksomhetsnummer,
                                 dto.perioder
                         )
-                        val saved = db.insert(domeneKrav)
-
-                        INNKOMMENDE_REFUSJONSKRAV_COUNTER.inc()
-                        INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTER.inc(domeneKrav.perioder.sumByDouble { it.beloep }.div(1000))
-
-                        responseBody.add(PostListResponseDto(status = PostListResponseDto.Status.OK, referenceNumber = "${saved.referansenummer}"))
                     } catch (forbiddenEx: ForbiddenException) {
-                        responseBody.add(PostListResponseDto(status = PostListResponseDto.Status.GENERIC_ERROR, genericMessage = "Ingen tilgang til virksomheten"))
+                        responseBody[i] = PostListResponseDto(status = PostListResponseDto.Status.GENERIC_ERROR, genericMessage = "Ingen tilgang til virksomheten")
                     } catch (validationEx: ConstraintViolationException) {
                         val problems = validationEx.constraintViolations.map {
                             ValidationProblemDetail(it.constraint.name, it.getContextualMessage(), it.property, it.value)
                         }
-                        responseBody.add(PostListResponseDto(status = PostListResponseDto.Status.VALIDATION_ERRORS, validationErrors = problems))
+                        responseBody[i] = PostListResponseDto(status = PostListResponseDto.Status.VALIDATION_ERRORS, validationErrors = problems)
                     } catch (genericEx: Exception) {
                         if (genericEx.cause is ConstraintViolationException) {
                             val problems = (genericEx.cause as ConstraintViolationException).constraintViolations.map {
                                 ValidationProblemDetail(it.constraint.name, it.getContextualMessage(), it.property, it.value)
                             }
-                            responseBody.add(PostListResponseDto(status = PostListResponseDto.Status.VALIDATION_ERRORS, validationErrors = problems))
+                            responseBody[i] = PostListResponseDto(status = PostListResponseDto.Status.VALIDATION_ERRORS, validationErrors = problems)
                         } else {
-                            responseBody.add(PostListResponseDto(status = PostListResponseDto.Status.GENERIC_ERROR, genericMessage = genericEx.message))
+                            responseBody[i] = PostListResponseDto(status = PostListResponseDto.Status.GENERIC_ERROR, genericMessage = genericEx.message)
                         }
                     }
                 }
-
+                if (domeneListeMedIndex.isNotEmpty()) {
+                    val savedList = refusjonskravService.saveKravListWithKvittering(domeneListeMedIndex)
+                    savedList.forEach {
+                        INNKOMMENDE_REFUSJONSKRAV_COUNTER.inc()
+                        INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTER.inc(it.value.perioder.sumByDouble { it.beloep }.div(1000))
+                        responseBody[it.key] = PostListResponseDto(status = PostListResponseDto.Status.OK, referenceNumber = "${it.value.referansenummer}")
+                    }
+                }
                 call.respond(HttpStatusCode.OK, responseBody)
             }
         }
@@ -159,7 +160,8 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
                     throw IOException("Den opplastede filen er for stor")
                 }
 
-                ExcelBulkService(db, ExcelParser(authorizer)).processExcelFile(bytes.inputStream(), id)
+                ExcelBulkService(refusjonskravService, ExcelParser(authorizer))
+                        .processExcelFile(bytes.inputStream(), id)
 
                 call.respond(HttpStatusCode.OK, "Søknaden er mottatt.")
             }

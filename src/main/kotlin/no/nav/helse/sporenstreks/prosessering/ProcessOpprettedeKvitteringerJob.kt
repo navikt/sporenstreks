@@ -1,21 +1,24 @@
 package no.nav.helse.sporenstreks.prosessering
 
 import kotlinx.coroutines.CoroutineScope
-import no.nav.helse.sporenstreks.db.RefusjonskravRepository
-import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
+import no.nav.helse.sporenstreks.db.KvitteringRepository
 import no.nav.helse.sporenstreks.integrasjon.rest.LeaderElection.LeaderElectionConsumer
+import no.nav.helse.sporenstreks.kvittering.KvitteringSender
+import no.nav.helse.sporenstreks.kvittering.KvitteringStatus
 import java.time.Duration
 import java.util.concurrent.locks.ReentrantLock
 
-const val FEILEDE_TO_PROCESS_LIMIT = 250
+const val KVITTERINGER_TO_PROCESS_LIMIT = 250
 
-class ProcessFeiledeRefusjonskravJob(
-        private val db: RefusjonskravRepository,
-        private val processor: RefusjonskravBehandler,
+
+class ProcessOpprettedeKvitteringerJob(
+        private val db: KvitteringRepository,
+        private val kvitteringSender: KvitteringSender,
         coroutineScope: CoroutineScope,
         freq: Duration,
         val leaderElectionConsumer: LeaderElectionConsumer
 ) : RecurringJob(coroutineScope, freq) {
+
     var shutdownSignalSent = false
     val mutualLock = ReentrantLock()
 
@@ -33,9 +36,9 @@ class ProcessFeiledeRefusjonskravJob(
             return
         }
         mutualLock.lock()
-        db.getByStatus(RefusjonskravStatus.FEILET, FEILEDE_TO_PROCESS_LIMIT)
+        db.getByStatus(KvitteringStatus.OPPRETTET, KVITTERINGER_TO_PROCESS_LIMIT)
                 .forEach {
-                    processor.behandle(it)
+                    kvitteringSender.send(it)
                     if (shutdownSignalSent) {
                         return@forEach
                     }

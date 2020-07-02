@@ -64,11 +64,15 @@ spec:
       value: aadb2c
     - name: ALTINN_SERVICE_OWNER_GW_URL
       value: https://api-gw.adeo.no/ekstern/altinn/api/serviceowner
-    - name: SECURITYTOKENSERVICE_URL
+    - name: SECURITYTOKENSERVICE_URL_REST
       value: https://security-token-service.nais.adeo.no/rest/v1/sts/token
+    - name: SECURITYTOKENSERVICE_URL_WS
+      value: https://sts.adeo.no/SecurityTokenServiceProvider/
     - name: DOKARKIV_URL
       value: https://dokarkiv.nais.adeo.no
     - name: AKTOERREGISTER_URL
       value: https://app.adeo.no/aktoerregister/api/v1
     - name: OPPGAVEBEHANDLING_URL
       value: http://oppgave.default.svc.nais.local/api/v1/oppgaver
+    - name: PARTNER_GATEWAY_ALTINN_ENDPOINT
+      value: https://pep-gw.oera.no:9443/ekstern/altinn/BehandleAltinnMelding/v1

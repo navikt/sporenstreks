@@ -2,7 +2,6 @@ package no.nav.helse.sporenstreks.prosessering
 
 import kotlinx.coroutines.CoroutineScope
 import no.nav.helse.sporenstreks.db.RefusjonskravRepository
-import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.integrasjon.rest.LeaderElection.LeaderElectionConsumer
 import no.nav.helse.sporenstreks.prosessering.metrics.InfluxReporter
 import java.time.Duration
@@ -30,7 +29,7 @@ class ProcessInfluxJob(
 
     override suspend fun doJob() {
         if (!leaderElectionConsumer.isLeader()) {
-            logger.warn("Er ikke leader")
+            logger.info("Er ikke leader")
             return
         }
         mutualLock.lock()
