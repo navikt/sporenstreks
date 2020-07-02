@@ -48,8 +48,6 @@ import no.nav.helse.sporenstreks.prosessering.metrics.InfluxReporterImpl
 import no.nav.helse.sporenstreks.service.MockRefusjonskravService
 import no.nav.helse.sporenstreks.service.PostgresRefusjonskravService
 import no.nav.helse.sporenstreks.service.RefusjonskravService
-import org.apache.cxf.ext.logging.LoggingInInterceptor
-import org.apache.cxf.frontend.ClientProxy
 import org.koin.core.Koin
 import org.koin.core.definition.Kind
 import org.koin.core.module.Module
@@ -276,8 +274,6 @@ fun prodConfig(config: ApplicationConfig) = module {
         val altinnMeldingWsClient = Clients.iCorrespondenceExternalBasic(
                 config.getString("altinn_melding.pep_gw_endpoint")
         )
-        val client = ClientProxy.getClient(altinnMeldingWsClient)
-        client.inInterceptors.add(LoggingInInterceptor())
         val sts = wsStsClient(
                 config.getString("sts_url_ws"),
                 config.getString("service_user.username") to config.getString("service_user.password")

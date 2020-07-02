@@ -100,7 +100,6 @@ fun wsStsClient(stsUrl: String, credentials: Pair<String, String>): org.apache.c
         isEnableAppliesTo = false
         isAllowRenewing = false
         location = stsUrl
-        //features = listOf(LoggingFeature())
         properties = mapOf(
                 SecurityConstants.USERNAME to credentials.first,
                 SecurityConstants.PASSWORD to credentials.second
