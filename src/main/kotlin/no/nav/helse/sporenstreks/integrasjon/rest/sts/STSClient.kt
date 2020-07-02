@@ -7,7 +7,6 @@ import org.apache.cxf.BusFactory
 import org.apache.cxf.binding.soap.Soap12
 import org.apache.cxf.binding.soap.SoapMessage
 import org.apache.cxf.endpoint.Client
-import org.apache.cxf.ext.logging.LoggingInInterceptor
 import org.apache.cxf.frontend.ClientProxy
 import org.apache.cxf.ws.policy.PolicyBuilder
 import org.apache.cxf.ws.policy.PolicyEngine
@@ -126,7 +125,6 @@ fun org.apache.cxf.ws.security.trust.STSClient.configureFor(servicePort: Any) {
 
 fun org.apache.cxf.ws.security.trust.STSClient.configureFor(servicePort: Any, policyUri: String) {
     val client = ClientProxy.getClient(servicePort)
-    client.inInterceptors.add(LoggingInInterceptor())
     client.configureSTS(this, policyUri)
 }
 
