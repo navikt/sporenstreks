@@ -1,7 +1,6 @@
 package no.nav.helse.sporenstreks.kvittering
 
 import no.altinn.services.serviceengine.correspondence._2009._10.ICorrespondenceAgencyExternalBasic
-import org.apache.cxf.ext.logging.LoggingFeature
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean
 
 object Clients {
@@ -18,6 +17,6 @@ object Clients {
     ): PORT_TYPE = JaxWsProxyFactoryBean().apply {
         address = serviceUrl
         serviceClass = serviceClazz
-        features = listOf(LoggingFeature())
+        //features = listOf(LoggingFeature())
     }.create(serviceClazz)
 }
