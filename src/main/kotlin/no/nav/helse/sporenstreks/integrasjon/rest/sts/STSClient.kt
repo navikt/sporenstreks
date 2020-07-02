@@ -2,9 +2,18 @@ package no.nav.helse.sporenstreks.integrasjon.rest.sts
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.security.token.support.core.jwt.JwtToken
+import org.apache.cxf.Bus
 import org.apache.cxf.BusFactory
-import org.apache.cxf.ext.logging.LoggingFeature
+import org.apache.cxf.binding.soap.Soap12
+import org.apache.cxf.binding.soap.SoapMessage
+import org.apache.cxf.endpoint.Client
+import org.apache.cxf.ext.logging.LoggingInInterceptor
+import org.apache.cxf.frontend.ClientProxy
+import org.apache.cxf.ws.policy.PolicyBuilder
+import org.apache.cxf.ws.policy.PolicyEngine
+import org.apache.cxf.ws.policy.attachment.reference.RemoteReferenceResolver
 import org.apache.cxf.ws.security.SecurityConstants
+import org.apache.neethi.Policy
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.net.HttpURLConnection
@@ -18,15 +27,6 @@ import java.util.*
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.UriBuilder
-import org.apache.cxf.Bus
-import org.apache.cxf.binding.soap.Soap12
-import org.apache.cxf.binding.soap.SoapMessage
-import org.apache.cxf.endpoint.Client
-import org.apache.cxf.frontend.ClientProxy
-import org.apache.cxf.ws.policy.PolicyBuilder
-import org.apache.cxf.ws.policy.PolicyEngine
-import org.apache.cxf.ws.policy.attachment.reference.RemoteReferenceResolver
-import org.apache.neethi.Policy
 
 
 class STSClient(username: String, password: String, stsEndpoint: String) {
@@ -101,7 +101,7 @@ fun wsStsClient(stsUrl: String, credentials: Pair<String, String>): org.apache.c
         isEnableAppliesTo = false
         isAllowRenewing = false
         location = stsUrl
-        features = listOf(LoggingFeature())
+        //features = listOf(LoggingFeature())
         properties = mapOf(
                 SecurityConstants.USERNAME to credentials.first,
                 SecurityConstants.PASSWORD to credentials.second
@@ -126,6 +126,7 @@ fun org.apache.cxf.ws.security.trust.STSClient.configureFor(servicePort: Any) {
 
 fun org.apache.cxf.ws.security.trust.STSClient.configureFor(servicePort: Any, policyUri: String) {
     val client = ClientProxy.getClient(servicePort)
+    client.inInterceptors.add(LoggingInInterceptor())
     client.configureSTS(this, policyUri)
 }
 
