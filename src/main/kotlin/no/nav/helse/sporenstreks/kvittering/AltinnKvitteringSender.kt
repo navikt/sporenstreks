@@ -34,7 +34,7 @@ class AltinnKvitteringSender(
                 kvittering.status = KvitteringStatus.SENDT
             }
         } catch (e: ICorrespondenceAgencyExternalBasicInsertCorrespondenceBasicV2AltinnFaultFaultFaultMessage) {
-            log.error("Feil ved sending kvittering til Altinn", e)
+            log.error("Feil ved sending kvittering til Altinn", e.faultInfo)
             throw RuntimeException("Feil ved sending kvittering til Altinn", e)
         } catch (e: Exception) {
             log.error("Feil ved sending kvittering til Altinn", e)
