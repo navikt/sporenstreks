@@ -3,6 +3,7 @@
     "Name": "HØNEFOSS OG ØLEN",
     "Type": "Enterprise",
     "OrganizationNumber": "910020102",
+    "ParentOrganizationNumber": "",
     "OrganizationForm": "AS",
     "Status": "Active"
   },
@@ -15,7 +16,167 @@
     "Status": "Active"
   },
   {
-    "Name": "ELTRODE AS",
+    "Name": "JØA OG SEL b",
+    "Type": "Business",
+    "OrganizationNumber": "910098897",
+    "ParentOrganizationNumber": "911366940",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "JØA OG SEL c",
+    "Type": "Business",
+    "OrganizationNumber": "910098898",
+    "ParentOrganizationNumber": "911366940",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "JØA OG SEL d",
+    "Type": "Business",
+    "OrganizationNumber": "910098899",
+    "ParentOrganizationNumber": "911366940",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "JØA OG SEL e",
+    "Type": "Business",
+    "OrganizationNumber": "910098800",
+    "ParentOrganizationNumber": "911366940",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "JØA OG SEL f",
+    "Type": "Business",
+    "OrganizationNumber": "910098801",
+    "ParentOrganizationNumber": "911366940",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "JØA OG SEL g",
+    "Type": "Business",
+    "OrganizationNumber": "910098802",
+    "ParentOrganizationNumber": "911366940",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "JØA OG SEL h",
+    "Type": "Business",
+    "OrganizationNumber": "910098803",
+    "ParentOrganizationNumber": "911366940",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "JØA OG SEL i",
+    "Type": "Business",
+    "OrganizationNumber": "910098804",
+    "ParentOrganizationNumber": "911366940",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "JØA OG SEL j",
+    "Type": "Business",
+    "OrganizationNumber": "910098805",
+    "ParentOrganizationNumber": "911366940",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "JØA OG SEL k",
+    "Type": "Business",
+    "OrganizationNumber": "910098806",
+    "ParentOrganizationNumber": "911366940",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "JØA OG SEL l",
+    "Type": "Business",
+    "OrganizationNumber": "910098807",
+    "ParentOrganizationNumber": "911366940",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "JØA OG SEL m",
+    "Type": "Business",
+    "OrganizationNumber": "910098808",
+    "ParentOrganizationNumber": "911366940",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "JØA OG SEL n",
+    "Type": "Business",
+    "OrganizationNumber": "910098809",
+    "ParentOrganizationNumber": "911366940",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ELTRODE a AS",
+    "Type": "Business",
+    "ParentOrganizationNumber": "917346380",
+    "OrganizationNumber": "917404430",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ELTRODE b AS",
+    "Type": "Business",
+    "ParentOrganizationNumber": "917346380",
+    "OrganizationNumber": "917404431",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ELTRODE c AS",
+    "Type": "Business",
+    "ParentOrganizationNumber": "917346380",
+    "OrganizationNumber": "917404432",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ELTRODE d AS",
+    "Type": "Business",
+    "ParentOrganizationNumber": "917346380",
+    "OrganizationNumber": "917404433",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ELTRODE e AS",
+    "Type": "Business",
+    "ParentOrganizationNumber": "917346380",
+    "OrganizationNumber": "917404434",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ELTRODE f AS",
+    "Type": "Business",
+    "ParentOrganizationNumber": "917346380",
+    "OrganizationNumber": "917404435",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ELTRODE g AS",
+    "Type": "Business",
+    "ParentOrganizationNumber": "917346380",
+    "OrganizationNumber": "917404436",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ELTRODE h AS",
     "Type": "Business",
     "ParentOrganizationNumber": "917346380",
     "OrganizationNumber": "917404437",
@@ -23,10 +184,283 @@
     "Status": "Active"
   },
   {
+    "Name": "ELTRODE i AS",
+    "Type": "Business",
+    "ParentOrganizationNumber": "917346380",
+    "OrganizationNumber": "917404438",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ELTRODE j AS",
+    "Type": "Business",
+    "ParentOrganizationNumber": "917346380",
+    "OrganizationNumber": "917404439",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ELTRODE k AS",
+    "Type": "Business",
+    "ParentOrganizationNumber": "917346380",
+    "OrganizationNumber": "917404440",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ELTRODE l AS",
+    "Type": "Business",
+    "ParentOrganizationNumber": "917346380",
+    "OrganizationNumber": "917404441",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ELTRODE m AS",
+    "Type": "Business",
+    "ParentOrganizationNumber": "917346380",
+    "OrganizationNumber": "917404442",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ELTRODE n AS",
+    "Type": "Business",
+    "ParentOrganizationNumber": "917346380",
+    "OrganizationNumber": "917404443",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ELTRODE o AS",
+    "Type": "Business",
+    "ParentOrganizationNumber": "917346380",
+    "OrganizationNumber": "917404444",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ELTRODE p AS",
+    "Type": "Business",
+    "ParentOrganizationNumber": "917346380",
+    "OrganizationNumber": "917404445",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ELTRODE q AS",
+    "Type": "Business",
+    "ParentOrganizationNumber": "917346380",
+    "OrganizationNumber": "917404446",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ELTRODE r AS",
+    "Type": "Business",
+    "ParentOrganizationNumber": "917346380",
+    "OrganizationNumber": "917404447",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
     "Name": "STADLANDET OG SINGSÅS",
     "Type": "Enterprise",
     "OrganizationNumber": "911366940",
+    "ParentOrganizationNumber": "",
     "OrganizationForm": "AS",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTERPRISE 1",
+    "Type": "Enterprise",
+    "OrganizationNumber": "991366940",
+    "ParentOrganizationNumber": "",
+    "OrganizationForm": "AS",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTER SUB 1",
+    "Type": "Business",
+    "ParentOrganizationNumber": "991366940",
+    "OrganizationNumber": "917404447",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTERPRISE 2",
+    "Type": "Enterprise",
+    "OrganizationNumber": "991366942",
+    "ParentOrganizationNumber": "",
+    "OrganizationForm": "AS",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTER SUB 2",
+    "Type": "Business",
+    "ParentOrganizationNumber": "991366942",
+    "OrganizationNumber": "917404447",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTERPRISE 3",
+    "Type": "Enterprise",
+    "OrganizationNumber": "991366943",
+    "ParentOrganizationNumber": "",
+    "OrganizationForm": "AS",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTER SUB 3",
+    "Type": "Business",
+    "ParentOrganizationNumber": "991366943",
+    "OrganizationNumber": "917404447",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTERPRISE 4",
+    "Type": "Enterprise",
+    "OrganizationNumber": "991366944",
+    "ParentOrganizationNumber": "",
+    "OrganizationForm": "AS",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTER SUB 4",
+    "Type": "Business",
+    "ParentOrganizationNumber": "991366944",
+    "OrganizationNumber": "917404447",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTERPRISE 5",
+    "Type": "Enterprise",
+    "OrganizationNumber": "991366945",
+    "ParentOrganizationNumber": "",
+    "OrganizationForm": "AS",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTER SUB 5",
+    "Type": "Business",
+    "ParentOrganizationNumber": "991366945",
+    "OrganizationNumber": "917404447",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTERPRISE 6",
+    "Type": "Enterprise",
+    "OrganizationNumber": "991366946",
+    "ParentOrganizationNumber": "",
+    "OrganizationForm": "AS",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTER SUB 6",
+    "Type": "Business",
+    "ParentOrganizationNumber": "991366946",
+    "OrganizationNumber": "917404447",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTERPRISE 7",
+    "Type": "Enterprise",
+    "OrganizationNumber": "991366947",
+    "ParentOrganizationNumber": "",
+    "OrganizationForm": "AS",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTER SUB 7",
+    "Type": "Business",
+    "ParentOrganizationNumber": "991366947",
+    "OrganizationNumber": "917404447",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTERPRISE 8",
+    "Type": "Enterprise",
+    "OrganizationNumber": "991366948",
+    "ParentOrganizationNumber": "",
+    "OrganizationForm": "AS",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTER SUB 8",
+    "Type": "Business",
+    "ParentOrganizationNumber": "991366948",
+    "OrganizationNumber": "917404447",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTERPRISE 9",
+    "Type": "Enterprise",
+    "OrganizationNumber": "991366949",
+    "ParentOrganizationNumber": "",
+    "OrganizationForm": "AS",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTER SUB 9",
+    "Type": "Business",
+    "ParentOrganizationNumber": "991366949",
+    "OrganizationNumber": "917404447",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTERPRISE 10",
+    "Type": "Enterprise",
+    "OrganizationNumber": "991366950",
+    "ParentOrganizationNumber": "",
+    "OrganizationForm": "AS",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTER SUB 10",
+    "Type": "Business",
+    "ParentOrganizationNumber": "991366950",
+    "OrganizationNumber": "917404447",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTERPRISE 11",
+    "Type": "Enterprise",
+    "OrganizationNumber": "991366951",
+    "ParentOrganizationNumber": "",
+    "OrganizationForm": "AS",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTER SUB 11",
+    "Type": "Business",
+    "ParentOrganizationNumber": "991366951",
+    "OrganizationNumber": "917404447",
+    "OrganizationForm": "BEDR",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTERPRISE 12",
+    "Type": "Enterprise",
+    "OrganizationNumber": "991366952",
+    "ParentOrganizationNumber": "",
+    "OrganizationForm": "AS",
+    "Status": "Active"
+  },
+  {
+    "Name": "ENTER SUB 12",
+    "Type": "Business",
+    "ParentOrganizationNumber": "991366952",
+    "OrganizationNumber": "917404447",
+    "OrganizationForm": "BEDR",
     "Status": "Active"
   }
 ]

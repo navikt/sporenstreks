@@ -166,17 +166,19 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { PostgresKvitteringRepository(get(), get()) as KvitteringRepository }
     single { PostgresRefusjonskravService(get(), get()) as RefusjonskravService }
 
-    single {
-        val altinnClient = AltinnClient(
-                config.getString("altinn.service_owner_api_url"),
-                config.getString("altinn.gw_api_key"),
-                config.getString("altinn.altinn_api_key"),
-                config.getString("altinn.service_id"),
-                get()
-        )
+//    single {
+//        val altinnClient = AltinnClient(
+//                config.getString("altinn.service_owner_api_url"),
+//                config.getString("altinn.gw_api_key"),
+//                config.getString("altinn.altinn_api_key"),
+//                config.getString("altinn.service_id"),
+//                get()
+//        )
+//
+//        CachedAuthRepo(altinnClient) as AuthorizationsRepository
+//    }
 
-        CachedAuthRepo(altinnClient) as AuthorizationsRepository
-    }
+    single { StaticMockAuthRepo(get()) as AuthorizationsRepository }
 
     single {SensuClientImpl("sensu.nais", 3030) as SensuClient }
     single {InfluxReporterImpl("sporenstreks", "dev-fss", "default", get()) as InfluxReporter}
