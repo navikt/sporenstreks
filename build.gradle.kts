@@ -36,7 +36,7 @@ application {
 
 sonarqube {
     properties {
-        property("sonar.projectKey", "navikt_helse-sporenstreks")
+        property("sonar.projectKey", "navikt_sporenstreks")
         property("sonar.organization", "navit")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.login", System.getenv("SONAR_TOKEN"))
