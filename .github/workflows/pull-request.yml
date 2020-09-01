@@ -39,6 +39,6 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args:  GRADLE_OPTS="-Xmx512m"
+          args:  GRADLE_OPTS="-Xmx512m" snyk test -d
 
 
