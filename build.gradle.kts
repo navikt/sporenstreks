@@ -19,7 +19,7 @@ val cxfVersion = "3.3.1"
 val jaxwsVersion = "2.3.1"
 val jaxwsToolsVersion = "2.3.1"
 val apachePoiVersion = "4.1.2"
-val influxVersion = "2.19"
+val influxVersion = "2.20"
 
 
 plugins {
