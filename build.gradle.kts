@@ -125,7 +125,7 @@ dependencies {
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
 
-    implementation("org.influxdb:influxdb-java:${influxVersion}")
+    implementation(project("org.influxdb:influxdb-java:${influxVersion}", configuration = "default"))
 
     testImplementation("org.koin:koin-test:$koinVersion")
     implementation("com.github.javafaker:javafaker:1.0.2") // flytt denne til test når generatorene ikke er nødvendige i prod-koden lenger
