@@ -24,7 +24,7 @@ val influxVersion = "2.20"
 
 plugins {
     application
-    kotlin("jvm") version "1.3.50"
+    kotlin("jvm") version "1.3.60"
     id("org.sonarqube") version "2.8"
     id("com.github.ben-manes.versions") version "0.27.0"
     jacoco
@@ -125,7 +125,7 @@ dependencies {
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
 
-    implementation(project("org.influxdb:influxdb-java:${influxVersion}", configuration = "default"))
+    implementation("org.influxdb:influxdb-java:${influxVersion}")
 
     testImplementation("org.koin:koin-test:$koinVersion")
     implementation("com.github.javafaker:javafaker:1.0.2") // flytt denne til test når generatorene ikke er nødvendige i prod-koden lenger
