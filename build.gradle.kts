@@ -202,3 +202,9 @@ task<Test>("slowTests") {
 tasks.withType<Wrapper> {
     gradleVersion = "6.0.1"
 }
+
+configurations.forEach {
+    if (it.name.contains("productionRuntimeClasspath")) {
+        it.attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, "java-runtime"))
+    }
+}
