@@ -6,7 +6,7 @@ val logback_contrib_version = "0.1.5"
 val jacksonVersion = "2.10.3"
 val prometheusVersion = "0.6.0"
 val hikariVersion = "3.3.1"
-val vaultJdbcVersion = "1.3.1"
+val vaultJdbcVersion = "1.3.7"
 val kafkaVersion = "2.1.1"
 val mainClass = "no.nav.helse.sporenstreks.web.AppKt"
 val junitJupiterVersion = "5.5.0-RC2"
@@ -15,16 +15,16 @@ val mockKVersion = "1.9.3"
 val tokenSupportVersion = "1.1.6"
 val koinVersion = "2.0.1"
 val valiktorVersion = "0.10.0"
-val cxfVersion = "3.3.1"
+val cxfVersion = "3.4.0"
 val jaxwsVersion = "2.3.1"
 val jaxwsToolsVersion = "2.3.1"
 val apachePoiVersion = "4.1.2"
-val influxVersion = "2.19"
+val influxVersion = "2.20"
 
 
 plugins {
     application
-    kotlin("jvm") version "1.3.50"
+    kotlin("jvm") version "1.3.60"
     id("org.sonarqube") version "2.8"
     id("com.github.ben-manes.versions") version "0.27.0"
     jacoco
@@ -36,7 +36,7 @@ application {
 
 sonarqube {
     properties {
-        property("sonar.projectKey", "navikt_helse-sporenstreks")
+        property("sonar.projectKey", "navikt_sporenstreks")
         property("sonar.organization", "navit")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.login", System.getenv("SONAR_TOKEN"))
