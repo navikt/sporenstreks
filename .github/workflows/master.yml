@@ -1,4 +1,4 @@
-name: Merge til master
+name: Bygg og deploy
 
 on:
   push:
