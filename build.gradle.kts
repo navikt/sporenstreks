@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val ktorVersion = "1.3.1"
+val ktorVersion = "1.4.0"
 val logback_version = "1.2.1"
 val logback_contrib_version = "0.1.5"
 val jacksonVersion = "2.10.3"
@@ -17,7 +17,7 @@ val koinVersion = "2.0.1"
 val valiktorVersion = "0.10.0"
 val cxfVersion = "3.4.0"
 val jaxwsVersion = "2.3.1"
-val jaxwsToolsVersion = "2.3.1"
+val jaxwsToolsVersion = "3.0.0"
 val apachePoiVersion = "4.1.2"
 val influxVersion = "2.20"
 
@@ -120,7 +120,7 @@ dependencies {
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("no.nav:vault-jdbc:$vaultJdbcVersion")
     implementation("com.github.tomakehurst:wiremock-standalone:2.25.1")
-    implementation("org.postgresql:postgresql:42.2.9")
+    implementation("org.postgresql:postgresql:42.2.16")
 
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
