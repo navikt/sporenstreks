@@ -45,7 +45,7 @@ sonarqube {
 }
 
 tasks.jacocoTestReport {
-    executionData("build/jacoco/test.exec", "build/jacoco/slowTests.exec")
+    executionData("build/jacoco/test.exec") // legg til slowtests senere
     reports {
         xml.isEnabled = true
         html.isEnabled = true
