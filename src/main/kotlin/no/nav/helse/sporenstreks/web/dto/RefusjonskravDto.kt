@@ -53,6 +53,9 @@ data class RefusjonskravDto(
 
             // periodene til sammen kan ikke overstige 16
             validate(RefusjonskravDto::perioder).totalPeriodeLengdeErMaks(maksimalAGPLengde)
+
+            // tom periode kan ikke ha refusjonsbeløp
+            validate(RefusjonskravDto::perioder).tomPeriodeKanIkkeHaBeloepConstraint()
         }
     }
 }
