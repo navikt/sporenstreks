@@ -66,7 +66,7 @@ class AltinnClient(
                     is ServerResponseException -> {
                         // midlertidig hook for å detektere at det tok for lang tid å hente rettigheter
                         // brukeren/klienten kan prøve igjen når dette skjer siden altinn svarer raskere gang nummer 2
-                        if (ex.response.status == HttpStatusCode.BadGateway) {
+                        if (ex.response!!.status == HttpStatusCode.BadGateway) {
                             logger.warn("Fikk en timeout fra Altinn som vi antar er fiksbar lagg hos dem", ex)
                             throw AltinnBrukteForLangTidException()
                         } else throw ex
@@ -87,7 +87,7 @@ class AltinnClient(
             // og kubernetes hamrer denne helsesjekken ved oppstart om den feiler
             // hentOrgMedRettigheterForPerson("01065500791")
         } catch (ex: io.ktor.client.features.ClientRequestException) {
-            if (!(ex.response.status == HttpStatusCode.BadRequest && ex.response.readText().contains("Invalid social security number"))) {
+            if (!(ex.response!!.status == HttpStatusCode.BadRequest && ex.response!!.readText().contains("Invalid social security number"))) {
                 throw ex
             }
         }
