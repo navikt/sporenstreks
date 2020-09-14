@@ -25,11 +25,12 @@ jobs:
       #      - name: compose up
       #        run: cd docker/local && docker-compose up -d && sleep 15
       - name: test and build
-        run: ./gradlew --console=plain build test jacocoTestReport sonarqube
+        run: ./gradlew --console=plain build test slowTests jacocoTestReport sonarqube
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.sonartoken }}
   snyk:
     runs-on: ubuntu-latest
     steps:

@@ -25,9 +25,10 @@ jobs:
       #          restore-keys: |
       #            ${{ runner.os }}-gradle-
       - name: test and build
-        run: bash ./gradlew --console=plain build test jacocoTestReport
+        run: bash ./gradlew --console=plain build test slowTests jacocoTestReport sonarqube
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.sonartoken }}
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and publish Docker image
