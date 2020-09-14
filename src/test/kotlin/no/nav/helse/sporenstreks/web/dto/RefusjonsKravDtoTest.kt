@@ -335,4 +335,19 @@ internal class RefusjonsKravDtoTest {
         }
     }
 
+    @Test
+    fun `Beløp må være null hvis antall refusjonsdager er null`() {
+        Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
+            RefusjonskravDto(
+                    TestData.validIdentitetsnummer,
+                    TestData.validOrgNr,
+                    setOf(
+                            Arbeidsgiverperiode(
+                                    LocalDate.of(2020, 3, 10),
+                                    LocalDate.of(2020, 3, 20),
+                                    0, 4000.0))
+            )
+        }
+    }
+
 }

@@ -101,6 +101,14 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refujonsDagerIkkeO
             }
         }
 
+class TomPeriodeKanIkkeHaBeloepConstraint : CustomConstraint
+fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.tomPeriodeKanIkkeHaBeloepConstraint() =
+        this.validate(TomPeriodeKanIkkeHaBeloepConstraint()) { ps ->
+            !ps!!.any { p ->
+                p.antallDagerMedRefusjon == 0 && p.beloep > 0
+            }
+        }
+
 class RefusjonsdagerInnenforGyldigPeriodeConstraint : CustomConstraint
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdagerInnenforGyldigPeriode(refusjonsdagerFom: LocalDate) =
         this.validate(RefusjonsdagerInnenforGyldigPeriodeConstraint()) { ps ->
