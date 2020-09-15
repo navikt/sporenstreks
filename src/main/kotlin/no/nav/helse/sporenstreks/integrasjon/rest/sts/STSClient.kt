@@ -35,6 +35,7 @@ class STSClient(username: String, password: String, stsEndpoint: String) {
     private val basicAuth: String
 
     private var currentToken: JwtToken
+    private val errorMessage = "Feilet ved kall til STS"
 
     init {
         basicAuth = basicAuth(username, password)
@@ -70,14 +71,14 @@ class STSClient(username: String, password: String, stsEndpoint: String) {
             check(response.statusCode() == HttpURLConnection.HTTP_OK) { String.format("Feil oppsto under henting av token fra STS - %s", response.body()) }
 
             val accessToken = ObjectMapper().readValue(response.body(), STSOidcResponse::class.java).access_token
-                    ?: throw IllegalStateException("Feilet ved kall til STS")
+                    ?: throw IllegalStateException(errorMessage)
 
 
             return JwtToken(accessToken)
         } catch (e: InterruptedException) {
-            throw IllegalStateException("Feilet ved kall til STS", e)
+            throw IllegalStateException(errorMessage, e)
         } catch (e: IOException) {
-            throw IllegalStateException("Feilet ved kall til STS", e)
+            throw IllegalStateException(errorMessage, e)
         }
     }
 
