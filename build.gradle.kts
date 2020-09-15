@@ -17,7 +17,7 @@ val koinVersion = "2.0.1"
 val valiktorVersion = "0.10.0"
 val cxfVersion = "3.4.0"
 val jaxwsVersion = "2.3.1"
-val jaxwsToolsVersion = "2.3.1"
+val jaxwsToolsVersion = "2.3.3"
 val apachePoiVersion = "4.1.2"
 val influxVersion = "2.20"
 
