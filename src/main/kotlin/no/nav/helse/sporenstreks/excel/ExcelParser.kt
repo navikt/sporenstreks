@@ -29,6 +29,7 @@ class ExcelParser(private val authorizer: Authorizer) {
         var currentDataRow = startDataRowAt
         val parseRunId = UUID.randomUUID().toString()
         var row :Row? = sheet.getRow(currentDataRow)
+        val genericErrorMessage = "Ukjent feil"
 
         while (row != null && row.extractRawValue(0) != "") {
             try {
@@ -50,13 +51,13 @@ class ExcelParser(private val authorizer: Authorizer) {
                 errorRows.add(ExcelFileRowError(
                         currentDataRow+1,
                         ex.columnName,
-                        ex.message ?: "Ukjent feil")
+                        ex.message ?: genericErrorMessage)
                 )
             } catch(ex: Exception) {
                 errorRows.add(ExcelFileRowError(
                         currentDataRow+1,
-                        "Ukjent feil",
-                        ex.message ?: "Ukjent feil")
+                        genericErrorMessage,
+                        ex.message ?: genericErrorMessage)
                 )
 
             } finally {
