@@ -22,15 +22,15 @@ jobs:
         run: |
           echo $DOCKER_IMAGE > .docker_image
           echo $(echo $GITHUB_SHA | cut -c1-7) > .docker_tag
-      #      - name: compose up
-      #        run: cd docker/local && docker-compose up -d && sleep 15
+      - name: compose up
+        run: cd docker/local && docker-compose up -d && sleep 15
       - name: test and build
         run: ./gradlew --console=plain build test slowTests jacocoTestReport sonarqube
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.sonartoken }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   snyk:
     runs-on: ubuntu-latest
     steps:

@@ -24,11 +24,13 @@ jobs:
       #          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
       #          restore-keys: |
       #            ${{ runner.os }}-gradle-
+      - name: compose up
+        run: cd docker/local && docker-compose up -d && sleep 15
       - name: test and build
         run: bash ./gradlew --console=plain build test slowTests jacocoTestReport sonarqube
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.sonartoken }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and publish Docker image
