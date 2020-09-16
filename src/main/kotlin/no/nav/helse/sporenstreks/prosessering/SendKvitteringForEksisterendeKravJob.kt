@@ -1,11 +1,12 @@
 package no.nav.helse.sporenstreks.prosessering
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.runBlocking
+import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.helse.sporenstreks.db.RefusjonskravRepository
 import no.nav.helse.sporenstreks.integrasjon.rest.LeaderElection.LeaderElectionConsumer
 import no.nav.helse.sporenstreks.service.RefusjonskravService
 import org.slf4j.LoggerFactory
-import java.time.Duration
 import java.util.concurrent.locks.ReentrantLock
 
 
@@ -13,9 +14,9 @@ class SendKvitteringForEksisterendeKravJob(
         private val refusjonskravService: RefusjonskravService,
         private val refusjonskravRepository: RefusjonskravRepository,
         coroutineScope: CoroutineScope,
-        freq: Duration,
+        waitMillisWhenEmptyQueue: Long = (30 * 1000L),
         val leaderElectionConsumer: LeaderElectionConsumer
-) : RecurringJob(coroutineScope, freq) {
+) : RecurringJob(coroutineScope, waitMillisWhenEmptyQueue) {
 
     var shutdownSignalSent = false
     val mutualLock = ReentrantLock()
@@ -28,11 +29,9 @@ class SendKvitteringForEksisterendeKravJob(
         })
     }
 
-    override suspend fun doJob() {
-        if (!leaderElectionConsumer.isLeader()) {
-            logger.info("Er ikke leader")
+    override fun doJob() {
+        if (runBlocking { leaderElectionConsumer.isLeader() })
             return
-        }
         mutualLock.lock()
 
         refusjonskravRepository.getRandomVirksomhetWithoutKvittering()?.let {
