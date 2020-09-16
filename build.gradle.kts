@@ -21,6 +21,9 @@ val jaxwsToolsVersion = "2.3.3"
 val apachePoiVersion = "4.1.2"
 val influxVersion = "2.20"
 
+val githubPassword: String by project
+
+
 
 plugins {
     application
@@ -136,6 +139,8 @@ dependencies {
 
     implementation("org.influxdb:influxdb-java:${influxVersion}")
 
+    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2020.09.10-12-08-8f320")
+
     testImplementation("org.koin:koin-test:$koinVersion")
     implementation("com.github.javafaker:javafaker:1.0.2") // flytt denne til test når generatorene ikke er nødvendige i prod-koden lenger
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.2")
@@ -168,6 +173,13 @@ repositories {
     jcenter()
     mavenCentral()
     maven("https://kotlin.bintray.com/ktor")
+    maven {
+        credentials {
+            username = "x-access-token"
+            password = githubPassword
+        }
+        setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
+    }
 }
 
 tasks.named<Jar>("jar") {

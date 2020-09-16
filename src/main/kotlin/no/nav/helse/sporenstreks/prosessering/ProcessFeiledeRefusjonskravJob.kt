@@ -1,10 +1,11 @@
 package no.nav.helse.sporenstreks.prosessering
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.runBlocking
+import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.helse.sporenstreks.db.RefusjonskravRepository
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.integrasjon.rest.LeaderElection.LeaderElectionConsumer
-import java.time.Duration
 import java.util.concurrent.locks.ReentrantLock
 
 const val FEILEDE_TO_PROCESS_LIMIT = 250
@@ -13,9 +14,9 @@ class ProcessFeiledeRefusjonskravJob(
         private val db: RefusjonskravRepository,
         private val processor: RefusjonskravBehandler,
         coroutineScope: CoroutineScope,
-        freq: Duration,
+        waitMillisWhenEmptyQueue: Long = (30 * 1000L),
         val leaderElectionConsumer: LeaderElectionConsumer
-) : RecurringJob(coroutineScope, freq) {
+) : RecurringJob(coroutineScope, waitMillisWhenEmptyQueue) {
     var shutdownSignalSent = false
     val mutualLock = ReentrantLock()
 
@@ -27,11 +28,9 @@ class ProcessFeiledeRefusjonskravJob(
         })
     }
 
-    override suspend fun doJob() {
-        if (!leaderElectionConsumer.isLeader()) {
-            logger.info("Er ikke leader")
+    override fun doJob() {
+        if (runBlocking { leaderElectionConsumer.isLeader() })
             return
-        }
         mutualLock.lock()
         db.getByStatus(RefusjonskravStatus.FEILET, FEILEDE_TO_PROCESS_LIMIT)
                 .forEach {

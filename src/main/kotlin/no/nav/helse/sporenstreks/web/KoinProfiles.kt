@@ -10,12 +10,11 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.zaxxer.hikari.metrics.prometheus.PrometheusMetricsTrackerFactory
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.apache.Apache
-import io.ktor.client.features.json.JacksonSerializer
-import io.ktor.client.features.json.JsonFeature
-import io.ktor.config.ApplicationConfig
-import io.ktor.util.KtorExperimentalAPI
+import io.ktor.client.*
+import io.ktor.client.engine.apache.*
+import io.ktor.client.features.json.*
+import io.ktor.config.*
+import io.ktor.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import no.altinn.services.serviceengine.correspondence._2009._10.ICorrespondenceAgencyExternalBasic
@@ -53,7 +52,6 @@ import org.koin.core.definition.Kind
 import org.koin.core.module.Module
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import java.time.Duration
 import javax.sql.DataSource
 
 
@@ -221,12 +219,12 @@ fun preprodConfig(config: ApplicationConfig) = module {
     }
 
     single { RefusjonskravBehandler(get(), get(), get(), get()) }
-    single { ProcessMottatteRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1), get()) }
-    single { ProcessFeiledeRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofHours(5), get()) }
-    single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1), get(), get()) }
-    single { ProcessOpprettedeKvitteringerJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1), get()) }
-    single { ProcessFeiledeKvitteringerJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(10), get()) }
-    single { SendKvitteringForEksisterendeKravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofSeconds(10), get()) }
+    single { ProcessMottatteRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60, get()) }
+    single { ProcessFeiledeRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 5, get()) }
+    single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60, get(), get()) }
+    single { ProcessOpprettedeKvitteringerJob(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60, get()) }
+    single { ProcessFeiledeKvitteringerJob(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 10, get()) }
+    single { SendKvitteringForEksisterendeKravJob(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 10, get()) }
     single { LeaderElectionConsumerImpl(config.getString("leader_election.url"), get(), get()) as LeaderElectionConsumer }
 }
 
@@ -294,12 +292,12 @@ fun prodConfig(config: ApplicationConfig) = module {
     }
 
     single { RefusjonskravBehandler(get(), get(), get(), get()) }
-    single { ProcessMottatteRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1), get()) }
-    single { ProcessFeiledeRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofHours(2), get()) }
-    single { ProcessOpprettedeKvitteringerJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(1), get()) }
-    single { ProcessFeiledeKvitteringerJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofHours(2), get()) }
-    single { SendKvitteringForEksisterendeKravJob(get(), get(), CoroutineScope(Dispatchers.IO), Duration.ofSeconds(10), get()) }
-    single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), Duration.ofMinutes(2), get(), get()) }
+    single { ProcessMottatteRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60, get()) }
+    single { ProcessFeiledeRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 2, get()) }
+    single { ProcessOpprettedeKvitteringerJob(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60, get()) }
+    single { ProcessFeiledeKvitteringerJob(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 2, get()) }
+    single { SendKvitteringForEksisterendeKravJob(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 10, get()) }
+    single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 2, get(), get()) }
     single { LeaderElectionConsumerImpl(config.getString("leader_election.url"), get(), get()) as LeaderElectionConsumer }
 }
 
