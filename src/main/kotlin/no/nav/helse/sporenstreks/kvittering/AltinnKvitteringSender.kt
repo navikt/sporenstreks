@@ -27,20 +27,17 @@ class AltinnKvitteringSender(
                     altinnKvitteringMapper.mapKvitteringTilInsertCorrespondence(kvittering)
             )
             if (receiptExternal.receiptStatusCode != ReceiptStatusEnum.OK) {
-                kvittering.status = KvitteringStatus.FEILET
                 log.error("Fikk uventet statuskode fra Altinn {}", receiptExternal.receiptStatusCode)
                 throw RuntimeException("Feil ved sending kvittering til Altinn")
             } else {
                 kvittering.status = KvitteringStatus.SENDT
             }
         } catch (e: ICorrespondenceAgencyExternalBasicInsertCorrespondenceBasicV2AltinnFaultFaultFaultMessage) {
-            kvittering.status = KvitteringStatus.FEILET
             log.error("Feil ved sending kvittering til Altinn", e)
             log.error("${e.faultInfo} ${e.cause} ${e.message}")
             log.error("Feil ved sending kvittering til Altinn", e)
             throw RuntimeException("Feil ved sending kvittering til Altinn", e)
         } catch (e: Exception) {
-            kvittering.status = KvitteringStatus.FEILET
             log.error("Feil ved sending kvittering til Altinn", e)
             throw e
         }

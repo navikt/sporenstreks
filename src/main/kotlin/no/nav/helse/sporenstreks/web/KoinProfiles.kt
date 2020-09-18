@@ -23,9 +23,6 @@ import no.nav.helse.sporenstreks.auth.altinn.AltinnClient
 import no.nav.helse.sporenstreks.db.*
 import no.nav.helse.sporenstreks.integrasjon.JoarkService
 import no.nav.helse.sporenstreks.integrasjon.OppgaveService
-import no.nav.helse.sporenstreks.integrasjon.rest.LeaderElection.LeaderElectionConsumer
-import no.nav.helse.sporenstreks.integrasjon.rest.LeaderElection.LeaderElectionConsumerImpl
-import no.nav.helse.sporenstreks.integrasjon.rest.LeaderElection.MockLeaderElectionConsumer
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumer
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumerImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.MockAktorConsumer
@@ -41,9 +38,12 @@ import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
 import no.nav.helse.sporenstreks.integrasjon.rest.sts.configureFor
 import no.nav.helse.sporenstreks.integrasjon.rest.sts.wsStsClient
 import no.nav.helse.sporenstreks.kvittering.*
-import no.nav.helse.sporenstreks.prosessering.*
+import no.nav.helse.sporenstreks.prosessering.kvittering.KvitteringJobCreator
 import no.nav.helse.sporenstreks.prosessering.metrics.InfluxReporter
 import no.nav.helse.sporenstreks.prosessering.metrics.InfluxReporterImpl
+import no.nav.helse.sporenstreks.prosessering.metrics.ProcessInfluxJob
+import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravBehandler
+import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravJobCreator
 import no.nav.helse.sporenstreks.service.MockRefusjonskravService
 import no.nav.helse.sporenstreks.service.PostgresRefusjonskravService
 import no.nav.helse.sporenstreks.service.RefusjonskravService
@@ -113,7 +113,6 @@ fun buildAndTestConfig() = module {
     single { OppgaveService(get(), get()) as OppgaveService }
     single { MockOppgaveKlient() as OppgaveKlient }
     single { MockAktorConsumer() as AktorConsumer }
-    single { MockLeaderElectionConsumer() as LeaderElectionConsumer }
     single { DummyKvitteringSender() as KvitteringSender }
 
     LocalOIDCWireMock.start()
@@ -148,7 +147,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
     }
     single { OppgaveService(get(), get()) as OppgaveService }
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
-    single { MockLeaderElectionConsumer() as LeaderElectionConsumer }
     single { DummyKvitteringSender() as KvitteringSender }
     LocalOIDCWireMock.start()
 }
@@ -218,14 +216,10 @@ fun preprodConfig(config: ApplicationConfig) = module {
                 as KvitteringSender
     }
 
-    single { RefusjonskravBehandler(get(), get(), get(), get()) }
-    single { ProcessMottatteRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60, get()) }
-    single { ProcessFeiledeRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 5, get()) }
-    single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60, get(), get()) }
-    single { ProcessOpprettedeKvitteringerJob(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60, get()) }
-    single { ProcessFeiledeKvitteringerJob(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 10, get()) }
-    single { SendKvitteringForEksisterendeKravJob(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 10, get()) }
-    single { LeaderElectionConsumerImpl(config.getString("leader_election.url"), get(), get()) as LeaderElectionConsumer }
+    single { RefusjonskravBehandler(get(), get(), get(), get(), get()) }
+    single { RefusjonskravJobCreator(get(), get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 5) }
+    single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60, get()) }
+    single { KvitteringJobCreator(get(), get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 10) }
 }
 
 @KtorExperimentalAPI
@@ -291,14 +285,10 @@ fun prodConfig(config: ApplicationConfig) = module {
                 as KvitteringSender
     }
 
-    single { RefusjonskravBehandler(get(), get(), get(), get()) }
-    single { ProcessMottatteRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60, get()) }
-    single { ProcessFeiledeRefusjonskravJob(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 2, get()) }
-    single { ProcessOpprettedeKvitteringerJob(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60, get()) }
-    single { ProcessFeiledeKvitteringerJob(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 2, get()) }
-    single { SendKvitteringForEksisterendeKravJob(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 10, get()) }
-    single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 2, get(), get()) }
-    single { LeaderElectionConsumerImpl(config.getString("leader_election.url"), get(), get()) as LeaderElectionConsumer }
+    single { RefusjonskravBehandler(get(), get(), get(), get(), get()) }
+    single { RefusjonskravJobCreator(get(), get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 2) }
+    single { KvitteringJobCreator(get(), get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 2) }
+    single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 2, get()) }
 }
 
 // utils

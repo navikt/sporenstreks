@@ -139,7 +139,7 @@ dependencies {
 
     implementation("org.influxdb:influxdb-java:${influxVersion}")
 
-    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2020.09.10-12-08-8f320")
+    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2020.09.18-13-19-1f0e5")
 
     testImplementation("org.koin:koin-test:$koinVersion")
     implementation("com.github.javafaker:javafaker:1.0.2") // flytt denne til test når generatorene ikke er nødvendige i prod-koden lenger

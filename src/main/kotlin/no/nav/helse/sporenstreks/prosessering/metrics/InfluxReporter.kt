@@ -3,7 +3,6 @@ package no.nav.helse.sporenstreks.prosessering.metrics
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.integrasjon.rest.sensu.SensuClient
 import no.nav.helse.sporenstreks.integrasjon.rest.sensu.SensuEvent
-import no.nav.helse.sporenstreks.prosessering.RefusjonskravBehandler
 import org.influxdb.dto.Point
 import org.slf4j.LoggerFactory
 import java.time.ZoneId
