@@ -15,6 +15,7 @@ import no.nav.helse.sporenstreks.utils.MDCOperations
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.io.IOException
 
 class RefusjonskravBehandlerTest {
@@ -32,7 +33,7 @@ class RefusjonskravBehandlerTest {
                 identitetsnummer = "123",
                 virksomhetsnummer = "213",
                 perioder = emptySet(),
-                status = RefusjonskravStatus.FEILET
+                status = RefusjonskravStatus.JOBB
         )
     }
 
@@ -75,7 +76,7 @@ class RefusjonskravBehandlerTest {
 
 
     @Test
-    fun `Ved feil skal kravet lagres med feilstatus og joarkref om det finnes`() {
+    fun `Ved feil skal kravet fortsatt ha status JOBB og joarkref om det finnes  og kaste exception oppover`() {
         val joarkref = "joarkref"
         val aktørId = "aktørId"
 
@@ -84,9 +85,9 @@ class RefusjonskravBehandlerTest {
 
         every { oppgaveMock.opprettOppgave(refusjonskrav, joarkref, aktørId, any()) } throws IOException()
 
-        refusjonskravBehandler.behandle(refusjonskrav)
+        assertThrows<IOException> { refusjonskravBehandler.behandle(refusjonskrav) }
 
-        assertThat(refusjonskrav.status).isEqualTo(RefusjonskravStatus.FEILET)
+        assertThat(refusjonskrav.status).isEqualTo(RefusjonskravStatus.JOBB)
         assertThat(refusjonskrav.joarkReferanse).isEqualTo(joarkref)
         assertThat(refusjonskrav.oppgaveId).isNull()
 
