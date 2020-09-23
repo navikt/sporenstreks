@@ -4,10 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.CoroutineScope
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.helse.sporenstreks.db.KvitteringRepository
-import no.nav.helse.sporenstreks.db.PostgresKvitteringRepository
 import no.nav.helse.sporenstreks.kvittering.KvitteringStatus
 import javax.sql.DataSource
 
@@ -19,13 +17,15 @@ const val KVITTERINGER_TO_PROCESS_LIMIT = 250
  */
 class KvitteringJobCreator(
         private val ds: DataSource,
+        val kvitteringRepo: KvitteringRepository,
+        val bakgrunnsjobbRepo: BakgrunnsjobbRepository,
         val om: ObjectMapper,
         coroutineScope: CoroutineScope,
         waitMillisWhenEmptyQueue: Long = (30 * 1000L)
 ) : RecurringJob(coroutineScope, waitMillisWhenEmptyQueue) {
 
-    val kvitteringRepo: KvitteringRepository = PostgresKvitteringRepository(ds, om)
-    val bakgrunnsjobbRepo: BakgrunnsjobbRepository = PostgresBakgrunnsjobbRepository(ds)
+    //val kvitteringRepo: KvitteringRepository = PostgresKvitteringRepository(ds, om)
+    //val bakgrunnsjobbRepo: BakgrunnsjobbRepository = PostgresBakgrunnsjobbRepository(ds)
 
 
     override fun doJob() {
@@ -47,7 +47,6 @@ class KvitteringJobCreator(
                         it.status = KvitteringStatus.JOBB
                         kvitteringRepo.update(it, con)
                         con.commit()
-
                     }
                     if (!isRunning) {
                         return@forEach

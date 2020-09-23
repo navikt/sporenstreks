@@ -219,7 +219,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { RefusjonskravProcessor(get(), get(), get(), get(), get()) }
     single { RefusjonskravJobCreator(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 5) }
     single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60, get()) }
-    single { KvitteringJobCreator(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 10) }
+    single { KvitteringJobCreator(get(), get(), get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 10) }
 }
 
 @KtorExperimentalAPI
@@ -287,7 +287,7 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single { RefusjonskravProcessor(get(), get(), get(), get(), get()) }
     single { RefusjonskravJobCreator(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 2) }
-    single { KvitteringJobCreator(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 2) }
+    single { KvitteringJobCreator(get(), get(), get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 2) }
     single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 2, get()) }
 }
 
