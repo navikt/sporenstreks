@@ -14,8 +14,8 @@ import no.nav.helse.sporenstreks.kvittering.Kvittering
 import no.nav.helse.sporenstreks.kvittering.KvitteringStatus
 import no.nav.helse.sporenstreks.prosessering.kvittering.KvitteringJobData
 import no.nav.helse.sporenstreks.prosessering.kvittering.KvitteringProcessor
-import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravBehandler
 import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravJobData
+import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravProcessor
 import org.slf4j.LoggerFactory
 import java.sql.Connection
 import java.sql.SQLException
@@ -133,7 +133,7 @@ class PostgresRefusjonskravService(
     fun lagreRefusjonskrav(refusjonskrav: Refusjonskrav, connection: Connection) {
         bakgrunnsjobbRepository.save(
                 Bakgrunnsjobb(
-                        type = RefusjonskravBehandler.JOBB_TYPE,
+                        type = RefusjonskravProcessor.JOBB_TYPE,
                         data = mapper.writeValueAsString(RefusjonskravJobData(
                                 refusjonskrav.id
                         )),

@@ -5,9 +5,12 @@ import io.ktor.config.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.util.*
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.sporenstreks.prosessering.kvittering.KvitteringJobCreator
+import no.nav.helse.sporenstreks.prosessering.kvittering.KvitteringProcessor
 import no.nav.helse.sporenstreks.prosessering.metrics.ProcessInfluxJob
 import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravJobCreator
+import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravProcessor
 import no.nav.helse.sporenstreks.system.AppEnv
 import no.nav.helse.sporenstreks.system.getEnvironment
 import org.koin.ktor.ext.getKoin
@@ -28,7 +31,10 @@ fun main() {
             koin.get<RefusjonskravJobCreator>().startAsync(retryOnFail = true)
             koin.get<ProcessInfluxJob>().startAsync(retryOnFail = true)
             koin.get<KvitteringJobCreator>().startAsync(retryOnFail = true)
-
+            val bakgrunnsjobbService = koin.get<BakgrunnsjobbService>()
+            bakgrunnsjobbService.leggTilBakgrunnsjobbProsesserer(KvitteringProcessor.JOBB_TYPE, koin.get<KvitteringProcessor>())
+            bakgrunnsjobbService.leggTilBakgrunnsjobbProsesserer(RefusjonskravProcessor.JOBB_TYPE, koin.get<RefusjonskravProcessor>())
+            bakgrunnsjobbService.startAsync(true)
         }
         Runtime.getRuntime().addShutdownHook(Thread {
             app.stop(1000, 1000)

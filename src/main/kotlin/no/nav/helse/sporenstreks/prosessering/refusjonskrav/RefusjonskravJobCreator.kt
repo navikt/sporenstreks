@@ -39,7 +39,7 @@ class RefusjonskravJobCreator(
                         con.autoCommit = false
                         bakgrunnsjobbRepo.save(
                                 Bakgrunnsjobb(
-                                        type = RefusjonskravBehandler.JOBB_TYPE,
+                                        type = RefusjonskravProcessor.JOBB_TYPE,
                                         data = om.writeValueAsString(RefusjonskravJobData(
                                                 it.id
                                         )),

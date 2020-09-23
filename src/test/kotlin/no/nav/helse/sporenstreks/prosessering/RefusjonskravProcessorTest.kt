@@ -10,7 +10,7 @@ import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.integrasjon.JoarkService
 import no.nav.helse.sporenstreks.integrasjon.OppgaveService
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumerImpl
-import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravBehandler
+import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravProcessor
 import no.nav.helse.sporenstreks.utils.MDCOperations
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -18,13 +18,13 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.io.IOException
 
-class RefusjonskravBehandlerTest {
+class RefusjonskravProcessorTest {
 
     val joarkMock = mockk<JoarkService>(relaxed = true)
     val oppgaveMock = mockk<OppgaveService>(relaxed = true)
     val repositoryMock = mockk<PostgresRefusjonskravRepository>(relaxed = true)
     val aktorConsumerMock = mockk<AktorConsumerImpl>(relaxed = true)
-    val refusjonskravBehandler = RefusjonskravBehandler(joarkMock, oppgaveMock, repositoryMock, aktorConsumerMock, ObjectMapper()) //TODO
+    val refusjonskravBehandler = RefusjonskravProcessor(joarkMock, oppgaveMock, repositoryMock, aktorConsumerMock, ObjectMapper()) //TODO
     lateinit var refusjonskrav: Refusjonskrav
 
     @BeforeEach

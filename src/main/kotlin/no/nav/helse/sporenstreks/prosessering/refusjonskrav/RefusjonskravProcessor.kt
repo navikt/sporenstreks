@@ -17,13 +17,13 @@ import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.util.*
 
-class RefusjonskravBehandler(val joarkService: JoarkService,
+class RefusjonskravProcessor(val joarkService: JoarkService,
                              val oppgaveService: OppgaveService,
                              val repository: RefusjonskravRepository,
                              val aktorConsumer: AktorConsumer,
                              val om: ObjectMapper) : BakgrunnsjobbProsesserer {
 
-    val logger = LoggerFactory.getLogger(RefusjonskravBehandler::class.java)
+    val logger = LoggerFactory.getLogger(RefusjonskravProcessor::class.java)
 
     override fun nesteForsoek(forsoek: Int, forrigeForsoek: LocalDateTime): LocalDateTime {
         return LocalDateTime.now().plusHours(2)
@@ -80,7 +80,7 @@ class RefusjonskravBehandler(val joarkService: JoarkService,
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(RefusjonskravBehandler::class.java)
+        private val log = LoggerFactory.getLogger(RefusjonskravProcessor::class.java)
         val JOBB_TYPE = "refusjonskrav"
 
     }

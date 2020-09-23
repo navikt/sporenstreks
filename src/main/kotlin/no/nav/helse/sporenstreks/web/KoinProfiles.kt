@@ -42,8 +42,8 @@ import no.nav.helse.sporenstreks.prosessering.kvittering.KvitteringJobCreator
 import no.nav.helse.sporenstreks.prosessering.metrics.InfluxReporter
 import no.nav.helse.sporenstreks.prosessering.metrics.InfluxReporterImpl
 import no.nav.helse.sporenstreks.prosessering.metrics.ProcessInfluxJob
-import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravBehandler
 import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravJobCreator
+import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravProcessor
 import no.nav.helse.sporenstreks.service.MockRefusjonskravService
 import no.nav.helse.sporenstreks.service.PostgresRefusjonskravService
 import no.nav.helse.sporenstreks.service.RefusjonskravService
@@ -216,7 +216,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
                 as KvitteringSender
     }
 
-    single { RefusjonskravBehandler(get(), get(), get(), get(), get()) }
+    single { RefusjonskravProcessor(get(), get(), get(), get(), get()) }
     single { RefusjonskravJobCreator(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 5) }
     single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60, get()) }
     single { KvitteringJobCreator(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 10) }
@@ -285,7 +285,7 @@ fun prodConfig(config: ApplicationConfig) = module {
                 as KvitteringSender
     }
 
-    single { RefusjonskravBehandler(get(), get(), get(), get(), get()) }
+    single { RefusjonskravProcessor(get(), get(), get(), get(), get()) }
     single { RefusjonskravJobCreator(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 2) }
     single { KvitteringJobCreator(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 2) }
     single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 2, get()) }
