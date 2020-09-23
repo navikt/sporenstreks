@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test
 import org.koin.core.KoinComponent
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
 import org.koin.core.get
 import java.time.LocalDateTime
 import java.util.*
@@ -53,6 +54,7 @@ internal class KvitteringJobCreatorTest : KoinComponent {
     @AfterEach
     internal fun tearDown() {
         kvitteringRepo.delete(id)
+        stopKoin()
     }
 
     @Test
