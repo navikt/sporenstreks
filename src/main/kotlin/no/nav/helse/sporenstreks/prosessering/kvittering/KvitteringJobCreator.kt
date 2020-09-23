@@ -14,6 +14,9 @@ import javax.sql.DataSource
 const val KVITTERINGER_TO_PROCESS_LIMIT = 250
 
 
+/**
+ * Denne klassen er unødvendig når alle eksisterende kvitteringer er flyttet over
+ */
 class KvitteringJobCreator(
         private val ds: DataSource,
         val om: ObjectMapper,

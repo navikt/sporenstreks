@@ -13,6 +13,9 @@ import javax.sql.DataSource
 
 const val PROCESS_LIMIT = 250
 
+/**
+ * Denne klassen er unødvendig når alle eksisterende refusjonskrav er flyttet over
+ */
 class RefusjonskravJobCreator(
         private val ds: DataSource,
         val om: ObjectMapper,
