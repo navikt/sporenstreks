@@ -3,10 +3,7 @@ package no.nav.helse.sporenstreks.service
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.helse.sporenstreks.db.KvitteringRepository
-import no.nav.helse.sporenstreks.db.PostgresKvitteringRepository
-import no.nav.helse.sporenstreks.db.PostgresRefusjonskravRepository
 import no.nav.helse.sporenstreks.db.RefusjonskravRepository
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
@@ -24,14 +21,13 @@ import javax.sql.DataSource
 
 class PostgresRefusjonskravService(
         val ds: DataSource,
+        val refusjonskravRepository: RefusjonskravRepository,
+        val kvitteringRepository: KvitteringRepository,
+        val bakgrunnsjobbRepository: BakgrunnsjobbRepository,
         val mapper: ObjectMapper
 ) : RefusjonskravService {
 
     private val logger = LoggerFactory.getLogger(PostgresRefusjonskravService::class.java)
-
-    val refusjonskravRepository: RefusjonskravRepository = PostgresRefusjonskravRepository(ds, mapper)
-    val kvitteringRepository: KvitteringRepository = PostgresKvitteringRepository(ds, mapper)
-    val bakgrunnsjobbRepository: BakgrunnsjobbRepository = PostgresBakgrunnsjobbRepository(ds)
 
     override fun saveKravWithKvittering(krav: Refusjonskrav): Refusjonskrav {
         ds.connection.use {
@@ -48,7 +44,7 @@ class PostgresRefusjonskravService(
             krav.status = RefusjonskravStatus.JOBB
             val savedKrav = refusjonskravRepository.insert(krav, it)
             lagreKvitteringJobb(savedKvittering, it)
-            lagreRefusjonskrav(savedKrav, it)
+            lagreRefusjonskravJobb(savedKrav, it)
             it.commit()
             return savedKrav
         }
@@ -66,13 +62,13 @@ class PostgresRefusjonskravService(
                     status = KvitteringStatus.JOBB
             )
             val savedKvittering = kvitteringRepository.insert(kvittering, con)
+            lagreKvitteringJobb(savedKvittering, con)
             val savedMap = mutableMapOf<Int, Refusjonskrav>()
             kravListeMedIndex.forEach {
                 it.value.kvitteringId = savedKvittering.id
                 it.value.status = RefusjonskravStatus.JOBB
                 savedMap[it.key] = refusjonskravRepository.insert(it.value, con)
-                lagreKvitteringJobb(savedKvittering, con)
-                lagreRefusjonskrav(it.value, con)
+                lagreRefusjonskravJobb(it.value, con)
             }
             con.commit()
             return savedMap
@@ -101,10 +97,10 @@ class PostgresRefusjonskravService(
                     it.value.forEach { krav ->
                         krav.kvitteringId = savedKvittering.id
                         krav.status = RefusjonskravStatus.JOBB
-                        lagreRefusjonskrav(krav, con)
+                        lagreRefusjonskravJobb(krav, con)
                     }
                     lagreKvitteringJobb(savedKvittering, con)
-                    resultList.addAll(refusjonskravRepository.bulkInsert(it.value))
+                    resultList.addAll(refusjonskravRepository.bulkInsert(it.value, con))
                 }
                 con.commit()
                 return resultList
@@ -130,7 +126,7 @@ class PostgresRefusjonskravService(
                 ), connection)
     }
 
-    fun lagreRefusjonskrav(refusjonskrav: Refusjonskrav, connection: Connection) {
+    fun lagreRefusjonskravJobb(refusjonskrav: Refusjonskrav, connection: Connection) {
         bakgrunnsjobbRepository.save(
                 Bakgrunnsjobb(
                         type = RefusjonskravProcessor.JOBB_TYPE,

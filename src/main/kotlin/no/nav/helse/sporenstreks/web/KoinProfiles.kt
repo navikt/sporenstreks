@@ -132,7 +132,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
     single { PostgresKvitteringRepository(get(), get()) as KvitteringRepository }
-    single { PostgresRefusjonskravService(get(), get()) as RefusjonskravService }
+    single { PostgresRefusjonskravService(get(), get(), get(), get(), get()) as RefusjonskravService }
 
     single { MockDokarkivKlient() as DokarkivKlient }
     single { StaticMockAuthRepo(get()) as AuthorizationsRepository }
@@ -160,7 +160,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
     single { PostgresKvitteringRepository(get(), get()) as KvitteringRepository }
-    single { PostgresRefusjonskravService(get(), get()) as RefusjonskravService }
+    single { PostgresRefusjonskravService(get(), get(), get(), get(), get()) as RefusjonskravService }
 
     single {
         val altinnClient = AltinnClient(
@@ -217,7 +217,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     }
 
     single { RefusjonskravProcessor(get(), get(), get(), get(), get()) }
-    single { RefusjonskravJobCreator(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 5) }
+    single { RefusjonskravJobCreator(get(), get(), get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 5) }
     single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60, get()) }
     single { KvitteringJobCreator(get(), get(), get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 10) }
 }
@@ -249,7 +249,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
     single { PostgresKvitteringRepository(get(), get()) as KvitteringRepository }
-    single { PostgresRefusjonskravService(get(), get()) as RefusjonskravService }
+    single { PostgresRefusjonskravService(get(), get(), get(), get(), get()) as RefusjonskravService }
     single { JoarkService(get()) as JoarkService }
     single { DefaultAuthorizer(get()) as Authorizer }
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
@@ -286,7 +286,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     }
 
     single { RefusjonskravProcessor(get(), get(), get(), get(), get()) }
-    single { RefusjonskravJobCreator(get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 2) }
+    single { RefusjonskravJobCreator(get(), get(), get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 2) }
     single { KvitteringJobCreator(get(), get(), get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 2) }
     single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 2, get()) }
 }

@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.CoroutineScope
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
-import no.nav.helse.sporenstreks.db.PostgresRefusjonskravRepository
 import no.nav.helse.sporenstreks.db.RefusjonskravRepository
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import javax.sql.DataSource
@@ -18,18 +16,16 @@ const val PROCESS_LIMIT = 250
  */
 class RefusjonskravJobCreator(
         private val ds: DataSource,
+        private val refusjonskravRepo: RefusjonskravRepository,
+        private val bakgrunnsjobbRepo: BakgrunnsjobbRepository,
         val om: ObjectMapper,
         coroutineScope: CoroutineScope,
         waitMillisWhenEmptyQueue: Long = (30 * 1000L)
 ) : RecurringJob(coroutineScope, waitMillisWhenEmptyQueue) {
 
-    val refusjonskravRepo: RefusjonskravRepository = PostgresRefusjonskravRepository(ds, om)
-    val bakgrunnsjobbRepo: BakgrunnsjobbRepository = PostgresBakgrunnsjobbRepository(ds)
-
-
     override fun doJob() {
-        opprettRefusjonskravJobForStatus(RefusjonskravStatus.FEILET)
         opprettRefusjonskravJobForStatus(RefusjonskravStatus.MOTTATT)
+        opprettRefusjonskravJobForStatus(RefusjonskravStatus.FEILET)
     }
 
     private fun opprettRefusjonskravJobForStatus(status: RefusjonskravStatus) {
