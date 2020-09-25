@@ -1,39 +1,27 @@
-package no.nav.helse.sporenstreks.prosessering.refusjonskrav
+package no.nav.helse.sporenstreks.prosessering
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
 import no.nav.helse.sporenstreks.db.RefusjonskravRepository
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.integrasjon.JoarkService
 import no.nav.helse.sporenstreks.integrasjon.OppgaveService
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumer
+import no.nav.helse.sporenstreks.kvittering.Kvittering
+import no.nav.helse.sporenstreks.kvittering.KvitteringSender
+import no.nav.helse.sporenstreks.metrics.FEIL_COUNTER
 import no.nav.helse.sporenstreks.metrics.JOURNALFOERING_COUNTER
 import no.nav.helse.sporenstreks.metrics.KRAV_TIME
 import no.nav.helse.sporenstreks.metrics.OPPGAVE_COUNTER
 import no.nav.helse.sporenstreks.utils.MDCOperations
 import no.nav.helse.sporenstreks.utils.withMDC
 import org.slf4j.LoggerFactory
-import java.time.LocalDateTime
-import java.util.*
 
-class RefusjonskravProcessor(val joarkService: JoarkService,
+class RefusjonskravBehandler(val joarkService: JoarkService,
                              val oppgaveService: OppgaveService,
                              val repository: RefusjonskravRepository,
-                             val aktorConsumer: AktorConsumer,
-                             val om: ObjectMapper) : BakgrunnsjobbProsesserer {
+                             val aktorConsumer: AktorConsumer) {
 
-    val logger = LoggerFactory.getLogger(RefusjonskravProcessor::class.java)
-
-    override fun nesteForsoek(forsoek: Int, forrigeForsoek: LocalDateTime): LocalDateTime {
-        return LocalDateTime.now().plusHours(2)
-    }
-
-    override fun prosesser(jobbData: String) {
-        val refusjonskravJobbData = om.readValue(jobbData, RefusjonskravJobData::class.java)
-        repository.getById(refusjonskravJobbData.kravId)?.let { behandle(it) }
-    }
-
+    val logger = LoggerFactory.getLogger(RefusjonskravBehandler::class.java)
 
     fun behandle(refusjonskrav: Refusjonskrav) {
         val callId = MDCOperations.generateCallId()
@@ -67,25 +55,25 @@ class RefusjonskravProcessor(val joarkService: JoarkService,
                 )
                 OPPGAVE_COUNTER.inc()
             }
+
+            refusjonskrav.feilmelding = null
             refusjonskrav.status = RefusjonskravStatus.SENDT_TIL_BEHANDLING
+        } catch (e: Exception) {
+            refusjonskrav.status = RefusjonskravStatus.FEILET
+            refusjonskrav.feilmelding = e.message
+            logger.error("Feilet i behandlingen av ${refusjonskrav.id}", e)
+            FEIL_COUNTER.inc()
         } finally {
             try {
                 timer.close()
                 repository.update(refusjonskrav)
             } catch (t: Throwable) {
                 logger.error("Feilet i lagring av ${refusjonskrav.id} med  joarkRef: ${refusjonskrav.joarkReferanse} oppgaveId ${refusjonskrav.oppgaveId} ")
-                throw t
             }
         }
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(RefusjonskravProcessor::class.java)
-        val JOBB_TYPE = "refusjonskrav"
-
+        private val log = LoggerFactory.getLogger(RefusjonskravBehandler::class.java)
     }
 }
-
-data class RefusjonskravJobData(
-        val kravId: UUID
-)

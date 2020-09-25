@@ -26,4 +26,7 @@ class MockRefusjonskravService(val refusjonskravRepo: RefusjonskravRepository) :
         return refusjonskravRepo.bulkInsert(kravListe)
     }
 
+    override fun updateKravListWithKvittering(kravList: List<Refusjonskrav>) {
+        TODO("Not yet implemented")
+    }
 }

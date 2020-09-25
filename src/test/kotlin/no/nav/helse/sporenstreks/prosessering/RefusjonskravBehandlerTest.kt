@@ -1,6 +1,5 @@
 package no.nav.helse.sporenstreks.prosessering
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -10,21 +9,19 @@ import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.integrasjon.JoarkService
 import no.nav.helse.sporenstreks.integrasjon.OppgaveService
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumerImpl
-import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravProcessor
 import no.nav.helse.sporenstreks.utils.MDCOperations
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import java.io.IOException
 
-class RefusjonskravProcessorTest {
+class RefusjonskravBehandlerTest {
 
     val joarkMock = mockk<JoarkService>(relaxed = true)
     val oppgaveMock = mockk<OppgaveService>(relaxed = true)
     val repositoryMock = mockk<PostgresRefusjonskravRepository>(relaxed = true)
     val aktorConsumerMock = mockk<AktorConsumerImpl>(relaxed = true)
-    val refusjonskravBehandler = RefusjonskravProcessor(joarkMock, oppgaveMock, repositoryMock, aktorConsumerMock, ObjectMapper())
+    val refusjonskravBehandler = RefusjonskravBehandler(joarkMock, oppgaveMock, repositoryMock, aktorConsumerMock)
     lateinit var refusjonskrav: Refusjonskrav
 
     @BeforeEach
@@ -33,7 +30,7 @@ class RefusjonskravProcessorTest {
                 identitetsnummer = "123",
                 virksomhetsnummer = "213",
                 perioder = emptySet(),
-                status = RefusjonskravStatus.JOBB
+                status = RefusjonskravStatus.FEILET
         )
     }
 
@@ -76,7 +73,7 @@ class RefusjonskravProcessorTest {
 
 
     @Test
-    fun `Ved feil skal kravet fortsatt ha status JOBB og joarkref om det finnes  og kaste exception oppover`() {
+    fun `Ved feil skal kravet lagres med feilstatus og joarkref om det finnes`() {
         val joarkref = "joarkref"
         val aktørId = "aktørId"
 
@@ -85,9 +82,9 @@ class RefusjonskravProcessorTest {
 
         every { oppgaveMock.opprettOppgave(refusjonskrav, joarkref, aktørId, any()) } throws IOException()
 
-        assertThrows<IOException> { refusjonskravBehandler.behandle(refusjonskrav) }
+        refusjonskravBehandler.behandle(refusjonskrav)
 
-        assertThat(refusjonskrav.status).isEqualTo(RefusjonskravStatus.JOBB)
+        assertThat(refusjonskrav.status).isEqualTo(RefusjonskravStatus.FEILET)
         assertThat(refusjonskrav.joarkReferanse).isEqualTo(joarkref)
         assertThat(refusjonskrav.oppgaveId).isNull()
 

@@ -13,6 +13,5 @@ interface KvitteringRepository {
     fun getById(id: UUID): Kvittering?
     fun delete(id: UUID): Int
     fun update(kvittering: Kvittering)
-    fun update(kvittering: Kvittering, connection: Connection)
 
 }
