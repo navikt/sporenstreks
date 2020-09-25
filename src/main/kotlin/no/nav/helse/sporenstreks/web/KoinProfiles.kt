@@ -18,6 +18,10 @@ import io.ktor.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import no.altinn.services.serviceengine.correspondence._2009._10.ICorrespondenceAgencyExternalBasic
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.MockBakgrunnsjobbRepository
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.helse.sporenstreks.auth.*
 import no.nav.helse.sporenstreks.auth.altinn.AltinnClient
 import no.nav.helse.sporenstreks.db.*
@@ -108,12 +112,14 @@ fun buildAndTestConfig() = module {
     single { MockRefusjonskravRepo() as RefusjonskravRepository }
     single { MockKvitteringRepository() as KvitteringRepository }
     single { MockRefusjonskravService(get()) as RefusjonskravService }
+    single { MockBakgrunnsjobbRepository() as BakgrunnsjobbRepository }
     single { MockDokarkivKlient() as DokarkivKlient }
     single { JoarkService(get()) as JoarkService }
     single { OppgaveService(get(), get()) as OppgaveService }
     single { MockOppgaveKlient() as OppgaveKlient }
     single { MockAktorConsumer() as AktorConsumer }
     single { DummyKvitteringSender() as KvitteringSender }
+    single { BakgrunnsjobbService(get()) }
 
     LocalOIDCWireMock.start()
 }
@@ -133,11 +139,15 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
     single { PostgresKvitteringRepository(get(), get()) as KvitteringRepository }
     single { PostgresRefusjonskravService(get(), get(), get(), get(), get()) as RefusjonskravService }
+    single { PostgresBakgrunnsjobbRepository(get()) as BakgrunnsjobbRepository }
+
 
     single { MockDokarkivKlient() as DokarkivKlient }
     single { StaticMockAuthRepo(get()) as AuthorizationsRepository }
     single { DefaultAuthorizer(get()) as Authorizer }
     single { JoarkService(get()) as JoarkService }
+    single { BakgrunnsjobbService(get()) }
+
     single {
         AktorConsumerImpl(get(),
                 config.getString("service_user.username"),
@@ -161,6 +171,8 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
     single { PostgresKvitteringRepository(get(), get()) as KvitteringRepository }
     single { PostgresRefusjonskravService(get(), get(), get(), get(), get()) as RefusjonskravService }
+    single { PostgresBakgrunnsjobbRepository(get()) as BakgrunnsjobbRepository }
+
 
     single {
         val altinnClient = AltinnClient(
@@ -180,6 +192,8 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { STSClient(config.getString("service_user.username"), config.getString("service_user.password"), config.getString("sts_url_rest")) }
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
     single { JoarkService(get()) as JoarkService }
+    single { BakgrunnsjobbService(get()) }
+
 
     single { DefaultAuthorizer(get()) as Authorizer }
     single {
@@ -250,7 +264,9 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
     single { PostgresKvitteringRepository(get(), get()) as KvitteringRepository }
     single { PostgresRefusjonskravService(get(), get(), get(), get(), get()) as RefusjonskravService }
+    single { PostgresBakgrunnsjobbRepository(get()) as BakgrunnsjobbRepository }
     single { JoarkService(get()) as JoarkService }
+    single { BakgrunnsjobbService(get()) }
     single { DefaultAuthorizer(get()) as Authorizer }
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
     single { OppgaveService(get(), get()) as OppgaveService }
