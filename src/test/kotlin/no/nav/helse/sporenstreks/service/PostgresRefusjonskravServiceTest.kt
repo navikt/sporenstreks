@@ -12,7 +12,6 @@ import no.nav.helse.sporenstreks.db.MockKvitteringRepository
 import no.nav.helse.sporenstreks.db.MockRefusjonskravRepo
 import no.nav.helse.sporenstreks.db.RefusjonskravRepository
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import javax.sql.DataSource
 
@@ -24,14 +23,7 @@ internal class PostgresRefusjonskravServiceTest {
     val kravRepo: RefusjonskravRepository = spyk(MockRefusjonskravRepo())
     val kvitteringRepo: KvitteringRepository = spyk(MockKvitteringRepository())
 
-
     val service = PostgresRefusjonskravService(ds, kravRepo, kvitteringRepo, bakgrunnRepo, ObjectMapper())
-
-
-    @BeforeEach
-    internal fun setup() {
-
-    }
 
     @Test
     fun `ett krav lagres også med kvittering og to jobber`() {

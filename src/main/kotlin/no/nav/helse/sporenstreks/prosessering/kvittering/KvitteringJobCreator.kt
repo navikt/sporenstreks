@@ -24,10 +24,6 @@ class KvitteringJobCreator(
         waitMillisWhenEmptyQueue: Long = (30 * 1000L)
 ) : RecurringJob(coroutineScope, waitMillisWhenEmptyQueue) {
 
-    //val kvitteringRepo: KvitteringRepository = PostgresKvitteringRepository(ds, om)
-    //val bakgrunnsjobbRepo: BakgrunnsjobbRepository = PostgresBakgrunnsjobbRepository(ds)
-
-
     override fun doJob() {
         opprettJobberForStatus(KvitteringStatus.FEILET)
         opprettJobberForStatus(KvitteringStatus.OPPRETTET)

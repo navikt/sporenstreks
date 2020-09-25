@@ -24,7 +24,7 @@ class RefusjonskravProcessorTest {
     val oppgaveMock = mockk<OppgaveService>(relaxed = true)
     val repositoryMock = mockk<PostgresRefusjonskravRepository>(relaxed = true)
     val aktorConsumerMock = mockk<AktorConsumerImpl>(relaxed = true)
-    val refusjonskravBehandler = RefusjonskravProcessor(joarkMock, oppgaveMock, repositoryMock, aktorConsumerMock, ObjectMapper()) //TODO
+    val refusjonskravBehandler = RefusjonskravProcessor(joarkMock, oppgaveMock, repositoryMock, aktorConsumerMock, ObjectMapper())
     lateinit var refusjonskrav: Refusjonskrav
 
     @BeforeEach
