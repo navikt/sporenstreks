@@ -79,15 +79,13 @@ class PostgresKvitteringRepository(val ds: DataSource, val mapper: ObjectMapper)
     }
 
     override fun update(kvittering: Kvittering) {
-        update(kvittering, ds.connection)
-    }
-
-    override fun update(kvittering: Kvittering, connection: Connection) {
         val json = mapper.writeValueAsString(kvittering)
-        connection.prepareStatement(updateStatement).apply {
-            setString(1, json)
-            setString(2, kvittering.id.toString())
-        }.executeUpdate()
+        ds.connection.use {
+            it.prepareStatement(updateStatement).apply {
+                setString(1, json)
+                setString(2, kvittering.id.toString())
+            }.executeUpdate()
+        }
     }
 
     override fun delete(id: UUID): Int {

@@ -21,9 +21,6 @@ val jaxwsToolsVersion = "2.3.3"
 val apachePoiVersion = "4.1.2"
 val influxVersion = "2.20"
 
-val githubPassword: String by project
-
-
 
 plugins {
     application
@@ -132,14 +129,12 @@ dependencies {
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("no.nav:vault-jdbc:$vaultJdbcVersion")
     implementation("com.github.tomakehurst:wiremock-standalone:2.25.1")
-    implementation("org.postgresql:postgresql:42.2.16")
+    implementation("org.postgresql:postgresql:42.2.13")
 
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
 
     implementation("org.influxdb:influxdb-java:${influxVersion}")
-
-    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2020.09.23-15-07-d735a")
 
     testImplementation("org.koin:koin-test:$koinVersion")
     implementation("com.github.javafaker:javafaker:1.0.2") // flytt denne til test når generatorene ikke er nødvendige i prod-koden lenger
@@ -173,13 +168,6 @@ repositories {
     jcenter()
     mavenCentral()
     maven("https://kotlin.bintray.com/ktor")
-    maven {
-        credentials {
-            username = "x-access-token"
-            password = githubPassword
-        }
-        setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
-    }
 }
 
 tasks.named<Jar>("jar") {
@@ -218,8 +206,6 @@ tasks.named<Test>("test") {
 task<Test>("slowTests") {
     include("no/nav/helse/slowtests/**")
     outputs.upToDateWhen { false }
-    group = "verification"
-
 }
 
 tasks.withType<Wrapper> {

@@ -15,7 +15,7 @@ class MockKvitteringRepository : KvitteringRepository {
     }
 
     override fun insert(kvittering: Kvittering, connection: Connection): Kvittering {
-        return insert(kvittering)
+        TODO("Not yet implemented")
     }
 
     override fun delete(id: UUID): Int {
@@ -31,10 +31,6 @@ class MockKvitteringRepository : KvitteringRepository {
     override fun update(kvittering: Kvittering) {
         kvitteringListe.removeIf { it.id == kvittering.id }
         kvitteringListe.add(kvittering)
-    }
-
-    override fun update(kvittering: Kvittering, connection: Connection) {
-        update(kvittering)
     }
 
     override fun getById(id: UUID): Kvittering? {
