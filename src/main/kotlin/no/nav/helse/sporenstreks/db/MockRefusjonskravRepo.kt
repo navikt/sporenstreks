@@ -16,16 +16,17 @@ class MockRefusjonskravRepo : RefusjonskravRepository {
     }
 
     override fun insert(refusjonskrav: Refusjonskrav, connection: Connection): Refusjonskrav {
-        TODO("Not yet implemented")
+        return insert(refusjonskrav)
     }
 
 
     override fun update(krav: Refusjonskrav, connection: Connection) {
-        TODO("Not yet implemented")
+        update(krav)
     }
 
     override fun bulkInsert(kravListe: List<Refusjonskrav>, connection: Connection): List<Int> {
-        TODO("Not yet implemented")
+        kravListe.forEach { insert(it) }
+        return emptyList()
     }
 
     override fun getAllForVirksomhetWithoutKvittering(virksomhetsnummer: String): List<Refusjonskrav> {
@@ -60,7 +61,9 @@ class MockRefusjonskravRepo : RefusjonskravRepository {
     }
 
     override fun getByStatus(status: RefusjonskravStatus, limit: Int): List<Refusjonskrav> {
-        return emptyList()
+        return refusjonskravListe.filter {
+            it.status == status
+        }
     }
 
     override fun getByIkkeIndeksertInflux(limit: Int): List<Refusjonskrav> {

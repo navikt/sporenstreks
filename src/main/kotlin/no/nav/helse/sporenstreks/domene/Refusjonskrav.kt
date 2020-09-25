@@ -46,5 +46,6 @@ enum class RefusjonskravStatus {
     MOTTATT,
     SENDT_TIL_BEHANDLING,
     FEILET,
+    JOBB,
     AVBRUTT // Denne er ment som en måte å skru av prosesseringen for krav som skal ignoreres, men ikke skal slettes
 }
