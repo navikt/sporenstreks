@@ -79,7 +79,9 @@ class PostgresKvitteringRepository(val ds: DataSource, val mapper: ObjectMapper)
     }
 
     override fun update(kvittering: Kvittering) {
-        update(kvittering, ds.connection)
+        ds.connection.use {
+            update(kvittering, it)
+        }
     }
 
     override fun update(kvittering: Kvittering, connection: Connection) {
