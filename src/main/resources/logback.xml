@@ -17,7 +17,7 @@
     <logger name="no.nav" level="${log.level.no.nav:-INFO}"/>
     <logger name="no.nav.security.token" level="${log.level.no.nav.security.token:-WARN}"/>
     <logger name="jdbc.sql" level="${log.level.jdbc.sql:-ERROR}"/>
-    <logger name="com.zaxxer.hikari" level="${log.level.com.zaxxer.hikari:-WARN}"/>
+    <logger name="com.zaxxer.hikari" level="${log.level.com.zaxxer.hikari:-DEBUG}"/>
     <logger name="ch.qos.logback" level="${log.level.ch.qos.logback:-WARN}"/>
     <logger name="org.apache.cxf" level="${log.level.ch.qos.logback:-WARN}"/>
 
