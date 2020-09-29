@@ -26,7 +26,7 @@ class RefusjonskravProcessor(val joarkService: JoarkService,
     val logger = LoggerFactory.getLogger(RefusjonskravProcessor::class.java)
 
     override fun nesteForsoek(forsoek: Int, forrigeForsoek: LocalDateTime): LocalDateTime {
-        return LocalDateTime.now().plusHours(2)
+        return forrigeForsoek.plusHours(2)
     }
 
     override fun prosesser(jobbData: String) {

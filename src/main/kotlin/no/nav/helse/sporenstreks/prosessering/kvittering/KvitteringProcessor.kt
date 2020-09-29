@@ -18,7 +18,7 @@ class KvitteringProcessor(
     }
 
     override fun nesteForsoek(forsoek: Int, forrigeForsoek: LocalDateTime): LocalDateTime {
-        return LocalDateTime.now().plusHours(2)
+        return forrigeForsoek.plusHours(2)
     }
 
     override fun prosesser(jobbData: String) {
