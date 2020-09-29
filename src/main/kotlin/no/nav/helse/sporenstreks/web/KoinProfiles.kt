@@ -144,13 +144,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { StaticMockAuthRepo(get()) as AuthorizationsRepository }
     single { DefaultAuthorizer(get()) as Authorizer }
     single { JoarkService(get()) as JoarkService }
-    single {
-        AktorConsumerImpl(get(),
-                config.getString("service_user.username"),
-                config.getString("aktoerregister.url"),
-                get()
-        ) as AktorConsumer
-    }
+    single {MockAktorConsumer() as AktorConsumer}
     single { MockOppgaveKlient() as OppgaveKlient }
     single { OppgaveService(get(), get()) as OppgaveService }
     single { MockLeaderElectionConsumer() as LeaderElectionConsumer }
