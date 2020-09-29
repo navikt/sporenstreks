@@ -44,7 +44,7 @@ class HealthCheckTests : ControllerIntegrationTestBase() {
 
         }) {
             val probeManager = application.get<KubernetesProbeManager>()
-            probeManager.registerReadynessComponent(StaticMockAuthRepo(application.get<ObjectMapper>()))
+            probeManager.registerReadynessComponent(application.get<StaticMockAuthRepo>())
             handleRequest(HttpMethod.Get, "/healthcheck") {
             }.apply {
                 assertEquals(HttpStatusCode.OK, response.status())
