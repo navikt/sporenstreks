@@ -19,6 +19,7 @@ import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import no.altinn.services.serviceengine.correspondence._2009._10.ICorrespondenceAgencyExternalBasic
+import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
 import no.nav.helse.sporenstreks.auth.*
 import no.nav.helse.sporenstreks.auth.altinn.AltinnClient
 import no.nav.helse.sporenstreks.db.*
@@ -86,6 +87,8 @@ val common = module {
 
     single { om }
 
+    single {KubernetesProbeManager()}
+
     val httpClient = HttpClient(Apache) {
         install(JsonFeature) {
             serializer = JacksonSerializer {
@@ -148,8 +151,8 @@ fun localDevConfig(config: ApplicationConfig) = module {
                 get()
         ) as AktorConsumer
     }
+    single { MockOppgaveKlient() as OppgaveKlient }
     single { OppgaveService(get(), get()) as OppgaveService }
-    single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
     single { MockLeaderElectionConsumer() as LeaderElectionConsumer }
     single { DummyKvitteringSender() as KvitteringSender }
     LocalOIDCWireMock.start()

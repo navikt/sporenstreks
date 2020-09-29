@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+val githubPassword: String by project
 
 val ktorVersion = "1.4.0"
 val logback_version = "1.2.1"
@@ -136,6 +137,8 @@ dependencies {
 
     implementation("org.influxdb:influxdb-java:${influxVersion}")
 
+    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2020.09.29-12-47-cf76e")
+
     testImplementation("org.koin:koin-test:$koinVersion")
     implementation("com.github.javafaker:javafaker:1.0.2") // flytt denne til test når generatorene ikke er nødvendige i prod-koden lenger
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.2")
@@ -168,6 +171,13 @@ repositories {
     jcenter()
     mavenCentral()
     maven("https://kotlin.bintray.com/ktor")
+    maven {
+        credentials {
+            username = "x-access-token"
+            password = githubPassword
+        }
+        setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
+    }
 }
 
 tasks.named<Jar>("jar") {

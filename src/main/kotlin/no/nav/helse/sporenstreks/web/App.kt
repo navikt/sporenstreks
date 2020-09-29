@@ -7,6 +7,10 @@ import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.util.KtorExperimentalAPI
+import kotlinx.coroutines.runBlocking
+import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
+import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
+import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import no.nav.helse.sporenstreks.prosessering.*
 import no.nav.helse.sporenstreks.system.AppEnv
 import no.nav.helse.sporenstreks.system.getEnvironment
@@ -14,11 +18,13 @@ import org.koin.ktor.ext.getKoin
 import org.slf4j.LoggerFactory
 
 
+
+val mainLogger = LoggerFactory.getLogger("main")
+
 @KtorExperimentalAPI
 fun main() {
     Thread.currentThread().setUncaughtExceptionHandler { thread, err ->
-        LoggerFactory.getLogger("main")
-                .error("uncaught exception in thread ${thread.name}: ${err.message}", err)
+        mainLogger.error("uncaught exception in thread ${thread.name}: ${err.message}", err)
     }
 
     embeddedServer(Netty, createApplicationEnvironment()).let { app ->
@@ -33,10 +39,24 @@ fun main() {
             koin.get<SendKvitteringForEksisterendeKravJob>().startAsync(retryOnFail = true)
 
         }
+
+        runBlocking { autoDetectProbeableComponents(koin) }
+        mainLogger.info("La til probeable komponenter")
+
         Runtime.getRuntime().addShutdownHook(Thread {
             app.stop(1000, 1000)
         })
     }
+}
+
+private suspend fun autoDetectProbeableComponents(koin: org.koin.core.Koin) {
+    val kubernetesProbeManager = koin.get<KubernetesProbeManager>()
+
+    koin.getAllOfType<LivenessComponent>()
+            .forEach { kubernetesProbeManager.registerLivenessComponent(it) }
+
+    koin.getAllOfType<ReadynessComponent>()
+            .forEach { kubernetesProbeManager.registerReadynessComponent(it) }
 }
 
 

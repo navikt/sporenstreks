@@ -6,10 +6,9 @@ import io.ktor.client.request.get
 import io.ktor.client.statement.readText
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
+import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import no.nav.helse.sporenstreks.auth.AuthorizationsRepository
 import no.nav.helse.sporenstreks.domene.AltinnOrganisasjon
-import no.nav.helse.sporenstreks.selfcheck.HealthCheck
-import no.nav.helse.sporenstreks.selfcheck.HealthCheckType
 import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.LocalDateTime
@@ -21,8 +20,7 @@ class AltinnClient(
         private val altinnApiKey: String,
         serviceCode: String,
         private val httpClient: HttpClient,
-        private val pageSize: Int = 500) : AuthorizationsRepository, HealthCheck {
-    override val healthCheckType = HealthCheckType.READYNESS
+        private val pageSize: Int = 500) : AuthorizationsRepository, ReadynessComponent {
 
     private val logger: org.slf4j.Logger = LoggerFactory.getLogger("AltinnClient")
 
@@ -81,7 +79,7 @@ class AltinnClient(
         }
     }
 
-    override suspend fun doHealthCheck() {
+    override suspend fun runReadynessCheck() {
         try {
             // TODO: Få på plass en ok helsesjekk her. Litt vanskelig siden det ikke er noe naturlig å kalle,
             // og kubernetes hamrer denne helsesjekken ved oppstart om den feiler
@@ -95,5 +93,5 @@ class AltinnClient(
 }
 
 class AltinnBrukteForLangTidException : Exception(
-        "Altinn brukte for lang tid til å svare på forespørsleen om tilganger. Prøv igjen om litt."
+        "Altinn brukte for lang tid til å svare på forespørselen om tilganger. Prøv igjen om litt."
 )
