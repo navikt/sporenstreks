@@ -42,6 +42,7 @@ import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
 import no.nav.helse.sporenstreks.integrasjon.rest.sts.configureFor
 import no.nav.helse.sporenstreks.integrasjon.rest.sts.wsStsClient
 import no.nav.helse.sporenstreks.kvittering.*
+import no.nav.helse.sporenstreks.metrics.MetrikkVarsler
 import no.nav.helse.sporenstreks.prosessering.kvittering.KvitteringJobCreator
 import no.nav.helse.sporenstreks.prosessering.kvittering.KvitteringProcessor
 import no.nav.helse.sporenstreks.prosessering.metrics.InfluxReporter
@@ -120,7 +121,7 @@ fun buildAndTestConfig() = module {
     single { MockOppgaveKlient() as OppgaveKlient }
     single { MockAktorConsumer() as AktorConsumer }
     single { DummyKvitteringSender() as KvitteringSender }
-    single { BakgrunnsjobbService(get()) }
+    single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
     LocalOIDCWireMock.start()
 }
@@ -147,7 +148,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { StaticMockAuthRepo(get()) as AuthorizationsRepository }
     single { DefaultAuthorizer(get()) as Authorizer }
     single { JoarkService(get()) as JoarkService }
-    single { BakgrunnsjobbService(get()) }
+    single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
     single {
         AktorConsumerImpl(get(),
@@ -193,7 +194,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { STSClient(config.getString("service_user.username"), config.getString("service_user.password"), config.getString("sts_url_rest")) }
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
     single { JoarkService(get()) as JoarkService }
-    single { BakgrunnsjobbService(get()) }
+    single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
 
     single { DefaultAuthorizer(get()) as Authorizer }
@@ -268,7 +269,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { PostgresRefusjonskravService(get(), get(), get(), get(), get()) as RefusjonskravService }
     single { PostgresBakgrunnsjobbRepository(get()) as BakgrunnsjobbRepository }
     single { JoarkService(get()) as JoarkService }
-    single { BakgrunnsjobbService(get()) }
+    single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
     single { DefaultAuthorizer(get()) as Authorizer }
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
     single { OppgaveService(get(), get()) as OppgaveService }
