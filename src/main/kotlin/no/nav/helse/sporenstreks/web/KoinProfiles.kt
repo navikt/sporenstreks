@@ -156,7 +156,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single {MockAktorConsumer() as AktorConsumer}
     single { MockOppgaveKlient() as OppgaveKlient }
     single { OppgaveService(get(), get()) as OppgaveService }
-    single { MockLeaderElectionConsumer() as LeaderElectionConsumer }
     single { DummyKvitteringSender() as KvitteringSender }
     LocalOIDCWireMock.start()
 }
