@@ -22,6 +22,9 @@ val jaxwsToolsVersion = "2.3.3"
 val apachePoiVersion = "4.1.2"
 val influxVersion = "2.20"
 
+val githubPassword: String by project
+
+
 
 plugins {
     application
@@ -130,14 +133,14 @@ dependencies {
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("no.nav:vault-jdbc:$vaultJdbcVersion")
     implementation("com.github.tomakehurst:wiremock-standalone:2.25.1")
-    implementation("org.postgresql:postgresql:42.2.13")
+    implementation("org.postgresql:postgresql:42.2.16")
 
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
 
     implementation("org.influxdb:influxdb-java:${influxVersion}")
 
-    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2020.09.29-12-47-cf76e")
+    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2020.09.30-11-08-93059")
 
     testImplementation("org.koin:koin-test:$koinVersion")
     implementation("com.github.javafaker:javafaker:1.0.2") // flytt denne til test når generatorene ikke er nødvendige i prod-koden lenger
@@ -216,6 +219,8 @@ tasks.named<Test>("test") {
 task<Test>("slowTests") {
     include("no/nav/helse/slowtests/**")
     outputs.upToDateWhen { false }
+    group = "verification"
+
 }
 
 tasks.withType<Wrapper> {
