@@ -15,5 +15,6 @@ data class Kvittering(
 enum class KvitteringStatus {
     OPPRETTET,
     SENDT,
-    FEILET
+    FEILET,
+    JOBB
 }
