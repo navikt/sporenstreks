@@ -6,17 +6,18 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsvarsler
 
 const val METRICS_NS = "sporenstreks"
 
+
 class MetrikkVarsler() : Bakgrunnsvarsler {
-
-    val FEILET_JOBB_COUNTER = Counter.build().namespace(METRICS_NS)
-            .name("feil")
-            .help("Counts the number of errors")
-            .register()
-
     override fun rapporterPermanentFeiletJobb() {
         FEILET_JOBB_COUNTER.inc()
     }
 }
+
+val FEILET_JOBB_COUNTER = Counter.build()
+        .name("sporenstreks_feilet_jobb")
+        .help("Countes the number of permanently failed jobs")
+        .register()
+
 
 val INNKOMMENDE_REFUSJONSKRAV_COUNTER: Counter = Counter.build()
         .namespace(METRICS_NS)
