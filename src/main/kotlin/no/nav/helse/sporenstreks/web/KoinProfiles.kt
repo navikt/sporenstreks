@@ -22,6 +22,7 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.MockBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
+import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
 import no.nav.helse.sporenstreks.auth.*
 import no.nav.helse.sporenstreks.auth.altinn.AltinnClient
 import no.nav.helse.sporenstreks.db.*
@@ -90,6 +91,8 @@ val common = module {
 
     single { om }
 
+    single {KubernetesProbeManager()}
+
     val httpClient = HttpClient(Apache) {
         install(JsonFeature) {
             serializer = JacksonSerializer {
@@ -150,15 +153,9 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { JoarkService(get()) as JoarkService }
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
-    single {
-        AktorConsumerImpl(get(),
-                config.getString("service_user.username"),
-                config.getString("aktoerregister.url"),
-                get()
-        ) as AktorConsumer
-    }
+    single {MockAktorConsumer() as AktorConsumer}
+    single { MockOppgaveKlient() as OppgaveKlient }
     single { OppgaveService(get(), get()) as OppgaveService }
-    single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
     single { DummyKvitteringSender() as KvitteringSender }
     LocalOIDCWireMock.start()
 }

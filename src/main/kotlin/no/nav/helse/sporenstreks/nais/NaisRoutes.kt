@@ -7,34 +7,39 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.response.respondTextWriter
-import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.util.pipeline.PipelineContext
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
 import io.prometheus.client.hotspot.DefaultExports
-import no.nav.helse.sporenstreks.selfcheck.HealthCheck
-import no.nav.helse.sporenstreks.selfcheck.HealthCheckState
-import no.nav.helse.sporenstreks.selfcheck.HealthCheckType
-import no.nav.helse.sporenstreks.selfcheck.runHealthChecks
-import no.nav.helse.sporenstreks.web.getAllOfType
-import org.koin.ktor.ext.getKoin
+import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
+import no.nav.helse.arbeidsgiver.kubernetes.ProbeResult
+import no.nav.helse.arbeidsgiver.kubernetes.ProbeState
+import org.koin.ktor.ext.get
+import org.slf4j.LoggerFactory
 import java.util.*
 
 private val collectorRegistry = CollectorRegistry.defaultRegistry
 
 fun Application.nais() {
 
+    val log = LoggerFactory.getLogger("Metrics Routes")
     DefaultExports.initialize()
 
     routing {
         get("/isalive") {
-            returnResultOfChecks(this@routing, HealthCheckType.ALIVENESS, this)
+            val kubernetesProbeManager = this@routing.get<KubernetesProbeManager>()
+            val checkResults = kubernetesProbeManager.runLivenessProbe()
+            log.info(checkResults.toString())
+            returnResultOfChecks(checkResults)
         }
 
         get("/isready") {
-            returnResultOfChecks(this@routing, HealthCheckType.READYNESS, this)
+            val kubernetesProbeManager = this@routing.get<KubernetesProbeManager>()
+            val checkResults = kubernetesProbeManager.runReadynessProbe()
+            log.info(checkResults.toString())
+            returnResultOfChecks( checkResults)
         }
 
         get("/metrics") {
@@ -45,27 +50,27 @@ fun Application.nais() {
         }
 
         get("/healthcheck") {
-            val allRegisteredSelfCheckComponents = this@routing.getKoin().getAllOfType<HealthCheck>()
-            val checkResults = runHealthChecks(allRegisteredSelfCheckComponents)
-            val httpResult = if (checkResults.any { it.state == HealthCheckState.ERROR }) HttpStatusCode.InternalServerError else HttpStatusCode.OK
+            val kubernetesProbeManager = this@routing.get<KubernetesProbeManager>()
+            val readyResults = kubernetesProbeManager.runReadynessProbe()
+            val liveResults = kubernetesProbeManager.runLivenessProbe()
+            val combinedResults = ProbeResult(
+                    liveResults.healthyComponents +
+                            liveResults.unhealthyComponents +
+                            readyResults.healthyComponents +
+                            readyResults.unhealthyComponents
+            )
 
-            call.respond(httpResult, checkResults)
+            returnResultOfChecks(combinedResults)
         }
-
     }
 }
 
-private suspend fun returnResultOfChecks(routing: Routing, type: HealthCheckType, pipelineContext: PipelineContext<Unit, ApplicationCall>) {
-    val allRegisteredSelfCheckComponents = routing.getKoin()
-            .getAllOfType<HealthCheck>()
-            .filter { it.healthCheckType == type }
-
-    val checkResults = runHealthChecks(allRegisteredSelfCheckComponents)
-    val httpResult = if (checkResults.any { it.state == HealthCheckState.ERROR }) HttpStatusCode.InternalServerError else HttpStatusCode.OK
-    checkResults.forEach { r ->
-        r.errorMessage?.let { pipelineContext.call.application.environment.log.error(r.toString()) }
+private suspend fun PipelineContext<Unit, ApplicationCall>.returnResultOfChecks(checkResults: ProbeResult) {
+    val httpResult = if (checkResults.state == ProbeState.UN_HEALTHY) HttpStatusCode.InternalServerError else HttpStatusCode.OK
+    checkResults.unhealthyComponents.forEach { r ->
+        r.error?.let { call.application.environment.log.error(r.toString()) }
     }
-    pipelineContext.call.respond(httpResult, checkResults)
+    call.respond(httpResult, checkResults)
 }
 
 
