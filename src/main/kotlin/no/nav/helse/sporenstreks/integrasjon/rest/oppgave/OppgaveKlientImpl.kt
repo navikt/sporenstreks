@@ -5,7 +5,7 @@ import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
+import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClient
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 
@@ -25,7 +25,7 @@ class MockOppgaveKlient : OppgaveKlient {
 }
 
 class OppgaveKlientImpl(
-        private val url: String, private val stsClient: STSClient, private val httpClient: HttpClient
+        private val url: String, private val stsClient: RestStsClient, private val httpClient: HttpClient
 ) : OppgaveKlient {
 
 
@@ -70,7 +70,7 @@ class OppgaveKlientImpl(
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(STSClient::class.java)
+        private val log = LoggerFactory.getLogger(OppgaveKlientImpl::class.java)
     }
 
 }

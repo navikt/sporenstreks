@@ -4,7 +4,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.url
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
+import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClient
 
 interface AktorConsumer {
     fun getAktorId(fnr: String, callId: String): String
@@ -16,7 +16,7 @@ class MockAktorConsumer : AktorConsumer {
     }
 }
 
-class AktorConsumerImpl(val stsClient: STSClient,
+class AktorConsumerImpl(val stsClient: RestStsClient,
                         val username: String,
                         val baseUrl: String,
                         val httpClient: HttpClient) : AktorConsumer {

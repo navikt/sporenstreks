@@ -14,10 +14,10 @@ import io.ktor.client.features.json.JsonFeature
 import io.ktor.http.ContentType
 import io.ktor.http.headersOf
 import io.mockk.mockk
+import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClient
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.DokarkivKlientImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.JournalpostResponse
-import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
 import no.nav.helse.sporenstreks.utils.MDCOperations
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -36,7 +36,7 @@ class DokarkivKlientTest {
 
     private val identitetsnummer = "01020354321"
 
-    val stsMock = mockk<STSClient>(relaxed = true)
+    val stsMock = mockk<RestStsClient>(relaxed = true)
 
 
     val client = HttpClient(MockEngine) {
