@@ -22,6 +22,8 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.MockBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
+import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClient
+import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClientImpl
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
 import no.nav.helse.sporenstreks.auth.*
 import no.nav.helse.sporenstreks.auth.altinn.AltinnClient
@@ -39,7 +41,6 @@ import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.OppgaveKlient
 import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.OppgaveKlientImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.sensu.SensuClient
 import no.nav.helse.sporenstreks.integrasjon.rest.sensu.SensuClientImpl
-import no.nav.helse.sporenstreks.integrasjon.rest.sts.STSClient
 import no.nav.helse.sporenstreks.integrasjon.rest.sts.configureFor
 import no.nav.helse.sporenstreks.integrasjon.rest.sts.wsStsClient
 import no.nav.helse.sporenstreks.kvittering.*
@@ -186,7 +187,12 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single {SensuClientImpl("sensu.nais", 3030) as SensuClient }
     single {InfluxReporterImpl("sporenstreks", "dev-fss", "default", get()) as InfluxReporter}
 
-    single { STSClient(config.getString("service_user.username"), config.getString("service_user.password"), config.getString("sts_url_rest")) }
+    single { RestStsClientImpl(
+            config.getString("service_user.username"),
+            config.getString("service_user.password"),
+            config.getString("sts_url_rest"),
+            get()
+    ) as RestStsClient }
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
     single { JoarkService(get()) as JoarkService }
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
@@ -255,7 +261,12 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single {SensuClientImpl("sensu.nais", 3030) as SensuClient }
     single {InfluxReporterImpl("sporenstreks", "prod-fss", "default", get()) as InfluxReporter}
-    single { STSClient(config.getString("service_user.username"), config.getString("service_user.password"), config.getString("sts_url_rest")) }
+    single { RestStsClientImpl(
+            config.getString("service_user.username"),
+            config.getString("service_user.password"),
+            config.getString("sts_url_rest"),
+            get()
+    ) as RestStsClient }
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
     single { PostgresKvitteringRepository(get(), get()) as KvitteringRepository }
