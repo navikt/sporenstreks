@@ -44,12 +44,10 @@ import no.nav.helse.sporenstreks.integrasjon.rest.sts.configureFor
 import no.nav.helse.sporenstreks.integrasjon.rest.sts.wsStsClient
 import no.nav.helse.sporenstreks.kvittering.*
 import no.nav.helse.sporenstreks.metrics.MetrikkVarsler
-import no.nav.helse.sporenstreks.prosessering.kvittering.KvitteringJobCreator
 import no.nav.helse.sporenstreks.prosessering.kvittering.KvitteringProcessor
 import no.nav.helse.sporenstreks.prosessering.metrics.InfluxReporter
 import no.nav.helse.sporenstreks.prosessering.metrics.InfluxReporterImpl
 import no.nav.helse.sporenstreks.prosessering.metrics.ProcessInfluxJob
-import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravJobCreator
 import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravProcessor
 import no.nav.helse.sporenstreks.service.MockRefusjonskravService
 import no.nav.helse.sporenstreks.service.PostgresRefusjonskravService
@@ -231,9 +229,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single { RefusjonskravProcessor(get(), get(), get(), get(), get()) }
     single { KvitteringProcessor(get(), get(), get()) }
-    single { RefusjonskravJobCreator(get(), get(), get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 5) }
     single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60, get()) }
-    single { KvitteringJobCreator(get(), get(), get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 10) }
 }
 
 @KtorExperimentalAPI
@@ -303,8 +299,6 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single { RefusjonskravProcessor(get(), get(), get(), get(), get()) }
     single { KvitteringProcessor(get(), get(), get()) }
-    single { RefusjonskravJobCreator(get(), get(), get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 2) }
-    single { KvitteringJobCreator(get(), get(), get(), get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 60 * 2) }
     single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 2, get()) }
 }
 
