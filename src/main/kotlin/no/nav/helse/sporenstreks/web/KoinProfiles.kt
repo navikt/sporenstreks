@@ -24,6 +24,8 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.MockBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClient
 import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClientImpl
+import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.DokarkivKlient
+import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.DokarkivKlientImpl
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
 import no.nav.helse.sporenstreks.auth.*
 import no.nav.helse.sporenstreks.auth.altinn.AltinnClient
@@ -33,8 +35,6 @@ import no.nav.helse.sporenstreks.integrasjon.OppgaveService
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumer
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumerImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.MockAktorConsumer
-import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.DokarkivKlient
-import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.DokarkivKlientImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.MockDokarkivKlient
 import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.MockOppgaveKlient
 import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.OppgaveKlient

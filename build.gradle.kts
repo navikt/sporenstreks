@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val ktorVersion = "1.4.0"
+val ktorVersion = "1.4.1"
 val logback_version = "1.2.1"
 val logback_contrib_version = "0.1.5"
 val jacksonVersion = "2.10.3"
@@ -12,7 +12,7 @@ val mainClass = "no.nav.helse.sporenstreks.web.AppKt"
 val junitJupiterVersion = "5.5.0-RC2"
 val assertJVersion = "3.12.2"
 val mockKVersion = "1.9.3"
-val tokenSupportVersion = "1.3.0"
+val tokenSupportVersion = "1.3.1"
 val koinVersion = "2.0.1"
 val valiktorVersion = "0.10.0"
 val cxfVersion = "3.4.0"
@@ -142,7 +142,7 @@ dependencies {
     implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2020.09.30-11-08-93059")
 
     testImplementation("org.koin:koin-test:$koinVersion")
-    implementation("com.github.javafaker:javafaker:1.0.2") // flytt denne til test når generatorene ikke er nødvendige i prod-koden lenger
+    //implementation("com.github.javafaker:javafaker:1.0.2") // flytt denne til test når generatorene ikke er nødvendige i prod-koden lenger
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.2")
     testImplementation("io.mockk:mockk:$mockKVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
