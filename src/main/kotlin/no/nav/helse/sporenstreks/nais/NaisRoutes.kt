@@ -31,14 +31,14 @@ fun Application.nais() {
         get("/isalive") {
             val kubernetesProbeManager = this@routing.get<KubernetesProbeManager>()
             val checkResults = kubernetesProbeManager.runLivenessProbe()
-            log.info(checkResults.toString())
+            log.debug(checkResults.toString())
             returnResultOfChecks(checkResults)
         }
 
         get("/isready") {
             val kubernetesProbeManager = this@routing.get<KubernetesProbeManager>()
             val checkResults = kubernetesProbeManager.runReadynessProbe()
-            log.info(checkResults.toString())
+            log.debug(checkResults.toString())
             returnResultOfChecks( checkResults)
         }
 
