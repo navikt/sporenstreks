@@ -26,6 +26,8 @@ import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClient
 import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClientImpl
 import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.DokarkivKlient
 import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.DokarkivKlientImpl
+import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OppgaveKlient
+import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OppgaveKlientImpl
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
 import no.nav.helse.sporenstreks.auth.*
 import no.nav.helse.sporenstreks.auth.altinn.AltinnClient
@@ -37,8 +39,6 @@ import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumerImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.MockAktorConsumer
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.MockDokarkivKlient
 import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.MockOppgaveKlient
-import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.OppgaveKlient
-import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.OppgaveKlientImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.sensu.SensuClient
 import no.nav.helse.sporenstreks.integrasjon.rest.sensu.SensuClientImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.sts.configureFor
