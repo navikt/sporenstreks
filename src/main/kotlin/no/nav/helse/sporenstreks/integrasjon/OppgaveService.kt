@@ -2,25 +2,36 @@ package no.nav.helse.sporenstreks.integrasjon
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.runBlocking
+import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OppgaveKlient
+import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OpprettOppgaveRequest
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
-import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.OppgaveKlient
+import java.time.LocalDate
 
 class OppgaveService(private val oppgaveKlient: OppgaveKlient, private val om: ObjectMapper) {
 
     fun opprettOppgave(refusjonskrav: Refusjonskrav, journalpostId: String, aktørId: String, callId: String): String {
         val response = runBlocking {
-            oppgaveKlient.opprettOppgave(
-                    journalpostId = journalpostId,
-                    aktørId = aktørId,
-                    strukturertSkjema = mapStrukturert(refusjonskrav),
-                    callId = callId
-            )
+            val request = mapOppgave(journalpostId, aktørId, mapStrukturert(refusjonskrav))
+            oppgaveKlient.opprettOppgave(request, callId)
         }
-        return "${response.oppgaveId}"
+        return "${response.id}"
     }
 
-    fun mapStrukturert(refusjonskrav: Refusjonskrav): String {
+    private fun mapStrukturert(refusjonskrav: Refusjonskrav): String {
         return om.writeValueAsString(refusjonskrav)
     }
 
+    private fun mapOppgave(journalpostId: String, aktørId: String, beskrivelse: String): OpprettOppgaveRequest {
+        return OpprettOppgaveRequest(
+                aktoerId = aktørId,
+                journalpostId = journalpostId,
+                beskrivelse = beskrivelse,
+                tema = "SYK",
+                oppgavetype = "ROB_BEH",
+                behandlingstema = "ab0433",
+                aktivDato = LocalDate.now(),
+                fristFerdigstillelse = LocalDate.now().plusDays(7),
+                prioritet = "NORM"
+        )
+    }
 }
