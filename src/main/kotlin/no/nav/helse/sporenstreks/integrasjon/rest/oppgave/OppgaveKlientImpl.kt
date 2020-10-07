@@ -1,10 +1,12 @@
 package no.nav.helse.sporenstreks.integrasjon.rest.oppgave
 
 import io.ktor.client.HttpClient
+import io.ktor.client.features.*
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import io.ktor.utils.io.*
 import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClient
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
@@ -30,11 +32,16 @@ class OppgaveKlientImpl(
 
 
     private suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest, msgId: String, token: String): OpprettOppgaveResponse {
-        return httpClient.post(url) {
-            contentType(ContentType.Application.Json)
-            this.header("Authorization", "Bearer $token")
-            this.header("X-Correlation-ID", msgId)
-            body = opprettOppgaveRequest
+        try {
+            return httpClient.post(url) {
+                contentType(ContentType.Application.Json)
+                this.header("Authorization", "Bearer $token")
+                this.header("X-Correlation-ID", msgId)
+                body = opprettOppgaveRequest
+            }
+        } catch (ex: ResponseException) {
+            log.error(ex.response.content.readUTF8Line())
+            throw ex
         }
     }
 
@@ -59,7 +66,7 @@ class OppgaveKlientImpl(
             callId: String
     ): OppgaveResultat {
         val opprettOppgaveRequest = mapOppgave(journalpostId, aktørId, strukturertSkjema)
-        log.info("Oppretter oppgave")
+        log.debug("Oppretter oppgave")
         return OppgaveResultat(
                 opprettOppgave(
                         opprettOppgaveRequest,
