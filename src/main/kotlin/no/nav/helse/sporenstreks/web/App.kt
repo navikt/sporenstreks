@@ -12,9 +12,9 @@ import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
+import no.nav.helse.arbeidsgiver.system.AppEnv
+import no.nav.helse.arbeidsgiver.system.getEnvironment
 import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravProcessor
-import no.nav.helse.sporenstreks.system.AppEnv
-import no.nav.helse.sporenstreks.system.getEnvironment
 import org.koin.ktor.ext.getKoin
 import org.slf4j.LoggerFactory
 
