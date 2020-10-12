@@ -4,7 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.helse.TestData
-import no.nav.helse.sporenstreks.auth.Authorizer
+import no.nav.helse.arbeidsgiver.web.auth.AltinnAuthorizer
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.assertj.core.api.Assertions.assertThat
@@ -16,7 +16,7 @@ internal class ExcelParserTest {
     val validFile = ExcelParserTest::class.java.classLoader.getResourceAsStream("koronasykepengerefusjon_nav_TESTFILE.xlsx");
     val invalidFile = ExcelParserTest::class.java.classLoader.getResourceAsStream("koronasykepengerefusjon_nav_ERRORFILE.xlsx");
 
-    val authorizerMock = mockk<Authorizer>()
+    val authorizerMock = mockk<AltinnAuthorizer>()
 
     @BeforeEach
     fun setup() {

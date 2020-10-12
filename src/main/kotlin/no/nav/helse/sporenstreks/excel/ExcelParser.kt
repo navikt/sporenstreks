@@ -1,6 +1,6 @@
 package no.nav.helse.sporenstreks.excel
 
-import no.nav.helse.sporenstreks.auth.Authorizer
+import no.nav.helse.arbeidsgiver.web.auth.AltinnAuthorizer
 import no.nav.helse.sporenstreks.excel.ExcelBulkService.Companion.startDataRowAt
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
@@ -19,7 +19,7 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
 
 
-class ExcelParser(private val authorizer: Authorizer) {
+class ExcelParser(private val authorizer: AltinnAuthorizer) {
     fun parseAndValidateExcelContent(workbook: Workbook, opprettetAv: String): ExcelParsingResult {
         val sheet = workbook.getSheetAt(0)
 
