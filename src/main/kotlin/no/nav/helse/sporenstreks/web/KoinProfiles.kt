@@ -24,13 +24,16 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.MockBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClient
 import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClientImpl
+import no.nav.helse.arbeidsgiver.integrasjoner.altinn.AltinnRestClient
 import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.DokarkivKlient
 import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.DokarkivKlientImpl
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OppgaveKlient
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OppgaveKlientImpl
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
+import no.nav.helse.arbeidsgiver.web.auth.AltinnAuthorizer
+import no.nav.helse.arbeidsgiver.web.auth.AltinnOrganisationsRepository
+import no.nav.helse.arbeidsgiver.web.auth.DefaultAltinnAuthorizer
 import no.nav.helse.sporenstreks.auth.*
-import no.nav.helse.sporenstreks.auth.altinn.AltinnClient
 import no.nav.helse.sporenstreks.db.*
 import no.nav.helse.sporenstreks.integrasjon.JoarkService
 import no.nav.helse.sporenstreks.integrasjon.OppgaveService
@@ -111,8 +114,8 @@ val common = module {
 }
 
 fun buildAndTestConfig() = module {
-    single { StaticMockAuthRepo(get()) as AuthorizationsRepository } bind StaticMockAuthRepo::class
-    single { DefaultAuthorizer(get()) as Authorizer }
+    single { StaticMockAuthRepo(get()) as AltinnOrganisationsRepository } bind StaticMockAuthRepo::class
+    single { DefaultAltinnAuthorizer(get()) as AltinnAuthorizer }
     single { MockRefusjonskravRepo() as RefusjonskravRepository }
     single { MockKvitteringRepository() as KvitteringRepository }
     single { MockRefusjonskravService(get()) as RefusjonskravService }
@@ -147,8 +150,8 @@ fun localDevConfig(config: ApplicationConfig) = module {
 
 
     single { MockDokarkivKlient() as DokarkivKlient }
-    single { StaticMockAuthRepo(get()) as AuthorizationsRepository }
-    single { DefaultAuthorizer(get()) as Authorizer }
+    single { StaticMockAuthRepo(get()) as AltinnOrganisationsRepository }
+    single { DefaultAltinnAuthorizer(get()) as AltinnAuthorizer }
     single { JoarkService(get()) as JoarkService }
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
@@ -173,7 +176,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
 
     single {
-        val altinnClient = AltinnClient(
+        val altinnClient = AltinnRestClient(
                 config.getString("altinn.service_owner_api_url"),
                 config.getString("altinn.gw_api_key"),
                 config.getString("altinn.altinn_api_key"),
@@ -181,7 +184,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
                 get()
         )
 
-        CachedAuthRepo(altinnClient) as AuthorizationsRepository
+        CachedAuthRepo(altinnClient) as AltinnOrganisationsRepository
     }
 
     single {SensuClientImpl("sensu.nais", 3030) as SensuClient }
@@ -198,7 +201,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
 
-    single { DefaultAuthorizer(get()) as Authorizer }
+    single { DefaultAltinnAuthorizer(get()) as AltinnAuthorizer }
     single {
         AktorConsumerImpl(get(),
                 config.getString("service_user.username"),
@@ -248,7 +251,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     }
 
     single {
-        val altinn = AltinnClient(
+        val altinn = AltinnRestClient(
                 config.getString("altinn.service_owner_api_url"),
                 config.getString("altinn.gw_api_key"),
                 config.getString("altinn.altinn_api_key"),
@@ -256,7 +259,7 @@ fun prodConfig(config: ApplicationConfig) = module {
                 get()
         )
 
-        CachedAuthRepo(altinn) as AuthorizationsRepository
+        CachedAuthRepo(altinn) as AltinnOrganisationsRepository
     }
 
     single {SensuClientImpl("sensu.nais", 3030) as SensuClient }
@@ -274,7 +277,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { PostgresBakgrunnsjobbRepository(get()) as BakgrunnsjobbRepository }
     single { JoarkService(get()) as JoarkService }
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
-    single { DefaultAuthorizer(get()) as Authorizer }
+    single { DefaultAltinnAuthorizer(get()) as AltinnAuthorizer }
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
     single { OppgaveService(get(), get()) as OppgaveService }
     single {

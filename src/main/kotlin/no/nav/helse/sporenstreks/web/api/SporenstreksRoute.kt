@@ -21,9 +21,9 @@ import io.ktor.routing.post
 import io.ktor.routing.route
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.pipeline.PipelineContext
-import no.nav.helse.sporenstreks.auth.AuthorizationsRepository
-import no.nav.helse.sporenstreks.auth.Authorizer
-import no.nav.helse.sporenstreks.auth.altinn.AltinnBrukteForLangTidException
+import no.nav.helse.arbeidsgiver.integrasjoner.altinn.AltinnBrukteForLangTidException
+import no.nav.helse.arbeidsgiver.web.auth.AltinnAuthorizer
+import no.nav.helse.arbeidsgiver.web.auth.AltinnOrganisationsRepository
 import no.nav.helse.sporenstreks.auth.hentIdentitetsnummerFraLoginToken
 import no.nav.helse.sporenstreks.auth.hentUtløpsdatoFraLoginToken
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
@@ -45,7 +45,7 @@ import javax.ws.rs.ForbiddenException
 private val excelContentType = ContentType.parse("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
 @KtorExperimentalAPI
-fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepository, refusjonskravService: RefusjonskravService) {
+fun Route.sporenstreks(authorizer: AltinnAuthorizer, authRepo: AltinnOrganisationsRepository, refusjonskravService: RefusjonskravService) {
     route("api/v1") {
 
         route("/login-expiry") {
@@ -185,7 +185,7 @@ fun Route.sporenstreks(authorizer: Authorizer, authRepo: AuthorizationsRepositor
 }
 
 @KtorExperimentalAPI
-private fun PipelineContext<Unit, ApplicationCall>.authorize(authorizer: Authorizer, arbeidsgiverId: String) {
+private fun PipelineContext<Unit, ApplicationCall>.authorize(authorizer: AltinnAuthorizer, arbeidsgiverId: String) {
     val identitetsnummer = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
     if (!authorizer.hasAccess(identitetsnummer, arbeidsgiverId)) {
         throw ForbiddenException()
