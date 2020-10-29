@@ -9,7 +9,7 @@ val hikariVersion = "3.3.1"
 val vaultJdbcVersion = "1.3.7"
 val kafkaVersion = "2.1.1"
 val mainClass = "no.nav.helse.sporenstreks.web.AppKt"
-val junitJupiterVersion = "5.5.0-RC2"
+val junitJupiterVersion = "5.7.0"
 val assertJVersion = "3.12.2"
 val mockKVersion = "1.9.3"
 val tokenSupportVersion = "1.3.1"
@@ -74,7 +74,7 @@ dependencies {
     // SNYK-fikser - Disse kan fjernes etterhver som våre avhengigheter oppdaterer sine versjoner
     // Forsøk å fjerne en og en og kjør snyk test --configuration-matching=runtimeClasspath
     implementation("commons-collections:commons-collections:3.2.2") // overstyrer transiente 3.2.1
-    implementation("io.netty:netty-codec:4.1.46.Final") // overstyrer transiente 4.1.44
+    implementation("io.netty:netty-codec:4.1.53.Final") // overstyrer transiente 4.1.44
     implementation("org.glassfish.jersey.media:jersey-media-jaxb:2.31") // overstyrer transiente 2.30.1
     // -- end snyk fixes
 
