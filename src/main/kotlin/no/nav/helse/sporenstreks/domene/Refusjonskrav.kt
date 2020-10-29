@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 import java.util.*
 
 data class Refusjonskrav(
-        var opprettetAv: String,
+        var opprettetAv: String =  "<ukjent>",
         val identitetsnummer: String,
         val virksomhetsnummer: String,
         val perioder: Set<Arbeidsgiverperiode>,
