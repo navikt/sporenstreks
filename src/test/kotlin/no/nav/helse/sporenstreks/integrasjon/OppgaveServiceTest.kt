@@ -7,10 +7,7 @@ import no.nav.helse.TestData
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OppgaveKlient
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OpprettOppgaveRequest
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OpprettOppgaveResponse
-import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
-import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.domene.RefusjonskravForOppgave
-import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import no.nav.helse.sporenstreks.web.common
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -22,8 +19,6 @@ import org.koin.dsl.module
 import org.koin.test.KoinTest
 import org.koin.test.get
 import java.io.IOException
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 internal class OppgaveServiceTest : KoinTest{
 
