@@ -224,4 +224,14 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
         assertThat(repo.getByIkkeIndeksertInflux(100)).hasSize(1)
         repo.delete(krav2.id)
     }
+
+    @Test
+    fun `Ignorerer ikke opprettetAv ved serialisering til database`() {
+        val savedKrav =  repo.insert(refusjonskrav)
+
+        repo.getById(savedKrav.id)
+
+        assertThat(savedKrav).isNotNull()
+        assertThat(savedKrav.opprettetAv).isEqualTo(TestData.opprettetAv)
+    }
 }
