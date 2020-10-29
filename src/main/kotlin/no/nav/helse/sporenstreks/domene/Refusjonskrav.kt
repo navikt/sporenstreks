@@ -1,11 +1,10 @@
 package no.nav.helse.sporenstreks.domene
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.time.LocalDateTime
 import java.util.*
 
-@JsonIgnoreProperties("opprettetAv")
 data class Refusjonskrav(
+        var opprettetAv: String,
         val identitetsnummer: String,
         val virksomhetsnummer: String,
         val perioder: Set<Arbeidsgiverperiode>,
