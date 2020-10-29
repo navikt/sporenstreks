@@ -76,6 +76,7 @@ dependencies {
     implementation("commons-collections:commons-collections:3.2.2") // overstyrer transiente 3.2.1
     implementation("io.netty:netty-codec:4.1.53.Final") // overstyrer transiente 4.1.44
     implementation("org.glassfish.jersey.media:jersey-media-jaxb:2.31") // overstyrer transiente 2.30.1
+    implementation("junit:junit:4.13.1") // overstyrer transiente 4.12
     // -- end snyk fixes
 
 
