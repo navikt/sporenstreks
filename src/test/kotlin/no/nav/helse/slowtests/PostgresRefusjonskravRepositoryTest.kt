@@ -33,6 +33,7 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
         }
         repo = PostgresRefusjonskravRepository(HikariDataSource(createNonVaultHikariConfig()), get())
         refusjonskrav = repo.insert(Refusjonskrav(
+                TestData.opprettetAv,
                 TestData.notValidIdentitetsnummer,
                 TestData.validOrgNr,
                 setOf(
@@ -76,8 +77,8 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
     @Test
     fun kan_hente_ut_gammelt_refusjonskrav() {
         val refusjonskrav2 = repo.insert(GammeltRefusjonskrav(
-                TestData.validIdentitetsnummer
-                , TestData.notValidIdentitetsnummer,
+                TestData.validIdentitetsnummer,
+                TestData.notValidIdentitetsnummer,
                 TestData.validOrgNr,
                 setOf(
                         Arbeidsgiverperiode(
@@ -142,6 +143,7 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
 
         for (i in 1..19) {
             repo.insert(Refusjonskrav(
+                    TestData.opprettetAv,
                     TestData.notValidIdentitetsnummer,
                     TestData.validOrgNr,
                     setOf(
@@ -202,8 +204,8 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
         repo.update(ikkeIndeksert)
         assertThat(repo.getByIkkeIndeksertInflux(100)).isEmpty()
         val krav2 = repo.insert(GammeltRefusjonskrav(
-                TestData.validIdentitetsnummer
-                , TestData.notValidIdentitetsnummer,
+                TestData.validIdentitetsnummer,
+                TestData.notValidIdentitetsnummer,
                 TestData.validOrgNr,
                 setOf(
                         Arbeidsgiverperiode(

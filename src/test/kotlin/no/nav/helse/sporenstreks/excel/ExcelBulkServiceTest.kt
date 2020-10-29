@@ -34,6 +34,7 @@ internal class ExcelBulkServiceTest {
     internal fun `Lagrer til databasen ved feilfri parsing`() {
         val bulkservice = ExcelBulkService(serviceMock, parserMock)
         val refusjonskrabParsedFromFile = listOf(Refusjonskrav(
+                TestData.opprettetAv,
                 TestData.validIdentitetsnummer,
                 TestData.validOrgNr,
                 emptySet()

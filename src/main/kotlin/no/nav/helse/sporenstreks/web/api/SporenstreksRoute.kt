@@ -60,8 +60,10 @@ fun Route.sporenstreks(authorizer: AltinnAuthorizer, authRepo: AltinnOrganisatio
                 try {
                     val refusjonskrav = call.receive<RefusjonskravDto>()
                     authorize(authorizer, refusjonskrav.virksomhetsnummer)
+                    val opprettetAv = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
 
                     val domeneKrav = Refusjonskrav(
+                            opprettetAv,
                             refusjonskrav.identitetsnummer,
                             refusjonskrav.virksomhetsnummer,
                             refusjonskrav.perioder
@@ -99,7 +101,9 @@ fun Route.sporenstreks(authorizer: AltinnAuthorizer, authRepo: AltinnOrganisatio
                     try {
                         val dto = om.readValue<RefusjonskravDto>(jsonTree[i].traverse())
                         authorize(authorizer, dto.virksomhetsnummer)
+                        val opprettetAv = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request) //burde denne være lengre opp?
                         domeneListeMedIndex[i] = Refusjonskrav(
+                                opprettetAv,
                                 dto.identitetsnummer,
                                 dto.virksomhetsnummer,
                                 dto.perioder

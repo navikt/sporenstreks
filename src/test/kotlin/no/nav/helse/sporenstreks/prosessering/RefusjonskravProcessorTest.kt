@@ -30,6 +30,7 @@ class RefusjonskravProcessorTest {
     @BeforeEach
     fun setup() {
         refusjonskrav = Refusjonskrav(
+                opprettetAv = "123",
                 identitetsnummer = "123",
                 virksomhetsnummer = "213",
                 perioder = emptySet(),

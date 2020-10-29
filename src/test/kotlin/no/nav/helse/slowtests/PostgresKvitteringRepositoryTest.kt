@@ -38,6 +38,7 @@ internal class PostgresKvitteringRepositoryTest : KoinComponent {
                 tidspunkt = LocalDateTime.now(),
                 virksomhetsnummer = TestData.validOrgNr,
                 refusjonsListe = listOf(Refusjonskrav(
+                        TestData.opprettetAv,
                         TestData.notValidIdentitetsnummer,
                         TestData.validOrgNr,
                         setOf(

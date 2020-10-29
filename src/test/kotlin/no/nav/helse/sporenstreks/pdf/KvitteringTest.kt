@@ -17,6 +17,7 @@ internal class KvitteringTest {
     @Test
     fun lagPDF() {
         val refusjonskrav = Refusjonskrav(
+                opprettetAv = TestData.opprettetAv,
                 identitetsnummer = TestData.validIdentitetsnummer,
                 virksomhetsnummer = TestData.validOrgNr,
                 perioder = setOf(Arbeidsgiverperiode(
@@ -46,6 +47,7 @@ internal class KvitteringTest {
     fun norskeBokstaver() {
         val kv = PDFGenerator()
         val refusjonskrav = Refusjonskrav(
+                opprettetAv = TestData.opprettetAv,
                 identitetsnummer = TestData.validIdentitetsnummer,
                 virksomhetsnummer = TestData.validOrgNr,
                 perioder = setOf(Arbeidsgiverperiode(

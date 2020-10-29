@@ -27,7 +27,7 @@ internal class PostgresRefusjonskravServiceTest {
 
     @Test
     fun `ett krav lagres også med kvittering og to jobber`() {
-        service.saveKravWithKvittering(Refusjonskrav("1", "1", emptySet()))
+        service.saveKravWithKvittering(Refusjonskrav("1", "1", "1", emptySet()))
         verify(exactly = 2) { bakgrunnRepo.save(any(), any()) }
         verify(exactly = 1) { kvitteringRepo.insert(any(), any()) }
         verify(exactly = 1) { kravRepo.insert(any(), any()) }
@@ -35,7 +35,7 @@ internal class PostgresRefusjonskravServiceTest {
 
     @Test
     fun `to krav lagres også med en kvittering og to jobber hver`() {
-        service.saveKravListWithKvittering(mapOf(Pair(0, Refusjonskrav("1", "1", emptySet())), (Pair(1, Refusjonskrav("1", "1", emptySet())))))
+        service.saveKravListWithKvittering(mapOf(Pair(0, Refusjonskrav("1", "1", "1", emptySet())), (Pair(1, Refusjonskrav("1", "1", "1", emptySet())))))
         verify(exactly = 3) { bakgrunnRepo.save(any(), any()) }
         verify(exactly = 1) { kvitteringRepo.insert(any(), any()) }
         verify(exactly = 2) { kravRepo.insert(any(), any()) }
@@ -43,7 +43,7 @@ internal class PostgresRefusjonskravServiceTest {
 
     @Test
     fun `to krav lagres også med en kvittering og to jobber hver bulk`() {
-        service.bulkInsert(listOf(Refusjonskrav("1", "1", emptySet()), Refusjonskrav("1", "1", emptySet())))
+        service.bulkInsert(listOf(Refusjonskrav("1", "1", "1", emptySet()), Refusjonskrav("1", "1", "1", emptySet())))
         verify(exactly = 3) { bakgrunnRepo.save(any(), any()) }
         verify(exactly = 1) { kvitteringRepo.insert(any(), any()) }
         verify(exactly = 1) { kravRepo.bulkInsert(any(), any()) }

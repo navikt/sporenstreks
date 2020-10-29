@@ -91,6 +91,7 @@ class ExcelParser(private val authorizer: AltinnAuthorizer) {
 
         // map to domain instance for insertion into Database
         return Refusjonskrav(
+                opprettetAv,
                 refusjonskrav.identitetsnummer,
                 refusjonskrav.virksomhetsnummer,
                 refusjonskrav.perioder,

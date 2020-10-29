@@ -11,7 +11,9 @@ object TestData {
     val notValidIdentitetsnummer = "50012001987"
     val validOrgNr = "123456785"
     val notValidOrgNr = "123456789"
+    val opprettetAv = "20015001543"
     val gyldigKrav = Refusjonskrav(
+            opprettetAv,
             validIdentitetsnummer,
             validOrgNr,
             setOf(Arbeidsgiverperiode(of(2020, 4,4), of(2020, 4,10), 2, 1000.0)),

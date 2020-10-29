@@ -5,6 +5,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OppgaveKlient
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OpprettOppgaveRequest
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
+import no.nav.helse.sporenstreks.domene.toRefusjonskravForOppgave
 import java.time.LocalDate
 
 class OppgaveService(private val oppgaveKlient: OppgaveKlient, private val om: ObjectMapper) {
@@ -18,7 +19,8 @@ class OppgaveService(private val oppgaveKlient: OppgaveKlient, private val om: O
     }
 
     private fun mapStrukturert(refusjonskrav: Refusjonskrav): String {
-        return om.writeValueAsString(refusjonskrav)
+        val kravForOppgave = refusjonskrav.toRefusjonskravForOppgave()
+        return om.writeValueAsString(kravForOppgave)
     }
 
     private fun mapOppgave(journalpostId: String, aktørId: String, beskrivelse: String): OpprettOppgaveRequest {
