@@ -58,12 +58,6 @@ spec:
       value: sporenstreks
     - name: VAULT_MOUNTPATH
       value: postgresql/preprod-fss/
-    - name: OIDC_ISSUER_NAME
-      value: loginservice-test
-    - name: OIDC_DISCOVERY_URL
-      value: "https://navtestb2c.b2clogin.com/navtestb2c.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1A_idporten_ver1"
-    - name: OIDC_ACCEPTED_AUDIENCE
-      value: 0090b6e1-ffcc-4c37-bc21-049f7d1f0fe5
     - name: ALTINN_SERVICE_OWNER_GW_URL
       value: https://api-gw-q1.adeo.no/ekstern/altinn/api/serviceowner
     - name: SECURITYTOKENSERVICE_URL_REST

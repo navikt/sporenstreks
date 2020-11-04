@@ -59,16 +59,6 @@ spec:
       value: sporenstreks
     - name: VAULT_MOUNTPATH
       value: postgresql/prod-fss/
-    - name: OIDC_DISCOVERY_URL
-      value: https://login.microsoftonline.com/navnob2c.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1A_idporten
-    - name: OIDC_DISCOVERY_URL_NEW
-      value: https://navnob2c.b2clogin.com/navnob2c.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1A_idporten
-    - name: OIDC_ACCEPTED_AUDIENCE
-      value: 45104d6a-f5bc-4e8c-b352-4bbfc9381f25
-    - name: OIDC_ISSUER_NAME
-      value: aadb2c
-    - name: OIDC_ISSUER_NAME_NEW
-      value: "https://navnob2c.b2clogin.com/8b7dfc8b-b52e-4741-bde4-d83ea366f94f/v2.0/"
     - name: ALTINN_SERVICE_OWNER_GW_URL
       value: https://api-gw.adeo.no/ekstern/altinn/api/serviceowner
     - name: SECURITYTOKENSERVICE_URL_REST
