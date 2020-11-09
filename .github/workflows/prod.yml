@@ -1,10 +1,9 @@
-name: Bygg og deploy
+name: Deploy til prod
 
 on:
   push:
-    branches:
-      - master
-
+    tags:
+      - prod/*
 env:
   DOCKER_IMAGE_NAME: docker.pkg.github.com/${{ github.repository }}/sporenstreks
   LATEST_TAG: docker.pkg.github.com/${{ github.repository }}/sporenstreks:latest
@@ -35,7 +34,7 @@ jobs:
       - name: compose up
         run: cd docker/local && docker-compose up -d && sleep 15
       - name: test and build
-        run: bash ./gradlew --console=plain build test slowTests jacocoTestReport sonarqube
+        run: bash ./gradlew --console=plain build test slowTests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -49,16 +48,8 @@ jobs:
           docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
           docker push ${DOCKER_IMAGE_NAME}
 
-  deploy:
-    name: Deploy to PREPROD
-    needs: build
-    if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: dev-fss
-          RESOURCE: deploy/dev.yaml
-
+  - uses: nais/deploy/actions/deploy@v1
+  env:
+    APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+    CLUSTER: prod-fss
+    RESOURCE: deploy/prod.yaml
