@@ -78,6 +78,7 @@ dependencies {
     implementation("io.netty:netty-codec-http:4.1.53.Final") // overstyrer transiente 4.1.51.Final
     implementation("org.glassfish.jersey.media:jersey-media-jaxb:2.31") // overstyrer transiente 2.30.1
     implementation("junit:junit:4.13.1") // overstyrer transiente 4.12
+    implementation("com.google.guava:guava:30.0-jre") // overstyrer transiente 29.0-jre
     // -- end snyk fixes
 
 
