@@ -7,7 +7,15 @@ ignore:
         reason: None Given
         expires: 2020-07-04T11:43:42.594Z
   SNYK-JAVA-ORGGLASSFISHJERSEYMEDIA-595972:
-      - '*':
-          reason: Kan ikke oppdatere dependency enda
-          expires: 2020-10-10T00:00:00.000Z
+    - '*':
+        reason: Kan ikke oppdatere dependency enda
+        expires: 2020-10-10T00:00:00.000Z
+  SNYK-JAVA-COMGOOGLEGUAVA-1015415:
+    - '*':
+        reason: None Given
+        expires: 2020-12-26T10:19:44.462Z
+  SNYK-JAVA-IONETTY-1042268:
+    - '*':
+        reason: None Given
+        expires: 2020-12-26T10:20:51.486Z
 patch: {}
