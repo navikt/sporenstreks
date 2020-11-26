@@ -2,8 +2,10 @@
 <configuration>
     <if condition='isDefined("KOIN_PROFILE")'>
         <then>
-            <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-                <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+            <appender name="STDOUT" class="no.nav.common.log.MaskingAppender">
+                <appender name="INNER-STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+                    <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+                </appender>
             </appender>
         </then>
         <else>
