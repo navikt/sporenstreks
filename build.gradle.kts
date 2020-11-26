@@ -114,6 +114,8 @@ dependencies {
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
     implementation("no.nav.security:token-validation-test-support:$tokenSupportVersion")
 
+    implementation("no.nav.common:log:2.2020.10.15_11.43-b1f02e7bd6ae")
+
     implementation(kotlin("stdlib"))
 
     implementation("org.slf4j:slf4j-api:1.7.30")
