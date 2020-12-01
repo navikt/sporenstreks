@@ -16,7 +16,7 @@ val tokenSupportVersion = "1.3.1"
 val mockOAuth2ServerVersion = "0.2.1"
 val koinVersion = "2.0.1"
 val valiktorVersion = "0.10.0"
-val cxfVersion = "3.4.0"
+val cxfVersion = "3.4.1"
 val jaxwsVersion = "2.3.1"
 val jaxwsToolsVersion = "2.3.3"
 val apachePoiVersion = "4.1.2"
@@ -79,6 +79,7 @@ dependencies {
     implementation("io.netty:netty-codec-http:4.1.53.Final") // overstyrer transiente 4.1.51.Final
     implementation("org.glassfish.jersey.media:jersey-media-jaxb:2.31") // overstyrer transiente 2.30.1
     implementation("junit:junit:4.13.1") // overstyrer transiente 4.12
+    implementation("org.apache.httpcomponents:httpclient:4.5.13") // overstyrer transiente 4.5.6 via ktor-client-apache
     implementation("com.google.guava:guava:30.0-jre") // overstyrer transiente 29.0-jre
     // -- end snyk fixes
 
@@ -116,6 +117,8 @@ dependencies {
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
     implementation("javax.ws.rs:javax.ws.rs-api:2.1.1")
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
+
+    implementation("no.nav.common:log:2.2020.10.15_11.43-b1f02e7bd6ae")
 
     implementation(kotlin("stdlib"))
 
