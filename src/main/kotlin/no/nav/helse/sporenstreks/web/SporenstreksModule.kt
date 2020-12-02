@@ -48,7 +48,7 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
     }
 
     install(Authentication) {
-        tokenValidationSupport(config = config)
+        tokenValidationSupport(name = "default", config = config)
     }
 
     install(Locations)
@@ -195,7 +195,7 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
     localCookieDispenser(config)
 
     routing {
-        authenticate {
+        authenticate("default") {
             sporenstreks(get(), get(), get())
         }
     }
