@@ -127,8 +127,6 @@ fun buildAndTestConfig() = module {
     single { MockAktorConsumer() as AktorConsumer }
     single { DummyKvitteringSender() as KvitteringSender }
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
-
-    LocalOIDCWireMock.start()
 }
 
 @KtorExperimentalAPI
@@ -159,7 +157,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { MockOppgaveKlient() as OppgaveKlient }
     single { OppgaveService(get(), get()) as OppgaveService }
     single { DummyKvitteringSender() as KvitteringSender }
-    LocalOIDCWireMock.start()
 }
 
 @KtorExperimentalAPI
