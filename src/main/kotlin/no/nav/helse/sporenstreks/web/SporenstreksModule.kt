@@ -192,8 +192,6 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
 
     nais()
 
-    localCookieDispenser(config)
-
     routing {
         authenticate("default") {
             sporenstreks(get(), get(), get())

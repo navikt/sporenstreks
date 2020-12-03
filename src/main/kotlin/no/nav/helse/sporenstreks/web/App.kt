@@ -14,6 +14,7 @@ import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import no.nav.helse.arbeidsgiver.system.AppEnv
 import no.nav.helse.arbeidsgiver.system.getEnvironment
+import no.nav.helse.sporenstreks.auth.localCookieDispenser
 import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravProcessor
 import org.koin.ktor.ext.getKoin
 import org.slf4j.LoggerFactory
@@ -68,6 +69,9 @@ fun createApplicationEnvironment() = applicationEngineEnvironment {
     }
 
     module {
+        if (config.getEnvironment() != AppEnv.PROD) {
+            localCookieDispenser(config)
+        }
         sporenstreksModule(config)
     }
 }

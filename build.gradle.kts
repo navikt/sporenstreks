@@ -24,8 +24,6 @@ val influxVersion = "2.20"
 
 val githubPassword: String by project
 
-
-
 plugins {
     application
     kotlin("jvm") version "1.3.60"
@@ -116,7 +114,6 @@ dependencies {
     implementation("org.koin:koin-core:$koinVersion")
     implementation("org.koin:koin-ktor:$koinVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
-    implementation("javax.ws.rs:javax.ws.rs-api:2.1.1")
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
 
     implementation("no.nav.common:log:2.2020.10.15_11.43-b1f02e7bd6ae")
