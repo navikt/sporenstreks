@@ -23,7 +23,6 @@ import io.ktor.response.respond
 import io.ktor.routing.routing
 import io.ktor.util.DataConversionException
 import io.ktor.util.KtorExperimentalAPI
-import no.nav.helse.sporenstreks.auth.localCookieDispenser
 import no.nav.helse.sporenstreks.excel.ExcelFileParsingException
 import no.nav.helse.sporenstreks.nais.nais
 import no.nav.helse.sporenstreks.web.api.sporenstreks

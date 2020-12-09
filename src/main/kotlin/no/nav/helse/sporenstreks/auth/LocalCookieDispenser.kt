@@ -14,17 +14,15 @@ import java.net.InetAddress
 fun Application.localCookieDispenser(config: ApplicationConfig) {
 
     val server = MockOAuth2Server()
-    server.start(InetAddress.getLocalHost(), 6666)
+    server.start(port = 6666)
 
     DefaultExports.initialize()
 
     routing {
         get("/local/cookie-please") {
-            if (config.property("koin.profile").getString() == "LOCAL") {
                 val token = server.issueToken(call.request.queryParameters["subject"].toString())
                 val cookieName = config.configList("no.nav.security.jwt.issuers")[0].property("cookie_name").getString()
                 call.response.cookies.append(Cookie(cookieName, token.serialize(), CookieEncoding.RAW, domain = "localhost", path = "/"))
-            }
 
             if (call.request.queryParameters["redirect"] != null) {
                 call.respondText("<script>window.location.href='" + call.request.queryParameters["redirect"] + "';</script>", ContentType.Text.Html, HttpStatusCode.OK)

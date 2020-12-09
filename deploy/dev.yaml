@@ -22,6 +22,7 @@ spec:
     failureThreshold: 10
   ingresses:
     - https://sporenstreks.nais.preprod.local
+    - https://sporenstreks.dev.nav.no
   prometheus:
     enabled: true
   replicas:
@@ -44,9 +45,9 @@ spec:
       - mountPath: /var/run/secrets/nais.io/service_user
         kvPath: /serviceuser/data/dev/srvsporenstreks
   webproxy: true
-  leaderElection: true
-  envFrom:
-    - configmap: loginservice-idporten # tilgjengeliggjør LOGINSERVICE_IDPORTEN_DISCOVERY_URL og LOGINSERVICE_IDPORTEN_AUDIENCE
+  leaderElection: false
+  #envFrom:
+    #- configmap: loginservice-idporten # tilgjengeliggjør LOGINSERVICE_IDPORTEN_DISCOVERY_URL og LOGINSERVICE_IDPORTEN_AUDIENCE
   env:
     - name: KOIN_PROFILE
       value: PREPROD
