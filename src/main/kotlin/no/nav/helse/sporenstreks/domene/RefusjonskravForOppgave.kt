@@ -18,6 +18,8 @@ data class RefusjonskravForOppgave(
         var kvitteringId: UUID? = null,
         var indeksertInflux: Boolean = false,
 
+        val soekerForSegSelv: Boolean,
+
         // Dette referansenummeret overskrives av postgres ved lagring
         // og holdes utenfor JSON-data-feltet der. Det er kun skrivbart for mapping fra databasen
         var referansenummer: Int = 0
@@ -35,5 +37,6 @@ fun Refusjonskrav.toRefusjonskravForOppgave() = RefusjonskravForOppgave(
         id = id,
         kvitteringId = kvitteringId,
         indeksertInflux = indeksertInflux,
-        referansenummer = referansenummer
+        referansenummer = referansenummer,
+        soekerForSegSelv = identitetsnummer == opprettetAv
 )
