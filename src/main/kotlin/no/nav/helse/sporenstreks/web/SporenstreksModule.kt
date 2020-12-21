@@ -192,7 +192,7 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
     nais()
 
     routing {
-        authenticate("default") {
+        authenticate() {
             sporenstreks(get(), get(), get())
         }
     }
