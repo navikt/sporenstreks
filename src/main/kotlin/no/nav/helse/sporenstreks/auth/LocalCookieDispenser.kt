@@ -10,22 +10,23 @@ import io.prometheus.client.hotspot.DefaultExports
 import no.nav.helse.arbeidsgiver.system.AppEnv
 import no.nav.helse.arbeidsgiver.system.getEnvironment
 import no.nav.security.mock.oauth2.MockOAuth2Server
+import org.slf4j.LoggerFactory
 import java.net.InetAddress
 
 @KtorExperimentalAPI
 fun Application.localCookieDispenser(config: ApplicationConfig) {
+    val logger = LoggerFactory.getLogger("LocalCookieDispenser")
+    val cookieName = config.configList("no.nav.security.jwt.issuers")[0].property("cookie_name").getString()
+    val issuerName = config.configList("no.nav.security.jwt.issuers")[0].property("issuer_name").getString()
+    val audience = config.configList("no.nav.security.jwt.issuers")[0].property("accepted_audience").getString()
+    val domain = if (config.getEnvironment() == AppEnv.PREPROD) "dev.nav.no" else "localhost"
 
     val server = MockOAuth2Server()
     server.start(port = 6666)
-
-    DefaultExports.initialize()
+    logger.info("Startet OAuth mock på ${server.jwksUrl(issuerName)}")
 
     routing {
         get("/local/cookie-please") {
-            val cookieName = config.configList("no.nav.security.jwt.issuers")[0].property("cookie_name").getString()
-            val issuerName = config.configList("no.nav.security.jwt.issuers")[0].property("issuer_name").getString()
-            val audience = config.configList("no.nav.security.jwt.issuers")[0].property("accepted_audience").getString()
-            val domain = if (config.getEnvironment() == AppEnv.PREPROD) "dev.nav.no" else "localhost"
 
             val token = server.issueToken(
                     subject = call.request.queryParameters["subject"].toString(),
