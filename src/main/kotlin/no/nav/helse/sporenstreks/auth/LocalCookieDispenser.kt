@@ -23,7 +23,7 @@ fun Application.localCookieDispenser(config: ApplicationConfig) {
 
     val server = MockOAuth2Server()
     server.start(port = 6666)
-    logger.info("Startet OAuth mock på ${server.jwksUrl(issuerName)}")
+    logger.info("Startet OAuth mock på ${server.wellKnownUrl(issuerName)}")
 
     routing {
         get("/local/cookie-please") {

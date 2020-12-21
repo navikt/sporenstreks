@@ -47,7 +47,7 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
     }
 
     install(Authentication) {
-        tokenValidationSupport(name = "default", config = config)
+        tokenValidationSupport(config = config)
     }
 
     install(Locations)
