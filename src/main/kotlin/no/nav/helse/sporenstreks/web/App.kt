@@ -31,22 +31,38 @@ fun main() {
 
     embeddedServer(Netty, createApplicationEnvironment()).let { app ->
         app.start(wait = false)
-        val koin = app.application.getKoin()
-        if (app.environment.config.getEnvironment() != AppEnv.LOCAL) {
-            koin.get<ProcessInfluxJob>().startAsync(retryOnFail = true)
-            val bakgrunnsjobbService = koin.get<BakgrunnsjobbService>()
-            bakgrunnsjobbService.leggTilBakgrunnsjobbProsesserer(KvitteringProcessor.JOBB_TYPE, koin.get<KvitteringProcessor>())
-            bakgrunnsjobbService.leggTilBakgrunnsjobbProsesserer(RefusjonskravProcessor.JOBB_TYPE, koin.get<RefusjonskravProcessor>())
-            bakgrunnsjobbService.startAsync(true)
-        }
 
-        runBlocking { autoDetectProbeableComponents(koin) }
-        mainLogger.info("La til probeable komponenter")
+        try {
+            initBackgroundWorkers(app)
+        } catch(ex: Exception) {
+            // Ved enhver feil i oppstart av bakgrunnsjobbene dra ned applikasjonen slik at vi blir restartet av kubernetes
+            app.stop(1000,1000)
+        }
 
         Runtime.getRuntime().addShutdownHook(Thread {
             app.stop(1000, 1000)
         })
     }
+}
+
+private fun initBackgroundWorkers(app: NettyApplicationEngine) {
+    val koin = app.application.getKoin()
+    if (app.environment.config.getEnvironment() != AppEnv.LOCAL) {
+        koin.get<ProcessInfluxJob>().startAsync(retryOnFail = true)
+        val bakgrunnsjobbService = koin.get<BakgrunnsjobbService>()
+        bakgrunnsjobbService.leggTilBakgrunnsjobbProsesserer(
+            KvitteringProcessor.JOBB_TYPE,
+            koin.get<KvitteringProcessor>()
+        )
+        bakgrunnsjobbService.leggTilBakgrunnsjobbProsesserer(
+            RefusjonskravProcessor.JOBB_TYPE,
+            koin.get<RefusjonskravProcessor>()
+        )
+        bakgrunnsjobbService.startAsync(true)
+    }
+
+    runBlocking { autoDetectProbeableComponents(koin) }
+    mainLogger.info("La til probeable komponenter")
 }
 
 private suspend fun autoDetectProbeableComponents(koin: org.koin.core.Koin) {
