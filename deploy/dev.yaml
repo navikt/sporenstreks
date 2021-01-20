@@ -46,8 +46,10 @@ spec:
         kvPath: /serviceuser/data/dev/srvsporenstreks
   webproxy: true
   leaderElection: false
-  envFrom:
-    - configmap: loginservice-idporten # tilgjengeliggjør LOGINSERVICE_IDPORTEN_DISCOVERY_URL og LOGINSERVICE_IDPORTEN_AUDIENCE
+  secureLogs:
+    enabled: true
+  #envFrom:
+    #- configmap: loginservice-idporten # tilgjengeliggjør LOGINSERVICE_IDPORTEN_DISCOVERY_URL og LOGINSERVICE_IDPORTEN_AUDIENCE
   env:
     - name: KOIN_PROFILE
       value: PREPROD
