@@ -4,7 +4,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.url
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClient
+import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 
 interface AktorConsumer {
     fun getAktorId(fnr: String, callId: String): String
@@ -16,7 +16,7 @@ class MockAktorConsumer : AktorConsumer {
     }
 }
 
-class AktorConsumerImpl(val stsClient: RestStsClient,
+class AktorConsumerImpl(val stsClient: AccessTokenProvider,
                         val username: String,
                         val baseUrl: String,
                         val httpClient: HttpClient) : AktorConsumer {
@@ -29,7 +29,7 @@ class AktorConsumerImpl(val stsClient: RestStsClient,
         val response = runBlocking {
             httpClient.get<AktorResponse> {
                 url("$baseUrl/identer?gjeldende=true&identgruppe=$identgruppe")
-                headers.append("Authorization", "Bearer " + stsClient.getOidcToken())
+                headers.append("Authorization", "Bearer " + stsClient.getToken())
                 headers.append("Nav-Consumer-Id", username)
                 headers.append("Nav-Call-Id", callId)
                 headers.append("Nav-Personidenter", sokeIdent)

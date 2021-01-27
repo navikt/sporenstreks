@@ -145,7 +145,7 @@ dependencies {
 
     implementation("org.influxdb:influxdb-java:${influxVersion}")
 
-    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2020.10.12-12-17-2badd")
+    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.01.27-10-20-8a953")
 
     testImplementation("org.koin:koin-test:$koinVersion")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.2")

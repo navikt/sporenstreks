@@ -22,8 +22,9 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.MockBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
-import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClient
-import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClientImpl
+import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
+import no.nav.helse.arbeidsgiver.integrasjoner.OAuth2TokenProvider
+import no.nav.helse.arbeidsgiver.integrasjoner.RestSTSAccessTokenProvider
 import no.nav.helse.arbeidsgiver.integrasjoner.altinn.AltinnRestClient
 import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.DokarkivKlient
 import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.DokarkivKlientImpl
@@ -187,12 +188,12 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single {SensuClientImpl("sensu.nais", 3030) as SensuClient }
     single {InfluxReporterImpl("sporenstreks", "dev-fss", "default", get()) as InfluxReporter}
 
-    single { RestStsClientImpl(
+    single { RestSTSAccessTokenProvider(
             config.getString("service_user.username"),
             config.getString("service_user.password"),
             config.getString("sts_url_rest"),
             get()
-    ) as RestStsClient }
+    ) as AccessTokenProvider }
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
     single { JoarkService(get()) as JoarkService }
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
@@ -261,12 +262,12 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single {SensuClientImpl("sensu.nais", 3030) as SensuClient }
     single {InfluxReporterImpl("sporenstreks", "prod-fss", "default", get()) as InfluxReporter}
-    single { RestStsClientImpl(
+    single { RestSTSAccessTokenProvider(
             config.getString("service_user.username"),
             config.getString("service_user.password"),
             config.getString("sts_url_rest"),
             get()
-    ) as RestStsClient }
+    ) as AccessTokenProvider }
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
     single { PostgresKvitteringRepository(get(), get()) as KvitteringRepository }
