@@ -19,5 +19,5 @@ jobs:
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
         with:
           command: monitor
-          args: --configuration-matching=runtimeClasspath --fail-on=all
+          args: --org=helsearbeidsgiver --project-name=Sporenstreks_Backend
 
