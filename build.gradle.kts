@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val ktorVersion = "1.4.1"
 val logback_version = "1.2.1"
 val logback_contrib_version = "0.1.5"
-val jacksonVersion = "2.10.3"
+val jacksonVersion = "2.12.1"
 val prometheusVersion = "0.6.0"
 val hikariVersion = "3.3.1"
 val vaultJdbcVersion = "1.3.7"
@@ -29,6 +29,7 @@ plugins {
     kotlin("jvm") version "1.3.60"
     id("org.sonarqube") version "2.8"
     id("com.github.ben-manes.versions") version "0.27.0"
+    id("com.github.komarovd95.stale-dependencies-plugin") version "0.0.2-SNAPSHOT"
     jacoco
 }
 
@@ -73,8 +74,8 @@ dependencies {
     // SNYK-fikser - Disse kan fjernes etterhver som våre avhengigheter oppdaterer sine versjoner
     // Forsøk å fjerne en og en og kjør snyk test --configuration-matching=runtimeClasspath
     implementation("commons-collections:commons-collections:3.2.2") // overstyrer transiente 3.2.1
-    implementation("io.netty:netty-codec:4.1.53.Final") // overstyrer transiente 4.1.44
-    implementation("io.netty:netty-codec-http:4.1.53.Final") // overstyrer transiente 4.1.51.Final
+    implementation("io.netty:netty-codec:4.1.59.Final") // overstyrer transiente 4.1.44
+    implementation("io.netty:netty-codec-http:4.1.59.Final") // overstyrer transiente 4.1.51.Final
     implementation("org.glassfish.jersey.media:jersey-media-jaxb:2.31") // overstyrer transiente 2.30.1
     implementation("junit:junit:4.13.1") // overstyrer transiente 4.12
     implementation("org.apache.httpcomponents:httpclient:4.5.13") // overstyrer transiente 4.5.6 via ktor-client-apache
@@ -116,7 +117,7 @@ dependencies {
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
 
-    implementation("no.nav.common:log:2.2020.10.15_11.43-b1f02e7bd6ae")
+    implementation("no.nav.common:log:2.2021.02.08_08.29-beea07de78ad")
 
     implementation(kotlin("stdlib"))
 
@@ -124,12 +125,12 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("ch.qos.logback.contrib:logback-jackson:$logback_contrib_version")
     implementation("ch.qos.logback.contrib:logback-json-classic:$logback_contrib_version")
-    implementation("net.logstash.logback:logstash-logback-encoder:4.9")
+    implementation("net.logstash.logback:logstash-logback-encoder:6.6")
     implementation("org.codehaus.janino:janino:3.0.6")
 
     implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:1.2019.09.25-00.21-49b69f0625e0")
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
