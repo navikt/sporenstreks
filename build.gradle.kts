@@ -16,7 +16,7 @@ val tokenSupportVersion = "1.3.1"
 val mockOAuth2ServerVersion = "0.2.1"
 val koinVersion = "2.0.1"
 val valiktorVersion = "0.10.0"
-val cxfVersion = "3.4.1"
+val cxfVersion = "3.4.2"
 val jaxwsVersion = "2.3.1"
 val jaxwsToolsVersion = "2.3.3"
 val apachePoiVersion = "4.1.2"
@@ -30,6 +30,7 @@ plugins {
     id("org.sonarqube") version "2.8"
     id("com.github.ben-manes.versions") version "0.27.0"
     id("com.github.komarovd95.stale-dependencies-plugin") version "0.0.2-SNAPSHOT"
+    id("com.autonomousapps.dependency-analysis") version "0.71.0"
     jacoco
 }
 
@@ -70,17 +71,36 @@ buildscript {
 }
 
 dependencies {
-
+    constraints {
+        implementation("com.google.guava:guava") {
+            version {
+                strictly("30.1-jre")
+            }
+            because("snyk control")
+        }
+        implementation("org.opensaml:opensaml-saml-api") {
+            version {
+                strictly("3.4.6")
+            }
+            because("snyk control")
+        }
+        implementation("commons-collections:commons-collections") {
+            version {
+                strictly("3.2.2")
+            }
+            because("snyk control")
+        }
+    }
     // SNYK-fikser - Disse kan fjernes etterhver som våre avhengigheter oppdaterer sine versjoner
     // Forsøk å fjerne en og en og kjør snyk test --configuration-matching=runtimeClasspath
-    implementation("commons-collections:commons-collections:3.2.2") // overstyrer transiente 3.2.1
+    //implementation("commons-collections:commons-collections:3.2.2") // overstyrer transiente 3.2.1
     implementation("io.netty:netty-codec:4.1.59.Final") // overstyrer transiente 4.1.44
     implementation("io.netty:netty-codec-http:4.1.59.Final") // overstyrer transiente 4.1.51.Final
     implementation("org.glassfish.jersey.media:jersey-media-jaxb:2.31") // overstyrer transiente 2.30.1
-    implementation("junit:junit:4.13.1") // overstyrer transiente 4.12
-    implementation("org.apache.httpcomponents:httpclient:4.5.13") // overstyrer transiente 4.5.6 via ktor-client-apache
-    implementation("com.google.guava:guava:30.0-jre") // overstyrer transiente 29.0-jre
-    implementation("org.eclipse.jetty:jetty-server:9.4.35.v20201120")
+   // implementation("junit:junit:4.13.1") // overstyrer transiente 4.12
+   // implementation("org.apache.httpcomponents:httpclient:4.5.13") // overstyrer transiente 4.5.6 via ktor-client-apache
+    //implementation("com.google.guava:guava:30.1-jre") // overstyrer transiente 29.0-jre
+    implementation("org.eclipse.jetty:jetty-server:11.0.0")
     // -- end snyk fixes
 
 
