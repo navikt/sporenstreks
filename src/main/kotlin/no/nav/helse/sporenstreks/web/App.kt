@@ -19,8 +19,6 @@ import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravProcess
 import org.koin.ktor.ext.getKoin
 import org.slf4j.LoggerFactory
 
-
-
 val mainLogger = LoggerFactory.getLogger("main")
 
 @KtorExperimentalAPI
@@ -49,15 +47,10 @@ private fun initBackgroundWorkers(app: NettyApplicationEngine) {
     val koin = app.application.getKoin()
     if (app.environment.config.getEnvironment() != AppEnv.LOCAL) {
         koin.get<ProcessInfluxJob>().startAsync(retryOnFail = true)
+
         val bakgrunnsjobbService = koin.get<BakgrunnsjobbService>()
-        bakgrunnsjobbService.leggTilBakgrunnsjobbProsesserer(
-            KvitteringProcessor.JOBB_TYPE,
-            koin.get<KvitteringProcessor>()
-        )
-        bakgrunnsjobbService.leggTilBakgrunnsjobbProsesserer(
-            RefusjonskravProcessor.JOBB_TYPE,
-            koin.get<RefusjonskravProcessor>()
-        )
+        bakgrunnsjobbService.registrer(koin.get<KvitteringProcessor>())
+        bakgrunnsjobbService.registrer(koin.get<RefusjonskravProcessor>())
         bakgrunnsjobbService.startAsync(true)
     }
 
@@ -65,7 +58,7 @@ private fun initBackgroundWorkers(app: NettyApplicationEngine) {
     mainLogger.info("La til probeable komponenter")
 }
 
-private suspend fun autoDetectProbeableComponents(koin: org.koin.core.Koin) {
+private fun autoDetectProbeableComponents(koin: org.koin.core.Koin) {
     val kubernetesProbeManager = koin.get<KubernetesProbeManager>()
 
     koin.getAllOfType<LivenessComponent>()
