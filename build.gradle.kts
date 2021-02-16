@@ -29,7 +29,6 @@ plugins {
     kotlin("jvm") version "1.3.60"
     id("org.sonarqube") version "2.8"
     id("com.github.ben-manes.versions") version "0.27.0"
-    id("com.github.komarovd95.stale-dependencies-plugin") version "0.0.2-SNAPSHOT"
     id("com.autonomousapps.dependency-analysis") version "0.71.0"
     jacoco
 }
@@ -90,6 +89,13 @@ dependencies {
             }
             because("snyk control")
         }
+
+        implementation("org.apache.ws.xmlschema:xmlschema-core"){
+            version {
+                strictly("2.2.4")
+            }
+            because("Force newer version of XMLSchema to fix illegal reflective access warning")
+        }
     }
     // SNYK-fikser - Disse kan fjernes etterhver som våre avhengigheter oppdaterer sine versjoner
     // Forsøk å fjerne en og en og kjør snyk test --configuration-matching=runtimeClasspath
@@ -121,32 +127,32 @@ dependencies {
     implementation("org.apache.poi:poi:$apachePoiVersion")
     implementation("org.apache.poi:poi-ooxml:$apachePoiVersion")
 
-    implementation("javax.xml.ws:jaxws-api:$jaxwsVersion")
+   // implementation("javax.xml.ws:jaxws-api:$jaxwsVersion") -- ikke brukt 1
     implementation("org.apache.cxf:cxf-rt-frontend-jaxws:$cxfVersion")
-    implementation("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
-    implementation("org.apache.cxf:cxf-rt-transports-http:$cxfVersion")
+   // implementation("org.apache.cxf:cxf-rt-features-logging:$cxfVersion") -- ikke brukt 3
+   // implementation("org.apache.cxf:cxf-rt-transports-http:$cxfVersion") -- ikke brukt 4
     implementation("org.apache.cxf:cxf-rt-ws-security:$cxfVersion")
-    implementation("org.apache.ws.xmlschema:xmlschema-core:2.2.4") // Force newer version of XMLSchema to fix illegal reflective access warning
+    //implementation("org.apache.ws.xmlschema:xmlschema-core:2.2.4") // Force newer version of XMLSchema to fix illegal reflective access warning
     implementation("com.sun.xml.ws:jaxws-tools:$jaxwsToolsVersion") {
         exclude(group = "com.sun.xml.ws", module = "policy")
     }
-    implementation("com.sun.activation:javax.activation:1.2.0")
+  //  implementation("com.sun.activation:javax.activation:1.2.0") -- ikke brukt 5
 
     implementation("org.koin:koin-core:$koinVersion")
     implementation("org.koin:koin-ktor:$koinVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
 
-    implementation("no.nav.common:log:2.2021.02.08_08.29-beea07de78ad")
+    implementation("no.nav.common:log:2.2021.02.08_08.29-beea07de78ad")// ref i logback.xml
 
     implementation(kotlin("stdlib"))
 
     implementation("org.slf4j:slf4j-api:1.7.30")
     implementation("ch.qos.logback:logback-classic:$logback_version")
-    implementation("ch.qos.logback.contrib:logback-jackson:$logback_contrib_version")
-    implementation("ch.qos.logback.contrib:logback-json-classic:$logback_contrib_version")
-    implementation("net.logstash.logback:logstash-logback-encoder:6.6")
-    implementation("org.codehaus.janino:janino:3.0.6")
+    //implementation("ch.qos.logback.contrib:logback-jackson:$logback_contrib_version") -- ikke brukt 8
+    //implementation("ch.qos.logback.contrib:logback-json-classic:$logback_contrib_version") -- ikke brukt 2
+  //  implementation("net.logstash.logback:logstash-logback-encoder:6.6") -- ikke brukt 6
+    //implementation("org.codehaus.janino:janino:3.0.6") -- ikke brukt 7
 
     implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:1.2019.09.25-00.21-49b69f0625e0")
 
