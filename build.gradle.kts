@@ -189,8 +189,16 @@ java {
 }
 
 repositories {
-    jcenter()
-    mavenCentral()
+    jcenter{
+        content {
+            excludeGroup("no.nav.helsearbeidsgiver")
+        }
+    }
+    mavenCentral{
+        content {
+            excludeGroup("no.nav.helsearbeidsgiver")
+        }
+    }
     maven("https://kotlin.bintray.com/ktor")
     maven {
         credentials {
