@@ -12,7 +12,7 @@ env:
 
 jobs:
 
-  Test:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -50,7 +50,7 @@ jobs:
           docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
           docker push ${DOCKER_IMAGE_NAME}
 
-  SlowTest:
+  slowTest:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1

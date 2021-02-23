@@ -27,13 +27,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-cache-
 
-      - name: create docker tag
-        env:
-          DOCKER_IMAGE: docker.pkg.github.com/${{ github.repository }}/sporenstreks
-        run: |
-          echo $DOCKER_IMAGE > .docker_image
-          echo $(echo $GITHUB_SHA | cut -c1-7) > .docker_tag
-
       - name: compose up
         run: cd docker/local && docker-compose up -d && sleep 15
 
