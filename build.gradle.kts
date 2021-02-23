@@ -26,7 +26,7 @@ val githubPassword: String by project
 
 plugins {
     application
-    kotlin("jvm") version "1.3.60"
+    kotlin("jvm") version "1.4.20"
     id("org.sonarqube") version "2.8"
     id("com.github.ben-manes.versions") version "0.27.0"
     jacoco
@@ -175,9 +175,9 @@ java {
 }
 
 repositories {
-    jcenter()
-    mavenCentral()
     maven("https://kotlin.bintray.com/ktor")
+    mavenCentral()
+    jcenter()
     maven {
         credentials {
             username = "x-access-token"
@@ -228,5 +228,5 @@ task<Test>("slowTests") {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "6.0.1"
+    gradleVersion = "6.7.0"
 }
