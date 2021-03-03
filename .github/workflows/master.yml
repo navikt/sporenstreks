@@ -82,7 +82,7 @@ jobs:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
 
-jacocoOgSonarCube:
+  jacocoOgSonarCube:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -112,10 +112,9 @@ jacocoOgSonarCube:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
 
-
   deploy:
     name: Deploy to PREPROD
-    needs: [test, slowtest,jacocoOgSonarCube]
+    needs: [test, slowtest, jacocoOgSonarCube]
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
