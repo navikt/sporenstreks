@@ -73,13 +73,14 @@ dependencies {
     // SNYK-fikser - Disse kan fjernes etterhver som våre avhengigheter oppdaterer sine versjoner
     // Forsøk å fjerne en og en og kjør snyk test --configuration-matching=runtimeClasspath
     implementation("commons-collections:commons-collections:3.2.2") // overstyrer transiente 3.2.1
-    implementation("io.netty:netty-codec:4.1.53.Final") // overstyrer transiente 4.1.44
-    implementation("io.netty:netty-codec-http:4.1.53.Final") // overstyrer transiente 4.1.51.Final
+    implementation("io.netty:netty-codec:4.1.59.Final") // overstyrer transiente 4.1.44
+    implementation("io.netty:netty-codec-http:4.1.59.Final") // overstyrer transiente 4.1.51.Final
+    implementation("io.netty:netty-codec-http2:4.1.59.Final") // overstyrer transiente 4.1.51.Final
     implementation("org.glassfish.jersey.media:jersey-media-jaxb:2.31") // overstyrer transiente 2.30.1
     implementation("junit:junit:4.13.1") // overstyrer transiente 4.12
     implementation("org.apache.httpcomponents:httpclient:4.5.13") // overstyrer transiente 4.5.6 via ktor-client-apache
     implementation("com.google.guava:guava:30.0-jre") // overstyrer transiente 29.0-jre
-    implementation("org.eclipse.jetty:jetty-server:9.4.35.v20201120")
+    implementation("org.eclipse.jetty:jetty-server:9.4.37.v20210219")
     // -- end snyk fixes
 
 
