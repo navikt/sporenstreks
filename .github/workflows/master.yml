@@ -51,7 +51,7 @@ jobs:
           docker push ${DOCKER_IMAGE_NAME}
 
   docker:
-    needs: [ Kodekvalitet,Eslint,Bygg ]
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
