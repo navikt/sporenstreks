@@ -50,8 +50,8 @@ jobs:
           password: ${{ secrets.GHCR_PUSH_TOKEN }}
       - name: Build and publish Docker image
         run: |
-          docker build --tag ${IMAGE} --tag ${LATEST_TAG} .
-          docker push ${DOCKER_IMAGE_NAME}
+          docker build --tag ${IMAGE} .
+          docker push ${IMAGE}
 
   deploy:
     name: Deploy to PREPROD
