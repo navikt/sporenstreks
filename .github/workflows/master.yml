@@ -65,7 +65,9 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-fss
           RESOURCE: deploy/dev.yaml
-          IMAGE: ${IMAGE}
+          TEAM: helsearbeidsgiver
+          REF: ${{ env.COMMIT }}
+          IMAGE: ${{ env.IMAGE }}
 
 
 
