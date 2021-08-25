@@ -12,7 +12,7 @@ logge inn i docker med et Github personal access token:
 - Opprett et token, og kopier det til et sikkert sted (du kan bruke et du har om du har)
 - Gi tokenet tilgangen "read:packages"
 - "Enable SSO" på tokenet ditt (det er en knapp i listen over tokens)
-- Åpne kommandolinjen og skriv inn "docker login docker.pkg.github.com -u <ditt github brukernavn>"
+- Åpne kommandolinjen og skriv inn "docker login ghcr.io -u <ditt github brukernavn>"
 - Når du blir spurt om passord, skriv inn tokenet du fikk i steg 2
 
 Presto, nå skal du kunne starte backenden ved å stå i denne mappen og skrive

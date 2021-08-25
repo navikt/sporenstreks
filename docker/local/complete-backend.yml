@@ -8,7 +8,7 @@ services:
             - POSTGRES_USER=admin
             - POSTGRES_PASSWORD=admin
     sporenstreks-backend:
-        image: docker.pkg.github.com/navikt/sporenstreks/sporenstreks:latest
+        image: ghcr.io/navikt/sporenstreks/sporenstreks:latest
         depends_on:
             - sporenstreks-database
         environment:
