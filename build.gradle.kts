@@ -178,9 +178,9 @@ java {
 }
 
 repositories {
-    maven("https://kotlin.bintray.com/ktor")
     mavenCentral()
     jcenter()
+    maven("https://kotlin.bintray.com/ktor")
     maven {
         credentials {
             username = "x-access-token"
