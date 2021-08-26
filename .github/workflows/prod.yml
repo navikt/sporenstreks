@@ -117,7 +117,7 @@ jobs:
 
   deploy:
     name: Deploy to PROD
-    needs: build
+    needs: testAndbuild
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
