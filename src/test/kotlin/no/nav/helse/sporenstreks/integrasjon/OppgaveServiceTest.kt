@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.mockk.*
 import no.nav.helse.TestData
-import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OppgaveKlient
-import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OpprettOppgaveRequest
-import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OpprettOppgaveResponse
+import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.*
 import no.nav.helse.sporenstreks.domene.RefusjonskravForOppgave
 import no.nav.helse.sporenstreks.web.common
 import org.assertj.core.api.Assertions.assertThat
@@ -19,6 +17,7 @@ import org.koin.dsl.module
 import org.koin.test.KoinTest
 import org.koin.test.get
 import java.io.IOException
+import java.time.LocalDateTime
 
 internal class OppgaveServiceTest : KoinTest{
 
@@ -39,7 +38,17 @@ internal class OppgaveServiceTest : KoinTest{
 
 
         every { objectMapperMock.writeValueAsString(any())} returns mockJson
-        coEvery { oppgaveKlientMock.opprettOppgave(capture(mappedRequest), any()) } returns OpprettOppgaveResponse(mockOppgaveId)
+        coEvery { oppgaveKlientMock.opprettOppgave(capture(mappedRequest), any()) } returns
+                OpprettOppgaveResponse(
+                    mockOppgaveId,
+                    "2",
+                    "SYK",
+                    "ROB",
+                    1,
+                    LocalDateTime.now().toLocalDate(),
+                    Prioritet.NORM,
+                    Status.OPPRETTET
+                )
 
         val result = oppgaveService.opprettOppgave(
                 TestData.gyldigKrav,
@@ -70,7 +79,16 @@ internal class OppgaveServiceTest : KoinTest{
         }
 
         val mappedRequest = slot<OpprettOppgaveRequest>()
-        coEvery { oppgaveKlientMock.opprettOppgave(capture(mappedRequest), any()) } returns OpprettOppgaveResponse(mockOppgaveId)
+        coEvery { oppgaveKlientMock.opprettOppgave(capture(mappedRequest), any()) } returns OpprettOppgaveResponse(
+            mockOppgaveId,
+            "2",
+            "SYK",
+            "ROB",
+            1,
+            LocalDateTime.now().toLocalDate(),
+            Prioritet.NORM,
+            Status.OPPRETTET
+        )
 
         om = get<ObjectMapper>()
 

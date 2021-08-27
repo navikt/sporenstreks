@@ -55,7 +55,7 @@ fun Route.sporenstreks(authorizer: AltinnAuthorizer, authRepo: AltinnOrganisatio
         }
 
         route("/refusjonskrav") {
-            post("/") {
+            post() {
                 val timer = REQUEST_TIME.startTimer()
                 try {
                     val refusjonskrav = call.receive<RefusjonskravDto>()

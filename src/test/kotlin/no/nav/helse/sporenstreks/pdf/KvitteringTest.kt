@@ -1,12 +1,12 @@
 package no.nav.helse.sporenstreks.pdf
 
+import com.google.common.io.Files
 import no.nav.helse.TestData
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import org.junit.jupiter.api.Test
 
-import wiremock.com.google.common.io.Files
 import java.io.File
 import java.time.LocalDate
 import java.time.LocalDateTime
