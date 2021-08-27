@@ -3,11 +3,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val ktorVersion = "1.4.3"
 val logback_version = "1.2.1"
 val logback_contrib_version = "0.1.5"
-val jacksonVersion = "2.10.5"
+val jacksonVersion = "2.11.2"
 val prometheusVersion = "0.6.0"
 val hikariVersion = "3.3.1"
 val vaultJdbcVersion = "1.3.7"
-val kafkaVersion = "2.1.1"
 val mainClass = "no.nav.helse.sporenstreks.web.AppKt"
 val junitJupiterVersion = "5.7.0"
 val assertJVersion = "3.12.2"
@@ -136,8 +135,6 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
-    implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
-
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("no.nav:vault-jdbc:$vaultJdbcVersion")
     implementation("com.github.tomakehurst:wiremock-standalone:2.25.1")
@@ -151,7 +148,6 @@ dependencies {
     implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.01.27-10-20-8a953")
 
     testImplementation("org.koin:koin-test:$koinVersion")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.2")
     testImplementation("io.mockk:mockk:$mockKVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
@@ -178,9 +174,9 @@ java {
 }
 
 repositories {
+    maven("https://kotlin.bintray.com/ktor")
     mavenCentral()
     jcenter()
-    maven("https://kotlin.bintray.com/ktor")
 
     maven {
         credentials {
