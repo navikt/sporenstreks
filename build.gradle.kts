@@ -1,5 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val kotlinVersion = "1.5.30"
+
 val ktorVersion = "1.5.3"
 val logback_version = "1.2.1"
 val logback_contrib_version = "0.1.5"
@@ -25,7 +27,7 @@ val githubPassword: String by project
 
 plugins {
     application
-    kotlin("jvm") version "1.4.20"
+    kotlin("jvm") version "1.5.30"
     id("org.sonarqube") version "2.8"
     id("com.github.ben-manes.versions") version "0.27.0"
     jacoco
@@ -119,7 +121,7 @@ dependencies {
 
     implementation("no.nav.common:log:2.2020.10.15_11.43-b1f02e7bd6ae")
 
-    implementation(kotlin("stdlib"))
+    implementation(kotlin("stdlib", kotlinVersion))
 
     implementation("org.slf4j:slf4j-api:1.7.30")
     implementation("ch.qos.logback:logback-classic:$logback_version")
@@ -143,7 +145,7 @@ dependencies {
 
     implementation("org.influxdb:influxdb-java:${influxVersion}")
 
-    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.08.12-18-29-7ac5a")
+    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.08.27-14-31-53a8b")
 
     testImplementation("org.koin:koin-test:$koinVersion")
     testImplementation("io.mockk:mockk:$mockKVersion")
