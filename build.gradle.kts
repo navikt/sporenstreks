@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val ktorVersion = "1.4.3"
+val ktorVersion = "1.5.3"
 val logback_version = "1.2.1"
 val logback_contrib_version = "0.1.5"
 val jacksonVersion = "2.11.2"
@@ -11,8 +11,8 @@ val mainClass = "no.nav.helse.sporenstreks.web.AppKt"
 val junitJupiterVersion = "5.7.0"
 val assertJVersion = "3.12.2"
 val mockKVersion = "1.9.3"
-val tokenSupportVersion = "1.3.1"
-val mockOAuth2ServerVersion = "0.2.1"
+val tokenSupportVersion = "1.3.8"
+val mockOAuth2ServerVersion = "0.3.4"
 val koinVersion = "2.0.1"
 val valiktorVersion = "0.10.0"
 val cxfVersion = "3.4.1"
@@ -81,8 +81,6 @@ dependencies {
     implementation("org.apache.httpcomponents:httpclient:4.5.13") // overstyrer transiente 4.5.6 via ktor-client-apache
     implementation("com.google.guava:guava:30.0-jre") // overstyrer transiente 29.0-jre
     implementation("org.eclipse.jetty:jetty-server:9.4.37.v20210219")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
-
     // -- end snyk fixes
 
 
@@ -138,15 +136,14 @@ dependencies {
 
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("no.nav:vault-jdbc:$vaultJdbcVersion")
-    implementation("com.github.tomakehurst:wiremock-standalone:2.25.1")
-    implementation("org.postgresql:postgresql:42.2.16")
+    implementation("org.postgresql:postgresql:42.2.23")
 
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
 
     implementation("org.influxdb:influxdb-java:${influxVersion}")
 
-    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.01.27-10-20-8a953")
+    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.08.12-18-29-7ac5a")
 
     testImplementation("org.koin:koin-test:$koinVersion")
     testImplementation("io.mockk:mockk:$mockKVersion")

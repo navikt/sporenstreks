@@ -1,6 +1,7 @@
 package no.nav.helse.sporenstreks.prosessering.refusjonskrav
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
 import no.nav.helse.sporenstreks.db.RefusjonskravRepository
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
@@ -23,17 +24,18 @@ class RefusjonskravProcessor(val joarkService: JoarkService,
                              val aktorConsumer: AktorConsumer,
                              val om: ObjectMapper) : BakgrunnsjobbProsesserer {
 
+    override val type: String = JOBB_TYPE
+
     val logger = LoggerFactory.getLogger(RefusjonskravProcessor::class.java)
 
     override fun nesteForsoek(forsoek: Int, forrigeForsoek: LocalDateTime): LocalDateTime {
         return forrigeForsoek.plusHours(2)
     }
 
-    override fun prosesser(jobbData: String) {
-        val refusjonskravJobbData = om.readValue(jobbData, RefusjonskravJobData::class.java)
+    override fun prosesser(jobb: Bakgrunnsjobb) {
+        val refusjonskravJobbData = om.readValue(jobb.data, RefusjonskravJobData::class.java)
         repository.getById(refusjonskravJobbData.kravId)?.let { behandle(it) }
     }
-
 
     fun behandle(refusjonskrav: Refusjonskrav) {
         val callId = MDCOperations.generateCallId()
