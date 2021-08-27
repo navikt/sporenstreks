@@ -1,9 +1,11 @@
 package no.nav.helse.sporenstreks.prosessering
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import io.mockk.*
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
+import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OPPGAVETYPE_FORDELINGSOPPGAVE
+import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OpprettOppgaveRequest
 import no.nav.helse.sporenstreks.db.PostgresRefusjonskravRepository
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
@@ -17,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.io.IOException
+import java.util.*
 
 class RefusjonskravProcessorTest {
 
@@ -24,7 +27,7 @@ class RefusjonskravProcessorTest {
     val oppgaveMock = mockk<OppgaveService>(relaxed = true)
     val repositoryMock = mockk<PostgresRefusjonskravRepository>(relaxed = true)
     val aktorConsumerMock = mockk<AktorConsumerImpl>(relaxed = true)
-    val refusjonskravBehandler = RefusjonskravProcessor(joarkMock, oppgaveMock, repositoryMock, aktorConsumerMock, ObjectMapper())
+    val refusjonskravBehandler = RefusjonskravProcessor(joarkMock, oppgaveMock, repositoryMock, aktorConsumerMock, ObjectMapper().registerModules(KotlinModule()))
     lateinit var refusjonskrav: Refusjonskrav
 
     @BeforeEach
@@ -36,6 +39,7 @@ class RefusjonskravProcessorTest {
                 perioder = emptySet(),
                 status = RefusjonskravStatus.JOBB
         )
+        every {repositoryMock.getById(any()) } returns refusjonskrav
     }
 
 
@@ -44,6 +48,13 @@ class RefusjonskravProcessorTest {
         refusjonskrav.joarkReferanse = "joark"
         refusjonskravBehandler.behandle(refusjonskrav)
         verify(exactly = 0) { joarkMock.journalfør(any(), MDCOperations.generateCallId()) }
+    }
+
+
+    @Test
+    fun `skal opprette fordelingsoppgave når stoppet`() {
+        refusjonskravBehandler.stoppet(Bakgrunnsjobb(data = """{"kravId": "${UUID.randomUUID()}" }""", type = refusjonskravBehandler.type))
+        coVerify(exactly = 1) { oppgaveMock.opprettFordelingsOppgave(any(), any(), any()) }
     }
 
     @Test
