@@ -63,7 +63,7 @@ jobs:
         run: cd docker/local && docker-compose up -d && sleep 10
 
       - name: test and build
-        run: ./gradlew --console=plain build slowTests jacocoTestReport
+        run: ./gradlew --console=plain build slowTests
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
