@@ -81,6 +81,7 @@ dependencies {
     implementation("org.apache.httpcomponents:httpclient:4.5.13") // overstyrer transiente 4.5.6 via ktor-client-apache
     implementation("com.google.guava:guava:30.0-jre") // overstyrer transiente 29.0-jre
     implementation("org.eclipse.jetty:jetty-server:9.4.37.v20210219")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
 
     // -- end snyk fixes
 
