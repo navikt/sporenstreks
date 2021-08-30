@@ -173,7 +173,7 @@ fun Route.sporenstreks(authorizer: AltinnAuthorizer, authRepo: AltinnOrganisatio
 
 
         route("/arbeidsgivere") {
-            get("/") {
+            get() {
                 val id = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
                 try {
                     val rettigheter = authRepo.hentOrgMedRettigheterForPerson(id)
