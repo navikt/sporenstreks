@@ -219,6 +219,24 @@ internal class RefusjonsKravDtoTest {
     }
 
     @Test
+    fun `Perioder kan ikke være etter gjenåpning 30 september 2021`() {
+        Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
+            RefusjonskravDto(
+                TestData.validIdentitetsnummer,
+                TestData.validOrgNr,
+                setOf(
+                    Arbeidsgiverperiode(
+                        LocalDate.of(2021, 10, 1),
+                        LocalDate.of(2021, 10, 8),
+                        4, 2000.0
+                    )
+                )
+            )
+        }
+    }
+
+
+    @Test
     fun `Sammenlagte perioder må ha tre dager uten refusjonskrav`() {
         RefusjonskravDto(
                 TestData.validIdentitetsnummer,

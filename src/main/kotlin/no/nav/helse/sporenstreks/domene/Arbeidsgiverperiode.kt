@@ -10,6 +10,7 @@ data class Arbeidsgiverperiode(
 ): Comparable<Arbeidsgiverperiode> {
     companion object {
         val refusjonFraDato = LocalDate.of(2020, 3, 16)
+        val refusjonTilDato = LocalDate.of(2021, 10, 1)
         val maksOppholdMellomPerioder = 16
         val maksimalAGPLengde = 16
         val arbeidsgiverBetalerForDager = 3
