@@ -31,6 +31,9 @@ data class RefusjonskravDto(
                 validate(Arbeidsgiverperiode::antallDagerMedRefusjon).isPositiveOrZero()
             }
 
+            // kan ikke kreve refusjon for dager etter gjenåpning 1 oktober 2021
+            validate(RefusjonskravDto::perioder).refusjonsdatoIkkeEtterGjenåpning(refusjonTilDato)
+
             validate(RefusjonskravDto::perioder).validateForEach {
                 validate(Arbeidsgiverperiode::tom).isGreaterThanOrEqualTo(it.fom)
                 validate(Arbeidsgiverperiode::tom).isLessThanOrEqualTo(LocalDate.now())
@@ -42,9 +45,6 @@ data class RefusjonskravDto(
 
             // kan ikke kreve refusjon for dager før 16. mars
             validate(RefusjonskravDto::perioder).refusjonsdagerInnenforGyldigPeriode(refusjonFraDato)
-
-            // kan ikke kreve refusjon for dager etter gjenåpning 1 oktober 2021
-            validate(RefusjonskravDto::perioder).refusjonsdatoIkkeEtterGjenåpning(refusjonTilDato)
 
             // Summen av antallDagerMedRefusjon kan ikke overstige total periodelengde - 3 dager
             validate(RefusjonskravDto::perioder).arbeidsgiverBetalerForDager(arbeidsgiverBetalerForDager, refusjonFraDato)
