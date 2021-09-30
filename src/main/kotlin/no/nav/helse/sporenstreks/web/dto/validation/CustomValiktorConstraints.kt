@@ -118,10 +118,10 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdagerInne
             }
         }
 
-class RefusjonsdagerInnenforGjenåpningConstraint : CustomConstraint
+class RefusjonsdagerInnenforGjenaapningConstraint : CustomConstraint
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdatoIkkeEtterGjenåpning(refusjonsdagerTom: LocalDate) =
-    this.validate(RefusjonsdagerInnenforGyldigPeriodeConstraint()) { ps ->
+    this.validate(RefusjonsdagerInnenforGjenaapningConstraint()) { ps ->
         ps!!.all { p ->
-            ( p.tom < refusjonsdagerTom )
+            ( p.fom < refusjonsdagerTom )
         }
     }
