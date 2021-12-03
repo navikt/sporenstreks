@@ -1,10 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val kotlinVersion = "1.5.30"
-
 val ktorVersion = "1.5.3"
-val logback_version = "1.2.1"
-val logback_contrib_version = "0.1.5"
+val logbackVersion = "1.2.1"
+val logbackContribVersion = "0.1.5"
 val jacksonVersion = "2.11.2"
 val prometheusVersion = "0.6.0"
 val hikariVersion = "3.3.1"
@@ -114,9 +113,9 @@ dependencies {
     implementation("no.nav.common:log:2.2020.10.15_11.43-b1f02e7bd6ae")
     implementation(kotlin("stdlib", kotlinVersion))
     implementation("org.slf4j:slf4j-api:1.7.30")
-    implementation("ch.qos.logback:logback-classic:$logback_version")
-    implementation("ch.qos.logback.contrib:logback-jackson:$logback_contrib_version")
-    implementation("ch.qos.logback.contrib:logback-json-classic:$logback_contrib_version")
+    implementation("ch.qos.logback:logback-classic:$logbackVersion")
+    implementation("ch.qos.logback.contrib:logback-jackson:$logbackContribVersion")
+    implementation("ch.qos.logback.contrib:logback-json-classic:$logbackContribVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:4.9")
     implementation("org.codehaus.janino:janino:3.0.6")
     implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:1.2019.09.25-00.21-49b69f0625e0")
