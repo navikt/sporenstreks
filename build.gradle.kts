@@ -70,7 +70,6 @@ buildscript {
 }
 
 dependencies {
-
     // SNYK-fikser - Disse kan fjernes etterhver som våre avhengigheter oppdaterer sine versjoner
     // Forsøk å fjerne en og en og kjør snyk test --configuration-matching=runtimeClasspath
     implementation("commons-collections:commons-collections:3.2.2") // overstyrer transiente 3.2.1
@@ -84,7 +83,6 @@ dependencies {
     implementation("com.google.guava:guava:30.0-jre") // overstyrer transiente 29.0-jre
     implementation("org.eclipse.jetty:jetty-server:9.4.37.v20210219")
     // -- end snyk fixes
-
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
@@ -94,14 +92,11 @@ dependencies {
     implementation("io.ktor:ktor-client-json:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
     implementation("io.ktor:ktor-locations:$ktorVersion")
-
     implementation("org.valiktor:valiktor-core:$valiktorVersion")
     implementation("org.valiktor:valiktor-javatime:$valiktorVersion")
-
     implementation("org.apache.pdfbox:pdfbox:2.0.19")
     implementation("org.apache.poi:poi:$apachePoiVersion")
     implementation("org.apache.poi:poi-ooxml:$apachePoiVersion")
-
     implementation("javax.xml.ws:jaxws-api:$jaxwsVersion")
     implementation("org.apache.cxf:cxf-rt-frontend-jaxws:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
@@ -112,40 +107,29 @@ dependencies {
         exclude(group = "com.sun.xml.ws", module = "policy")
     }
     implementation("com.sun.activation:javax.activation:1.2.0")
-
     implementation("org.koin:koin-core:$koinVersion")
     implementation("org.koin:koin-ktor:$koinVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
-
     implementation("no.nav.common:log:2.2020.10.15_11.43-b1f02e7bd6ae")
-
     implementation(kotlin("stdlib", kotlinVersion))
-
     implementation("org.slf4j:slf4j-api:1.7.30")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("ch.qos.logback.contrib:logback-jackson:$logback_contrib_version")
     implementation("ch.qos.logback.contrib:logback-json-classic:$logback_contrib_version")
     implementation("net.logstash.logback:logstash-logback-encoder:4.9")
     implementation("org.codehaus.janino:janino:3.0.6")
-
     implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:1.2019.09.25-00.21-49b69f0625e0")
-
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("no.nav:vault-jdbc:$vaultJdbcVersion")
     implementation("org.postgresql:postgresql:42.2.23")
-
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
-
     implementation("org.influxdb:influxdb-java:$influxVersion")
-
     implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.08.27-14-31-53a8b")
-
     testImplementation("org.koin:koin-test:$koinVersion")
     testImplementation("io.mockk:mockk:$mockKVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
@@ -153,7 +137,6 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
     testImplementation("org.assertj:assertj-core:$assertJVersion")
-
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
 }
 
@@ -176,7 +159,6 @@ repositories {
     maven("https://kotlin.bintray.com/ktor")
     mavenCentral()
     jcenter()
-
     maven {
         credentials {
             username = "x-access-token"
@@ -188,14 +170,12 @@ repositories {
 
 tasks.named<Jar>("jar") {
     baseName = ("app")
-
     manifest {
         attributes["Main-Class"] = mainClass
         attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") {
             it.name
         }
     }
-
     doLast {
         configurations.runtimeClasspath.get().forEach {
             val file = File("$buildDir/libs/${it.name}")
