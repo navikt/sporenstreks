@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val mainClass = "no.nav.helse.sporenstreks.web.AppKt"
 val kotlinVersion = "1.5.30"
 val ktorVersion = "1.5.3"
 val logbackVersion = "1.2.1"
@@ -8,7 +9,6 @@ val jacksonVersion = "2.11.2"
 val prometheusVersion = "0.6.0"
 val hikariVersion = "3.3.1"
 val vaultJdbcVersion = "1.3.7"
-val mainClass = "no.nav.helse.sporenstreks.web.AppKt"
 val junitJupiterVersion = "5.7.0"
 val assertJVersion = "3.12.2"
 val mockKVersion = "1.9.3"
@@ -21,13 +21,12 @@ val jaxwsVersion = "2.3.1"
 val jaxwsToolsVersion = "2.3.3"
 val apachePoiVersion = "4.1.2"
 val influxVersion = "2.20"
-
 val githubPassword: String by project
 
 plugins {
     application
     kotlin("jvm") version "1.5.30"
-    id("org.sonarqube") version "2.8"
+    id("org.sonarqube") version "3.3"
     id("com.github.ben-manes.versions") version "0.27.0"
     jacoco
 }
@@ -167,8 +166,8 @@ repositories {
     }
 }
 
-tasks.named<Jar>("jar") {
-    baseName = ("app")
+tasks.jar {
+    archiveBaseName.set("app")
     manifest {
         attributes["Main-Class"] = mainClass
         attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") {
@@ -204,6 +203,13 @@ task<Test>("slowTests") {
     group = "verification"
 }
 
+configure<io.snyk.gradle.plugin.SnykExtension> {
+    setSeverity("high")
+    setAutoDownload(true)
+    setAutoUpdate(true)
+    setArguments("--all-sub-projects")
+}
+
 tasks.withType<Wrapper> {
-    gradleVersion = "6.7.0"
+    gradleVersion = "7.3"
 }
