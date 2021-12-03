@@ -57,9 +57,9 @@ tasks.jacocoTestReport {
 
 tasks.withType<JacocoReport> {
     classDirectories.setFrom(
-            sourceSets.main.get().output.asFileTree.matching {
-                exclude("**/Koin**", "**/App**", "**Mock**")
-            }
+        sourceSets.main.get().output.asFileTree.matching {
+            exclude("**/Koin**", "**/App**", "**Mock**")
+        }
     )
 }
 
@@ -84,7 +84,6 @@ dependencies {
     implementation("com.google.guava:guava:30.0-jre") // overstyrer transiente 29.0-jre
     implementation("org.eclipse.jetty:jetty-server:9.4.37.v20210219")
     // -- end snyk fixes
-
 
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-jackson:$ktorVersion")
@@ -143,7 +142,7 @@ dependencies {
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
 
-    implementation("org.influxdb:influxdb-java:${influxVersion}")
+    implementation("org.influxdb:influxdb-java:$influxVersion")
 
     implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.08.27-14-31-53a8b")
 
@@ -224,7 +223,6 @@ task<Test>("slowTests") {
     include("no/nav/helse/slowtests/**")
     outputs.upToDateWhen { false }
     group = "verification"
-
 }
 
 tasks.withType<Wrapper> {
