@@ -27,10 +27,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-cache-
 
-      - name: test and build
-        run: ./gradlew --console=plain build test
+      - name: Build and test
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: --console=plain build test jacocoTestReport
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONARTOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
