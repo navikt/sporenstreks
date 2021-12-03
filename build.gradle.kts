@@ -27,6 +27,7 @@ plugins {
     application
     kotlin("jvm") version "1.5.30"
     id("org.sonarqube") version "3.3"
+    id("io.snyk.gradle.plugin.snykplugin") version "0.4"
     id("com.github.ben-manes.versions") version "0.27.0"
     jacoco
 }
