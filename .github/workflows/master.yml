@@ -76,12 +76,13 @@ jobs:
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: nais/deploy/actions/deploy@v1
+      - uses: actions/checkout@v2
+      
+      - uses: nais/deploy/actions/deploy@master
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-fss
           RESOURCE: deploy/dev.yaml
           TEAM: helsearbeidsgiver
           REF: ${{ env.COMMIT }}
-          IMAGE: ${{ env.IMAGE }}
+          IMAGE: ${{ env.IMAGE }}:${{ github.sha }}
