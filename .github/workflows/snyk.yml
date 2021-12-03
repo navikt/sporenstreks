@@ -1,11 +1,6 @@
-name: Daglig snyk
+name: Snyk
 
-on:
-  push:
-    tags:
-      - snyk/*
-  schedule:
-    - cron: '15 3 * * *'
+on: [pull_request]
 
 jobs:
   snyk:

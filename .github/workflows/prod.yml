@@ -1,4 +1,4 @@
-name: Deploy til prod
+name: Produksjon
 
 on:
   push:
