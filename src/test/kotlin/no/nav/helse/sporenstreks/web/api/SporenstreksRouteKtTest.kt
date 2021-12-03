@@ -45,25 +45,28 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
             sporenstreksModule()
         }) {
             val om = application.get<ObjectMapper>()
-            val dto = RefusjonskravDto(identitetsnummer = TestData.validIdentitetsnummer,
-                    virksomhetsnummer = "910098896",
-                    perioder = setOf(Arbeidsgiverperiode(
-                            fom = LocalDate.of(2020, 3, 17),
-                            tom = LocalDate.of(2020, 3, 25),
-                            antallDagerMedRefusjon = 3,
-                            beloep = 6000.0
-                    ))
+            val dto = RefusjonskravDto(
+                identitetsnummer = TestData.validIdentitetsnummer,
+                virksomhetsnummer = "910098896",
+                perioder = setOf(
+                    Arbeidsgiverperiode(
+                        fom = LocalDate.of(2020, 3, 17),
+                        tom = LocalDate.of(2020, 3, 25),
+                        antallDagerMedRefusjon = 3,
+                        beloep = 6000.0
+                    )
+                )
             )
             doAuthenticatedRequest(HttpMethod.Post, "api/v1/refusjonskrav") {
                 addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                 setBody(
-                        om.writeValueAsString(
-                                dto)
+                    om.writeValueAsString(
+                        dto
+                    )
                 )
             }.apply {
                 Assertions.assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
             }
-
 
             doAuthenticatedRequest(HttpMethod.Get, "api/v1/refusjonskrav/virksomhet/910098896") {
             }.apply {
@@ -72,7 +75,6 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
                 Assertions.assertThat(resultat).isEqualTo(listOf(dto))
             }
         }
-
     }
 
     @KtorExperimentalLocationsAPI
@@ -82,20 +84,26 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
             sporenstreksModule()
         }) {
             val om = application.get<ObjectMapper>()
-            val dtoListe = listOf(RefusjonskravDtoMock(identitetsnummer = TestData.validIdentitetsnummer,
+            val dtoListe = listOf(
+                RefusjonskravDtoMock(
+                    identitetsnummer = TestData.validIdentitetsnummer,
                     virksomhetsnummer = "910098896",
-                    perioder = setOf(Arbeidsgiverperiode(
+                    perioder = setOf(
+                        Arbeidsgiverperiode(
                             fom = LocalDate.of(2020, 3, 17),
                             tom = LocalDate.of(2020, 3, 25),
                             antallDagerMedRefusjon = 20,
                             beloep = 6000.0
-                    ))
-            ))
+                        )
+                    )
+                )
+            )
             doAuthenticatedRequest(HttpMethod.Post, "api/v1/refusjonskrav/list") {
                 addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                 setBody(
-                        om.writeValueAsString(
-                                dtoListe)
+                    om.writeValueAsString(
+                        dtoListe
+                    )
                 )
             }.apply {
                 Assertions.assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
@@ -103,7 +111,6 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
                 Assertions.assertThat(resultat).hasSize(1)
                 Assertions.assertThat(resultat.first().status == PostListResponseDto.Status.VALIDATION_ERRORS)
             }
-
         }
     }
 
@@ -115,44 +122,61 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
         }) {
             val om = application.get<ObjectMapper>()
             val dtoListe = listOf(
-                    RefusjonskravDtoMock(identitetsnummer = TestData.validIdentitetsnummer,
-                            virksomhetsnummer = "910098896",
-                            perioder = setOf(Arbeidsgiverperiode(
-                                    fom = LocalDate.of(2020, 3, 20),
-                                    tom = LocalDate.of(2020, 3, 25),
-                                    antallDagerMedRefusjon = 1,
-                                    beloep = 6000.0
-                            ))),
-                    RefusjonskravDtoMock(identitetsnummer = TestData.validIdentitetsnummer,
-                            virksomhetsnummer = "910098896",
-                            perioder = setOf(Arbeidsgiverperiode(
-                                    fom = LocalDate.of(2020, 3, 17),
-                                    tom = LocalDate.of(2020, 3, 18),
-                                    antallDagerMedRefusjon = 4,
-                                    beloep = 6000.0
-                            ))),
-                    RefusjonskravDtoMock(identitetsnummer = TestData.validIdentitetsnummer,
-                            virksomhetsnummer = "910098896",
-                            perioder = setOf(Arbeidsgiverperiode(
-                                    fom = LocalDate.of(2020, 3, 27),
-                                    tom = LocalDate.of(2020, 3, 29),
-                                    antallDagerMedRefusjon = 1,
-                                    beloep = 9000.0
-                            ))),
-                    RefusjonskravDtoMock(identitetsnummer = TestData.validIdentitetsnummer,
-                            virksomhetsnummer = "910098896",
-                            perioder = setOf(Arbeidsgiverperiode(
-                                    fom = LocalDate.of(2020, 4, 1),
-                                    tom = LocalDate.of(2020, 4, 3),
-                                    antallDagerMedRefusjon = 1,
-                                    beloep = 999999999999.0
-                            )))
+                RefusjonskravDtoMock(
+                    identitetsnummer = TestData.validIdentitetsnummer,
+                    virksomhetsnummer = "910098896",
+                    perioder = setOf(
+                        Arbeidsgiverperiode(
+                            fom = LocalDate.of(2020, 3, 20),
+                            tom = LocalDate.of(2020, 3, 25),
+                            antallDagerMedRefusjon = 1,
+                            beloep = 6000.0
+                        )
+                    )
+                ),
+                RefusjonskravDtoMock(
+                    identitetsnummer = TestData.validIdentitetsnummer,
+                    virksomhetsnummer = "910098896",
+                    perioder = setOf(
+                        Arbeidsgiverperiode(
+                            fom = LocalDate.of(2020, 3, 17),
+                            tom = LocalDate.of(2020, 3, 18),
+                            antallDagerMedRefusjon = 4,
+                            beloep = 6000.0
+                        )
+                    )
+                ),
+                RefusjonskravDtoMock(
+                    identitetsnummer = TestData.validIdentitetsnummer,
+                    virksomhetsnummer = "910098896",
+                    perioder = setOf(
+                        Arbeidsgiverperiode(
+                            fom = LocalDate.of(2020, 3, 27),
+                            tom = LocalDate.of(2020, 3, 29),
+                            antallDagerMedRefusjon = 1,
+                            beloep = 9000.0
+                        )
+                    )
+                ),
+                RefusjonskravDtoMock(
+                    identitetsnummer = TestData.validIdentitetsnummer,
+                    virksomhetsnummer = "910098896",
+                    perioder = setOf(
+                        Arbeidsgiverperiode(
+                            fom = LocalDate.of(2020, 4, 1),
+                            tom = LocalDate.of(2020, 4, 3),
+                            antallDagerMedRefusjon = 1,
+                            beloep = 999999999999.0
+                        )
+                    )
+                )
             )
             doAuthenticatedRequest(HttpMethod.Post, "api/v1/refusjonskrav/list") {
                 addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                 setBody(
-                        om.writeValueAsString(
-                                dtoListe)
+                    om.writeValueAsString(
+                        dtoListe
+                    )
                 )
             }.apply {
                 Assertions.assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
@@ -165,10 +189,8 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
                 Assertions.assertThat(resultat[3].status == PostListResponseDto.Status.VALIDATION_ERRORS)
                 Assertions.assertThat(resultat[3].validationErrors?.map { it.validationType }).contains("LessOrEqual")
             }
-
         }
     }
-
 
     @KtorExperimentalLocationsAPI
     @Test
@@ -182,11 +204,10 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
             }
         }
     }
-
 }
 
 data class RefusjonskravDtoMock(
-        val identitetsnummer: String,
-        val virksomhetsnummer: String,
-        val perioder: Set<Arbeidsgiverperiode>
+    val identitetsnummer: String,
+    val virksomhetsnummer: String,
+    val perioder: Set<Arbeidsgiverperiode>
 )

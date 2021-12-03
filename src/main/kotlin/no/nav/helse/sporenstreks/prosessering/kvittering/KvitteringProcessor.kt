@@ -9,9 +9,9 @@ import java.time.LocalDateTime
 import java.util.*
 
 class KvitteringProcessor(
-        val kvitteringSender: KvitteringSender,
-        val db: KvitteringRepository,
-        val om: ObjectMapper
+    val kvitteringSender: KvitteringSender,
+    val db: KvitteringRepository,
+    val om: ObjectMapper
 ) : BakgrunnsjobbProsesserer {
 
     override val type = JOBB_TYPE
@@ -32,5 +32,5 @@ class KvitteringProcessor(
 }
 
 data class KvitteringJobData(
-        val kvitteringId: UUID
+    val kvitteringId: UUID
 )

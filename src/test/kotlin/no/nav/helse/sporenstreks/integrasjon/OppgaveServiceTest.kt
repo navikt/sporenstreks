@@ -19,13 +19,13 @@ import org.koin.test.get
 import java.io.IOException
 import java.time.LocalDateTime
 
-internal class OppgaveServiceTest : KoinTest{
+internal class OppgaveServiceTest : KoinTest {
 
     val oppgaveKlientMock = mockk<OppgaveKlient>()
     val objectMapperMock = mockk<ObjectMapper>()
 
     val oppgaveService = OppgaveService(oppgaveKlientMock, objectMapperMock)
-    lateinit var om : ObjectMapper
+    lateinit var om: ObjectMapper
 
     private val mockJson = "beskrivelse-json"
     private val mockAktørId = "aktør-id"
@@ -36,25 +36,24 @@ internal class OppgaveServiceTest : KoinTest{
     fun `Mapper krav og sender oppgaveopprettelse`() {
         val mappedRequest = slot<OpprettOppgaveRequest>()
 
-
-        every { objectMapperMock.writeValueAsString(any())} returns mockJson
+        every { objectMapperMock.writeValueAsString(any()) } returns mockJson
         coEvery { oppgaveKlientMock.opprettOppgave(capture(mappedRequest), any()) } returns
-                OpprettOppgaveResponse(
-                    mockOppgaveId,
-                    "2",
-                    "SYK",
-                    "ROB",
-                    1,
-                    LocalDateTime.now().toLocalDate(),
-                    Prioritet.NORM,
-                    Status.OPPRETTET
-                )
+            OpprettOppgaveResponse(
+                mockOppgaveId,
+                "2",
+                "SYK",
+                "ROB",
+                1,
+                LocalDateTime.now().toLocalDate(),
+                Prioritet.NORM,
+                Status.OPPRETTET
+            )
 
         val result = oppgaveService.opprettOppgave(
-                TestData.gyldigKrav,
-                mockJoarkRef,
-                mockAktørId,
-                "call-id"
+            TestData.gyldigKrav,
+            mockJoarkRef,
+            mockAktørId,
+            "call-id"
         )
 
         coVerify(exactly = 1) { oppgaveKlientMock.opprettOppgave(any(), any()) }
@@ -72,9 +71,9 @@ internal class OppgaveServiceTest : KoinTest{
     fun `Ignorerer opprettetAv ved serialisering til oppgave`() {
         startKoin {
             modules(
-                    module {
-                        loadKoinModules(common)
-                    }
+                module {
+                    loadKoinModules(common)
+                }
             )
         }
 
@@ -95,10 +94,10 @@ internal class OppgaveServiceTest : KoinTest{
         val oppgaveServiceMedMapper = OppgaveService(oppgaveKlientMock, om)
 
         oppgaveServiceMedMapper.opprettOppgave(
-                TestData.gyldigKrav,
-                mockJoarkRef,
-                mockAktørId,
-                "call-id"
+            TestData.gyldigKrav,
+            mockJoarkRef,
+            mockAktørId,
+            "call-id"
         )
 
         val deserializedOppgaveRefusjonskrav = om.readValue<RefusjonskravForOppgave>(mappedRequest.captured.beskrivelse ?: "")
@@ -114,13 +113,11 @@ internal class OppgaveServiceTest : KoinTest{
         every { objectMapperMock.writeValueAsString(any()) } throws IOException()
         assertThrows<IOException> {
             oppgaveService.opprettOppgave(
-                    TestData.gyldigKrav,
-                    mockJoarkRef,
-                    mockAktørId,
-                    "call-id"
+                TestData.gyldigKrav,
+                mockJoarkRef,
+                mockAktørId,
+                "call-id"
             )
         }
     }
-
-
-    }
+}

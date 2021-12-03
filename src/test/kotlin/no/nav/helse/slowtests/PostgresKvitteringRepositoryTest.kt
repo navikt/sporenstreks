@@ -31,30 +31,36 @@ internal class PostgresKvitteringRepositoryTest : KoinComponent {
     internal fun setUp() {
         startKoin {
             loadKoinModules(common)
-
         }
         repo = PostgresKvitteringRepository(HikariDataSource(createNonVaultHikariConfig()), get())
-        kvittering = repo.insert(Kvittering(
+        kvittering = repo.insert(
+            Kvittering(
                 tidspunkt = LocalDateTime.now(),
                 virksomhetsnummer = TestData.validOrgNr,
-                refusjonsListe = listOf(Refusjonskrav(
+                refusjonsListe = listOf(
+                    Refusjonskrav(
                         TestData.opprettetAv,
                         TestData.notValidIdentitetsnummer,
                         TestData.validOrgNr,
                         setOf(
-                                Arbeidsgiverperiode(
-                                        LocalDate.of(2020, 4, 1),
-                                        LocalDate.of(2020, 4, 6),
-                                        3, 1000.0
-                                ), Arbeidsgiverperiode(
+                            Arbeidsgiverperiode(
+                                LocalDate.of(2020, 4, 1),
+                                LocalDate.of(2020, 4, 6),
+                                3, 1000.0
+                            ),
+                            Arbeidsgiverperiode(
                                 LocalDate.of(2020, 4, 10),
                                 LocalDate.of(2020, 4, 12),
                                 3, 1000.0
-                        )),
+                            )
+                        ),
                         RefusjonskravStatus.MOTTATT,
                         "oppgave-id-234234",
                         "joark-ref-1232"
-                ))))
+                    )
+                )
+            )
+        )
     }
 
     @AfterEach
@@ -63,7 +69,6 @@ internal class PostgresKvitteringRepositoryTest : KoinComponent {
         stopKoin()
     }
 
-
     @Test
     fun `Kan hente lagret kvittering`() {
         val rs = repo.getById(kvittering.id)
@@ -71,7 +76,6 @@ internal class PostgresKvitteringRepositoryTest : KoinComponent {
         assertThat(rs).isNotNull
         assertThat(rs).isEqualTo(kvittering)
     }
-
 
     @Test
     fun `Kan hente fra status`() {
@@ -84,7 +88,6 @@ internal class PostgresKvitteringRepositoryTest : KoinComponent {
     fun `Kan oppdatere krav`() {
         val kvitteringListe = repo.getByStatus(KvitteringStatus.OPPRETTET, 10)
         val kvittering = kvitteringListe.first()
-
 
         kvittering.status = KvitteringStatus.SENDT
 

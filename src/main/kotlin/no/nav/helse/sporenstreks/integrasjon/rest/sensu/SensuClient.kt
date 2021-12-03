@@ -10,8 +10,8 @@ interface SensuClient {
 }
 
 class SensuClientImpl(
-        private val hostname: String,
-        private val port: Int
+    private val hostname: String,
+    private val port: Int
 ) : SensuClient {
 
     override fun write(data: SensuEvent) {
@@ -31,6 +31,5 @@ class SensuEvent(sensuName: String, output: String) {
         "handlers":["events_nano"],
         "output":"$output"
 }
-""".trimIndent()
-
+    """.trimIndent()
 }

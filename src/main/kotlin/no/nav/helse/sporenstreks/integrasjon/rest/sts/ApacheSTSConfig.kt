@@ -22,8 +22,8 @@ fun wsStsClient(stsUrl: String, credentials: Pair<String, String>): org.apache.c
         isAllowRenewing = false
         location = stsUrl
         properties = mapOf(
-                SecurityConstants.USERNAME to credentials.first,
-                SecurityConstants.PASSWORD to credentials.second
+            SecurityConstants.USERNAME to credentials.first,
+            SecurityConstants.PASSWORD to credentials.second
         )
         setPolicy(bus.resolvePolicy(STS_CLIENT_AUTHENTICATION_POLICY))
     }

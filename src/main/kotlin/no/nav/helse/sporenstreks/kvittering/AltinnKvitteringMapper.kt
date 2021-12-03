@@ -6,12 +6,10 @@ import java.time.format.DateTimeFormatter
 
 class AltinnKvitteringMapper(val altinnTjenesteKode: String) {
 
-
     fun mapKvitteringTilInsertCorrespondence(kvittering: Kvittering): InsertCorrespondenceV2 {
         val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
         val dateTimeFormatterMedKl = DateTimeFormatter.ofPattern("dd.MM.yyyy 'kl.' HH:mm")
         val dateTimeFormatterPlain = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
-
 
         val tittel = "Kvittering for krav om utvidet refusjon ved koronaviruset"
 
@@ -42,7 +40,7 @@ class AltinnKvitteringMapper(val altinnTjenesteKode: String) {
                             </tr>
                         ${kvittering.refusjonsListe.sorted().joinToString(separator = "") { krav ->
             krav.perioder.sorted().joinToString(
-                    separator = "\n"
+                separator = "\n"
             ) {
                 """
                                 <tr>
@@ -53,7 +51,7 @@ class AltinnKvitteringMapper(val altinnTjenesteKode: String) {
                                 <td style="padding:12px">${krav.virksomhetsnummer}</td>
                                 <td style="padding:12px">${krav.opprettet.format(dateTimeFormatterPlain)}</td>
                                 </tr>
-                                        """.trimIndent()
+                """.trimIndent()
             }
         }}
                        </table>
@@ -62,22 +60,18 @@ class AltinnKvitteringMapper(val altinnTjenesteKode: String) {
             </html>
         """.trimIndent()
 
-
         val meldingsInnhold = ExternalContentV2()
-                .withLanguageCode("1044")
-                .withMessageTitle(tittel)
-                .withMessageBody(innhold)
-                .withMessageSummary("Kvittering for krav om utvidet refusjon ved koronaviruset")
-
+            .withLanguageCode("1044")
+            .withMessageTitle(tittel)
+            .withMessageBody(innhold)
+            .withMessageSummary("Kvittering for krav om utvidet refusjon ved koronaviruset")
 
         return InsertCorrespondenceV2()
-                .withAllowForwarding(false)
-                .withReportee(kvittering.virksomhetsnummer)
-                .withMessageSender("NAV (Arbeids- og velferdsetaten)")
-                .withServiceCode(altinnTjenesteKode)
-                .withServiceEdition("1")
-                .withContent(meldingsInnhold)
-
+            .withAllowForwarding(false)
+            .withReportee(kvittering.virksomhetsnummer)
+            .withMessageSender("NAV (Arbeids- og velferdsetaten)")
+            .withServiceCode(altinnTjenesteKode)
+            .withServiceEdition("1")
+            .withContent(meldingsInnhold)
     }
-
 }

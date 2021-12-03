@@ -16,10 +16,12 @@ class MockAktorConsumer : AktorConsumer {
     }
 }
 
-class AktorConsumerImpl(val stsClient: AccessTokenProvider,
-                        val username: String,
-                        val baseUrl: String,
-                        val httpClient: HttpClient) : AktorConsumer {
+class AktorConsumerImpl(
+    val stsClient: AccessTokenProvider,
+    val username: String,
+    val baseUrl: String,
+    val httpClient: HttpClient
+) : AktorConsumer {
 
     override fun getAktorId(fnr: String, callId: String): String {
         return getIdent(fnr, "AktoerId", callId)
@@ -39,6 +41,6 @@ class AktorConsumerImpl(val stsClient: AccessTokenProvider,
             throw Exception("Feil ved henting av aktør: $it")
         }
         return response?.identer?.first { it.gjeldende!! }?.ident
-                ?: throw Exception("Finner ikke aktørId")
+            ?: throw Exception("Finner ikke aktørId")
     }
 }

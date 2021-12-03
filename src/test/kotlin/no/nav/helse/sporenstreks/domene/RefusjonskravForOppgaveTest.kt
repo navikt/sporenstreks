@@ -8,8 +8,8 @@ internal class RefusjonskravForOppgaveTest {
     @Test
     internal fun `sender informasjon til Oppgave om personer som søker på egne vegne`() {
         val mapped = TestData.gyldigKrav.copy(
-                opprettetAv = TestData.validIdentitetsnummer,
-                identitetsnummer = TestData.validIdentitetsnummer
+            opprettetAv = TestData.validIdentitetsnummer,
+            identitetsnummer = TestData.validIdentitetsnummer
         ).toRefusjonskravForOppgave()
 
         assertThat(mapped.soekerForSegSelv).isTrue()

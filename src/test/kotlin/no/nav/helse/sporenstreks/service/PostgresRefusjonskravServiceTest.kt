@@ -17,7 +17,6 @@ import javax.sql.DataSource
 
 internal class PostgresRefusjonskravServiceTest {
 
-
     val ds: DataSource = mockk<HikariDataSource>(relaxed = true)
     val bakgrunnRepo: BakgrunnsjobbRepository = spyk(MockBakgrunnsjobbRepository())
     val kravRepo: RefusjonskravRepository = spyk(MockRefusjonskravRepo())
@@ -48,5 +47,4 @@ internal class PostgresRefusjonskravServiceTest {
         verify(exactly = 1) { kvitteringRepo.insert(any(), any()) }
         verify(exactly = 1) { kravRepo.bulkInsert(any(), any()) }
     }
-
 }

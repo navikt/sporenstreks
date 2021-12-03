@@ -18,11 +18,13 @@ import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.util.*
 
-class RefusjonskravProcessor(val joarkService: JoarkService,
-                             val oppgaveService: OppgaveService,
-                             val repository: RefusjonskravRepository,
-                             val aktorConsumer: AktorConsumer,
-                             val om: ObjectMapper) : BakgrunnsjobbProsesserer {
+class RefusjonskravProcessor(
+    val joarkService: JoarkService,
+    val oppgaveService: OppgaveService,
+    val repository: RefusjonskravRepository,
+    val aktorConsumer: AktorConsumer,
+    val om: ObjectMapper
+) : BakgrunnsjobbProsesserer {
 
     override val type: String = JOBB_TYPE
 
@@ -62,10 +64,10 @@ class RefusjonskravProcessor(val joarkService: JoarkService,
                 val aktørId = aktorConsumer.getAktorId(refusjonskrav.identitetsnummer, callId)
 
                 refusjonskrav.oppgaveId = oppgaveService.opprettOppgave(
-                        refusjonskrav,
-                        refusjonskrav.joarkReferanse!!,
-                        aktørId,
-                        callId
+                    refusjonskrav,
+                    refusjonskrav.joarkReferanse!!,
+                    aktørId,
+                    callId
                 )
                 OPPGAVE_COUNTER.inc()
             }
@@ -84,10 +86,9 @@ class RefusjonskravProcessor(val joarkService: JoarkService,
     companion object {
         private val log = LoggerFactory.getLogger(RefusjonskravProcessor::class.java)
         val JOBB_TYPE = "refusjonskrav"
-
     }
 }
 
 data class RefusjonskravJobData(
-        val kravId: UUID
+    val kravId: UUID
 )

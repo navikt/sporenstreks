@@ -18,22 +18,21 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
     private val logger = LoggerFactory.getLogger(PostgresRefusjonskravRepository::class.java)
 
     private val tableName = "refusjonskrav"
-    private val getByVirksomhetsnummerStatement = """SELECT * FROM $tableName 
+    private val getByVirksomhetsnummerStatement = """SELECT * FROM $tableName
             WHERE data ->> 'virksomhetsnummer' = ?;"""
 
-    private val getByStatuses = """SELECT * FROM $tableName 
+    private val getByStatuses = """SELECT * FROM $tableName
             WHERE data ->> 'status' = ? LIMIT ?;"""
 
-    private val getByNoKvitteringForVirksomhetStatement = """SELECT * FROM $tableName 
+    private val getByNoKvitteringForVirksomhetStatement = """SELECT * FROM $tableName
             WHERE (data ->> 'kvitteringId' IS NULL OR data ->> 'kvitteringId' = '')
             AND data ->> 'virksomhetsnummer' = ?;"""
 
-    private val getOneVirksomhetWithoutKvitteringStatement = """SELECT data->>'virksomhetsnummer' FROM $tableName 
+    private val getOneVirksomhetWithoutKvitteringStatement = """SELECT data->>'virksomhetsnummer' FROM $tableName
             WHERE data ->> 'kvitteringId' IS NULL OR data ->> 'kvitteringId' = ''
             LIMIT 1;"""
 
-
-    private val getByIkkeIInflux = """SELECT * FROM $tableName 
+    private val getByIkkeIInflux = """SELECT * FROM $tableName
             WHERE data ->> 'indeksertInflux' IS NULL OR data ->> 'indeksertInflux' = '' OR data ->> 'indeksertInflux' = 'false' LIMIT ?;"""
 
     private val getByIdStatement = """SELECT * FROM $tableName WHERE data ->> 'id' = ?"""
@@ -42,7 +41,7 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
 
     private val updateStatement = "UPDATE $tableName SET data = ?::json WHERE data ->> 'id' = ?;"
 
-    private val getByIdentitetsnummerAndVirksomhetsnummerStatement = """SELECT * FROM $tableName 
+    private val getByIdentitetsnummerAndVirksomhetsnummerStatement = """SELECT * FROM $tableName
          WHERE data ->> 'identitetsnummer' = ?
             AND data ->> 'virksomhetsnummer' = ?;"""
 
@@ -75,7 +74,6 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
             return resultList
         }
     }
-
 
     override fun getRandomVirksomhetWithoutKvittering(): String? {
         ds.connection.use { con ->
@@ -214,7 +212,7 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
             }.executeUpdate()
         }
         return getById(refusjonskrav.id)
-                ?: throw IOException("Unable to read receipt for refusjonskrav with id ${refusjonskrav.id}")
+            ?: throw IOException("Unable to read receipt for refusjonskrav with id ${refusjonskrav.id}")
     }
 
     override fun insert(refusjonskrav: Refusjonskrav, connection: Connection): Refusjonskrav {
@@ -226,7 +224,6 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
 
         return refusjonskrav
     }
-
 
     override fun getExistingRefusjonskrav(identitetsnummer: String, virksomhetsnummer: String): List<Refusjonskrav> {
         ds.connection.use {
@@ -257,5 +254,4 @@ class PostgresRefusjonskravRepository(val ds: DataSource, val mapper: ObjectMapp
         refusjonsKrav.referansenummer = res.getInt("referansenummer")
         return refusjonsKrav
     }
-
 }

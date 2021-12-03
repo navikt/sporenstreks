@@ -20,11 +20,11 @@ import java.time.LocalDateTime
 import javax.sql.DataSource
 
 class PostgresRefusjonskravService(
-        val ds: DataSource,
-        val refusjonskravRepository: RefusjonskravRepository,
-        val kvitteringRepository: KvitteringRepository,
-        val bakgrunnsjobbRepository: BakgrunnsjobbRepository,
-        val mapper: ObjectMapper
+    val ds: DataSource,
+    val refusjonskravRepository: RefusjonskravRepository,
+    val kvitteringRepository: KvitteringRepository,
+    val bakgrunnsjobbRepository: BakgrunnsjobbRepository,
+    val mapper: ObjectMapper
 ) : RefusjonskravService {
 
     private val logger = LoggerFactory.getLogger(PostgresRefusjonskravService::class.java)
@@ -34,10 +34,10 @@ class PostgresRefusjonskravService(
             it.autoCommit = false
 
             val kvittering = Kvittering(
-                    virksomhetsnummer = krav.virksomhetsnummer,
-                    refusjonsListe = listOf(krav),
-                    tidspunkt = LocalDateTime.now(),
-                    status = KvitteringStatus.JOBB
+                virksomhetsnummer = krav.virksomhetsnummer,
+                refusjonsListe = listOf(krav),
+                tidspunkt = LocalDateTime.now(),
+                status = KvitteringStatus.JOBB
             )
             val savedKvittering = kvitteringRepository.insert(kvittering, it)
             krav.kvitteringId = savedKvittering.id
@@ -50,16 +50,15 @@ class PostgresRefusjonskravService(
         }
     }
 
-
     override fun saveKravListWithKvittering(kravListeMedIndex: Map<Int, Refusjonskrav>): Map<Int, Refusjonskrav> {
-        //Alle innsendingene må være på samme virksomhet
+        // Alle innsendingene må være på samme virksomhet
         ds.connection.use { con ->
             con.autoCommit = false
             val kvittering = Kvittering(
-                    virksomhetsnummer = kravListeMedIndex.values.first().virksomhetsnummer,
-                    refusjonsListe = kravListeMedIndex.values.toList(),
-                    tidspunkt = LocalDateTime.now(),
-                    status = KvitteringStatus.JOBB
+                virksomhetsnummer = kravListeMedIndex.values.first().virksomhetsnummer,
+                refusjonsListe = kravListeMedIndex.values.toList(),
+                tidspunkt = LocalDateTime.now(),
+                status = KvitteringStatus.JOBB
             )
             val savedKvittering = kvitteringRepository.insert(kvittering, con)
             lagreKvitteringJobb(savedKvittering, con)
@@ -73,9 +72,7 @@ class PostgresRefusjonskravService(
             con.commit()
             return savedMap
         }
-
     }
-
 
     override fun getAllForVirksomhet(virksomhetsnummer: String): List<Refusjonskrav> {
         return refusjonskravRepository.getAllForVirksomhet(virksomhetsnummer)
@@ -90,10 +87,14 @@ class PostgresRefusjonskravService(
                     it.virksomhetsnummer
                 }.forEach {
                     val savedKvittering = kvitteringRepository.insert(
-                            Kvittering(virksomhetsnummer = it.key,
-                                    refusjonsListe = it.value,
-                                    status = KvitteringStatus.JOBB,
-                                    tidspunkt = LocalDateTime.now()), con)
+                        Kvittering(
+                            virksomhetsnummer = it.key,
+                            refusjonsListe = it.value,
+                            status = KvitteringStatus.JOBB,
+                            tidspunkt = LocalDateTime.now()
+                        ),
+                        con
+                    )
                     it.value.forEach { krav ->
                         krav.kvitteringId = savedKvittering.id
                         krav.status = RefusjonskravStatus.JOBB
@@ -113,28 +114,32 @@ class PostgresRefusjonskravService(
                 }
                 throw e
             }
-
         }
     }
 
     fun lagreKvitteringJobb(kvittering: Kvittering, connection: Connection) {
         bakgrunnsjobbRepository.save(
-                Bakgrunnsjobb(
-                        type = KvitteringProcessor.JOBB_TYPE,
-                        data = mapper.writeValueAsString(KvitteringJobData(kvittering.id)),
-                        maksAntallForsoek = 14
-                ), connection)
+            Bakgrunnsjobb(
+                type = KvitteringProcessor.JOBB_TYPE,
+                data = mapper.writeValueAsString(KvitteringJobData(kvittering.id)),
+                maksAntallForsoek = 14
+            ),
+            connection
+        )
     }
 
     fun lagreRefusjonskravJobb(refusjonskrav: Refusjonskrav, connection: Connection) {
         bakgrunnsjobbRepository.save(
-                Bakgrunnsjobb(
-                        type = RefusjonskravProcessor.JOBB_TYPE,
-                        data = mapper.writeValueAsString(RefusjonskravJobData(
-                                refusjonskrav.id
-                        )),
-                        maksAntallForsoek = 14
-                ), connection
+            Bakgrunnsjobb(
+                type = RefusjonskravProcessor.JOBB_TYPE,
+                data = mapper.writeValueAsString(
+                    RefusjonskravJobData(
+                        refusjonskrav.id
+                    )
+                ),
+                maksAntallForsoek = 14
+            ),
+            connection
         )
     }
 }

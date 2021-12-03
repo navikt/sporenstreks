@@ -8,7 +8,6 @@ import java.security.SecureRandom
  */
 object MDCOperations {
 
-
     private val RANDOM = SecureRandom()
     private val log = LoggerFactory.getLogger(MDCOperations::class.java)
 
@@ -23,6 +22,4 @@ object MDCOperations {
 
     private val systemTime: Long
         get() = System.currentTimeMillis()
-
 }
-

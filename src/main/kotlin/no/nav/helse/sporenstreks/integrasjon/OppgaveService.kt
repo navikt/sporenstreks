@@ -25,15 +25,15 @@ class OppgaveService(private val oppgaveKlient: OppgaveKlient, private val om: O
 
     private fun mapOppgave(journalpostId: String, aktørId: String, beskrivelse: String): OpprettOppgaveRequest {
         return OpprettOppgaveRequest(
-                aktoerId = aktørId,
-                journalpostId = journalpostId,
-                beskrivelse = beskrivelse,
-                tema = "SYK",
-                oppgavetype = "ROB_BEH",
-                behandlingstema = "ab0433",
-                aktivDato = LocalDate.now(),
-                fristFerdigstillelse = LocalDate.now().plusDays(7),
-                prioritet = "NORM"
+            aktoerId = aktørId,
+            journalpostId = journalpostId,
+            beskrivelse = beskrivelse,
+            tema = "SYK",
+            oppgavetype = "ROB_BEH",
+            behandlingstema = "ab0433",
+            aktivDato = LocalDate.now(),
+            fristFerdigstillelse = LocalDate.now().plusDays(7),
+            prioritet = "NORM"
         )
     }
 }

@@ -2,11 +2,9 @@ package no.nav.helse.sporenstreks.excel
 
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
 import no.nav.helse.sporenstreks.service.RefusjonskravService
-import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.slf4j.LoggerFactory
-import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
 class ExcelBulkService(private val service: RefusjonskravService, private val parser: ExcelParser) {

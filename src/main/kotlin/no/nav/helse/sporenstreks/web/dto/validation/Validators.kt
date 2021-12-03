@@ -4,7 +4,6 @@ import no.nav.helse.sporenstreks.web.dto.validation.FoedselsNrValidator.Companio
 import no.nav.helse.sporenstreks.web.dto.validation.FoedselsNrValidator.Companion.tabeller.kontrollsiffer2
 import no.nav.helse.sporenstreks.web.dto.validation.OrganisasjonsnummerValidator.Companion.tabeller.weights
 
-
 class FoedselsNrValidator(input: String?) {
     val asString: String
 

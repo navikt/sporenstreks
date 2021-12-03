@@ -6,7 +6,6 @@ import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.domene.RefusjonskravStatus
 import org.junit.jupiter.api.Test
-
 import java.io.File
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -17,23 +16,26 @@ internal class KvitteringTest {
     @Test
     fun lagPDF() {
         val refusjonskrav = Refusjonskrav(
-                opprettetAv = TestData.opprettetAv,
-                identitetsnummer = TestData.validIdentitetsnummer,
-                virksomhetsnummer = TestData.validOrgNr,
-                perioder = setOf(Arbeidsgiverperiode(
-                        LocalDate.of(2020, 4, 1),
-                        LocalDate.of(2020, 4, 5),
-                        2,
-                        4500800.50
-                ), Arbeidsgiverperiode(
-                        LocalDate.of(2020, 4, 5),
-                        LocalDate.of(2020, 4, 10),
-                        4,
-                        1220800.50
-                )),
-                opprettet = LocalDateTime.now(),
-                status = RefusjonskravStatus.MOTTATT,
-                referansenummer = 12345
+            opprettetAv = TestData.opprettetAv,
+            identitetsnummer = TestData.validIdentitetsnummer,
+            virksomhetsnummer = TestData.validOrgNr,
+            perioder = setOf(
+                Arbeidsgiverperiode(
+                    LocalDate.of(2020, 4, 1),
+                    LocalDate.of(2020, 4, 5),
+                    2,
+                    4500800.50
+                ),
+                Arbeidsgiverperiode(
+                    LocalDate.of(2020, 4, 5),
+                    LocalDate.of(2020, 4, 10),
+                    4,
+                    1220800.50
+                )
+            ),
+            opprettet = LocalDateTime.now(),
+            status = RefusjonskravStatus.MOTTATT,
+            referansenummer = 12345
         )
         val kv = PDFGenerator()
         val ba = kv.lagPDF(refusjonskrav)
@@ -47,18 +49,20 @@ internal class KvitteringTest {
     fun norskeBokstaver() {
         val kv = PDFGenerator()
         val refusjonskrav = Refusjonskrav(
-                opprettetAv = TestData.opprettetAv,
-                identitetsnummer = TestData.validIdentitetsnummer,
-                virksomhetsnummer = TestData.validOrgNr,
-                perioder = setOf(Arbeidsgiverperiode(
-                        LocalDate.of(2020, 4, 1),
-                        LocalDate.of(2020, 4, 5),
-                        2,
-                        250.50
-                )),
-                opprettet = LocalDateTime.now(),
-                status = RefusjonskravStatus.MOTTATT,
-                referansenummer = 12345
+            opprettetAv = TestData.opprettetAv,
+            identitetsnummer = TestData.validIdentitetsnummer,
+            virksomhetsnummer = TestData.validOrgNr,
+            perioder = setOf(
+                Arbeidsgiverperiode(
+                    LocalDate.of(2020, 4, 1),
+                    LocalDate.of(2020, 4, 5),
+                    2,
+                    250.50
+                )
+            ),
+            opprettet = LocalDateTime.now(),
+            status = RefusjonskravStatus.MOTTATT,
+            referansenummer = 12345
         )
         val ba = kv.lagPDF(refusjonskrav)
 //        val file = File("kvittering_spesialtegn.pdf")

@@ -38,7 +38,6 @@ import java.time.LocalDate
 import java.util.*
 import javax.ws.rs.ForbiddenException
 
-
 @KtorExperimentalLocationsAPI
 @KtorExperimentalAPI
 fun Application.sporenstreksModule(config: ApplicationConfig = environment.config) {
@@ -81,10 +80,10 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
             val userAgent = call.request.headers.get("User-Agent") ?: "Ukjent"
             LOGGER.error("Uventet feil, $errorId med useragent $userAgent", cause)
             val problem = Problem(
-                    type = URI.create("urn:sporenstreks:uventet-feil"),
-                    title = "Uventet feil",
-                    detail = cause.message,
-                    instance = URI.create("urn:sporenstreks:uventent-feil:$errorId")
+                type = URI.create("urn:sporenstreks:uventet-feil"),
+                title = "Uventet feil",
+                detail = cause.message,
+                instance = URI.create("urn:sporenstreks:uventent-feil:$errorId")
             )
             call.respond(HttpStatusCode.InternalServerError, problem)
         }
@@ -95,12 +94,12 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
             }.toSet()
 
             problems
-                    .filter {
-                        it.propertyPath.contains("perioder")
-                    }
-                    .forEach {
-                        LOGGER.warn("Invalid ${it.propertyPath}: ${it.invalidValue} (${it.message})")
-                    }
+                .filter {
+                    it.propertyPath.contains("perioder")
+                }
+                .forEach {
+                    LOGGER.warn("Invalid ${it.propertyPath}: ${it.invalidValue} (${it.message})")
+                }
 
             call.respond(HttpStatusCode.UnprocessableEntity, ValidationProblem(problems))
         }
@@ -114,8 +113,8 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
 
         exception<ForbiddenException> {
             call.respond(
-                    HttpStatusCode.Forbidden,
-                    Problem(URI.create("urn:sporenstreks:forbidden"), "Ingen tilgang", HttpStatusCode.Forbidden.value)
+                HttpStatusCode.Forbidden,
+                Problem(URI.create("urn:sporenstreks:forbidden"), "Ingen tilgang", HttpStatusCode.Forbidden.value)
             )
         }
 
@@ -125,10 +124,12 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
 
         exception<ParameterConversionException> { cause ->
             call.respond(
-                    HttpStatusCode.BadRequest,
-                    ValidationProblem(setOf(
-                            ValidationProblemDetail("ParameterConversion", "Parameteret kunne ikke  konverteres til ${cause.type}", cause.parameterName, null))
+                HttpStatusCode.BadRequest,
+                ValidationProblem(
+                    setOf(
+                        ValidationProblemDetail("ParameterConversion", "Parameteret kunne ikke  konverteres til ${cause.type}", cause.parameterName, null)
                     )
+                )
             )
             LOGGER.warn("${cause.parameterName} kunne ikke konverteres")
         }
@@ -136,19 +137,25 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
         exception<MissingKotlinParameterException> { cause ->
             val userAgent = call.request.headers.get("User-Agent") ?: "Ukjent"
             call.respond(
-                    HttpStatusCode.BadRequest,
-                    ValidationProblem(setOf(
-                            ValidationProblemDetail("NotNull", "Det angitte feltet er påkrevd", cause.path.filter { it.fieldName != null }.joinToString(".") {
+                HttpStatusCode.BadRequest,
+                ValidationProblem(
+                    setOf(
+                        ValidationProblemDetail(
+                            "NotNull", "Det angitte feltet er påkrevd",
+                            cause.path.filter { it.fieldName != null }.joinToString(".") {
                                 it.fieldName
-                            }, "null"))
+                            },
+                            "null"
+                        )
                     )
+                )
             )
-            LOGGER.warn("Feil med validering av ${cause.parameter.name ?: "Ukjent"} for ${userAgent}: ${cause.message}")
+            LOGGER.warn("Feil med validering av ${cause.parameter.name ?: "Ukjent"} for $userAgent: ${cause.message}")
         }
 
         exception<ExcelFileParsingException> { cause ->
 
-            var excelproblems: ExcelProblem;
+            var excelproblems: ExcelProblem
 
             if (cause.errors.isEmpty()) {
                 excelproblems = ExcelProblem(emptySet(), cause.message)
@@ -157,8 +164,8 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
             }
 
             call.respond(
-                    HttpStatusCode.UnprocessableEntity,
-                    excelproblems
+                HttpStatusCode.UnprocessableEntity,
+                excelproblems
             )
         }
 
@@ -175,9 +182,9 @@ fun Application.sporenstreksModule(config: ApplicationConfig = environment.confi
                     val locale = call.request.headers.get("Accept-Language") ?: "Ukjent"
                     LOGGER.warn("$errorId : $userAgent : $locale", cause)
                     val problem = Problem(
-                            title = "Feil ved prosessering av JSON-dataene som ble oppgitt",
-                            detail = cause.message,
-                            instance = URI.create("urn:sporenstreks:json-mapping-error:$errorId")
+                        title = "Feil ved prosessering av JSON-dataene som ble oppgitt",
+                        detail = cause.message,
+                        instance = URI.create("urn:sporenstreks:json-mapping-error:$errorId")
                     )
                     call.respond(HttpStatusCode.BadRequest, problem)
                 }

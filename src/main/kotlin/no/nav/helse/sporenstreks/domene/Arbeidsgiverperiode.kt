@@ -3,11 +3,11 @@ package no.nav.helse.sporenstreks.domene
 import java.time.LocalDate
 
 data class Arbeidsgiverperiode(
-        val fom: LocalDate,
-        val tom: LocalDate,
-        val antallDagerMedRefusjon: Int,
-        val beloep: Double
-): Comparable<Arbeidsgiverperiode> {
+    val fom: LocalDate,
+    val tom: LocalDate,
+    val antallDagerMedRefusjon: Int,
+    val beloep: Double
+) : Comparable<Arbeidsgiverperiode> {
     companion object {
         val refusjonFraDato = LocalDate.of(2020, 3, 16)
         val refusjonTilDato = LocalDate.of(2021, 10, 1)
@@ -17,9 +17,9 @@ data class Arbeidsgiverperiode(
     }
 
     override fun compareTo(other: Arbeidsgiverperiode): Int {
-        if(other.fom.isAfter(fom))
+        if (other.fom.isAfter(fom))
             return -1
-        if(other.fom.isBefore(fom))
+        if (other.fom.isBefore(fom))
             return 1
         return 0
     }

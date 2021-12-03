@@ -7,11 +7,12 @@ import no.nav.helse.sporenstreks.db.KvitteringRepository
 import org.slf4j.LoggerFactory
 
 class AltinnKvitteringSender(
-        private val altinnKvitteringMapper: AltinnKvitteringMapper,
-        private val iCorrespondenceAgencyExternalBasic: ICorrespondenceAgencyExternalBasic,
-        private val username: String,
-        private val password: String,
-        private val db: KvitteringRepository) : KvitteringSender {
+    private val altinnKvitteringMapper: AltinnKvitteringMapper,
+    private val iCorrespondenceAgencyExternalBasic: ICorrespondenceAgencyExternalBasic,
+    private val username: String,
+    private val password: String,
+    private val db: KvitteringRepository
+) : KvitteringSender {
 
     private val log = LoggerFactory.getLogger("AltinnKvitteringSender")
 
@@ -22,9 +23,9 @@ class AltinnKvitteringSender(
     override fun send(kvittering: Kvittering) {
         try {
             val receiptExternal = iCorrespondenceAgencyExternalBasic.insertCorrespondenceBasicV2(
-                    username, password,
-                    SYSTEM_USER_CODE, kvittering.id.toString(),
-                    altinnKvitteringMapper.mapKvitteringTilInsertCorrespondence(kvittering)
+                username, password,
+                SYSTEM_USER_CODE, kvittering.id.toString(),
+                altinnKvitteringMapper.mapKvitteringTilInsertCorrespondence(kvittering)
             )
             if (receiptExternal.receiptStatusCode != ReceiptStatusEnum.OK) {
                 log.error("Fikk uventet statuskode fra Altinn {}", receiptExternal.receiptStatusCode)
@@ -40,8 +41,7 @@ class AltinnKvitteringSender(
         } catch (e: Exception) {
             log.error("Feil ved sending kvittering til Altinn", e)
             throw e
-        }
-        finally {
+        } finally {
             db.update(kvittering)
         }
     }
