@@ -13,22 +13,11 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: '11.x'
+          distribution: 'adopt'
+          cache: gradle
 
-      - name: Cache Gradle wrapper
-        uses: actions/cache@v2
-        with:
-          path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-wrapper-
-
-      - name: Cache Gradle packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-cache-${{ hashFiles('build.gradle') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-cache-
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
 
       - name: compose up
         run: cd docker/local && docker-compose up -d && sleep 10
