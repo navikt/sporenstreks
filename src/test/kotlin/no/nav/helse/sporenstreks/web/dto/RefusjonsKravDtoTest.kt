@@ -361,18 +361,6 @@ internal class RefusjonsKravDtoTest {
                 )
             )
         }
-
-        RefusjonskravDto(
-            TestData.validIdentitetsnummer,
-            TestData.validOrgNr,
-            setOf(
-                Arbeidsgiverperiode(
-                    today.minusDays(10),
-                    today,
-                    5, 20.0
-                )
-            )
-        )
     }
 
     @Test
