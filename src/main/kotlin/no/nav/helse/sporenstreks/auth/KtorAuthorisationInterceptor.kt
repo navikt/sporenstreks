@@ -12,8 +12,8 @@ fun hentIdentitetsnummerFraLoginToken(config: ApplicationConfig, request: Applic
     val cookieName = config.configList("no.nav.security.jwt.issuers")[0].property("cookie_name").getString()
 
     val tokenString = request.cookies[cookieName]
-            ?: request.headers["Authorization"]?.replaceFirst("Bearer ", "")
-            ?: throw IllegalAccessException("Du må angi et identitetstoken som cookieen $cookieName eller i Authorization-headeren")
+        ?: request.headers["Authorization"]?.replaceFirst("Bearer ", "")
+        ?: throw IllegalAccessException("Du må angi et identitetstoken som cookieen $cookieName eller i Authorization-headeren")
 
     return JwtToken(tokenString).subject
 }
@@ -23,8 +23,8 @@ fun hentUtløpsdatoFraLoginToken(config: ApplicationConfig, request: Application
     val cookieName = config.configList("no.nav.security.jwt.issuers")[0].property("cookie_name").getString()
 
     val tokenString = request.cookies[cookieName]
-            ?: request.headers["Authorization"]?.replaceFirst("Bearer ", "")
-            ?: throw IllegalAccessException("Du må angi et identitetstoken som cookieen $cookieName eller i Authorization-headeren")
+        ?: request.headers["Authorization"]?.replaceFirst("Bearer ", "")
+        ?: throw IllegalAccessException("Du må angi et identitetstoken som cookieen $cookieName eller i Authorization-headeren")
 
     return JwtToken(tokenString).jwtTokenClaims.expirationTime ?: Date.from(Instant.MIN)
 }

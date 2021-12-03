@@ -23,7 +23,6 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.MockBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
-import no.nav.helse.arbeidsgiver.integrasjoner.OAuth2TokenProvider
 import no.nav.helse.arbeidsgiver.integrasjoner.RestSTSAccessTokenProvider
 import no.nav.helse.arbeidsgiver.integrasjoner.altinn.AltinnRestClient
 import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.DokarkivKlient
@@ -64,7 +63,6 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
 
-
 @KtorExperimentalAPI
 fun selectModuleBasedOnProfile(config: ApplicationConfig): List<Module> {
     val envModule = when (config.property("koin.profile").getString()) {
@@ -87,14 +85,16 @@ val common = module {
     om.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
     om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
-    om.setDefaultPrettyPrinter(DefaultPrettyPrinter().apply {
-        indentArraysWith(DefaultPrettyPrinter.FixedSpaceIndenter.instance)
-        indentObjectsWith(DefaultIndenter("  ", "\n"))
-    })
+    om.setDefaultPrettyPrinter(
+        DefaultPrettyPrinter().apply {
+            indentArraysWith(DefaultPrettyPrinter.FixedSpaceIndenter.instance)
+            indentObjectsWith(DefaultIndenter("  ", "\n"))
+        }
+    )
 
     single { om }
 
-    single {KubernetesProbeManager()}
+    single { KubernetesProbeManager() }
 
     val httpClient = HttpClient(Apache) {
         install(JsonFeature) {
@@ -111,7 +111,6 @@ val common = module {
     }
 
     single { httpClient }
-
 }
 
 fun buildAndTestConfig() = module {
@@ -134,19 +133,19 @@ fun buildAndTestConfig() = module {
 fun localDevConfig(config: ApplicationConfig) = module {
     single {
         getDataSource(
-                createHikariConfig(
-                        config.getjdbcUrlFromProperties(),
-                        config.getString("database.username"),
-                        config.getString("database.password")
-                ),
-                config.getString("database.name"),
-                config.getString("database.vault.mountpath")) as DataSource
+            createHikariConfig(
+                config.getjdbcUrlFromProperties(),
+                config.getString("database.username"),
+                config.getString("database.password")
+            ),
+            config.getString("database.name"),
+            config.getString("database.vault.mountpath")
+        ) as DataSource
     }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
     single { PostgresKvitteringRepository(get(), get()) as KvitteringRepository }
     single { PostgresRefusjonskravService(get(), get(), get(), get(), get()) as RefusjonskravService }
     single { PostgresBakgrunnsjobbRepository(get()) as BakgrunnsjobbRepository }
-
 
     single { MockDokarkivKlient() as DokarkivKlient }
     single { StaticMockAuthRepo(get()) as AltinnOrganisationsRepository }
@@ -154,7 +153,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { JoarkService(get()) as JoarkService }
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
-    single {MockAktorConsumer() as AktorConsumer}
+    single { MockAktorConsumer() as AktorConsumer }
     single { MockOppgaveKlient() as OppgaveKlient }
     single { OppgaveService(get(), get()) as OppgaveService }
     single { DummyKvitteringSender() as KvitteringSender }
@@ -163,62 +162,63 @@ fun localDevConfig(config: ApplicationConfig) = module {
 @KtorExperimentalAPI
 fun preprodConfig(config: ApplicationConfig) = module {
     single {
-        getDataSource(createHikariConfig(config.getjdbcUrlFromProperties(), prometheusMetricsTrackerFactory = PrometheusMetricsTrackerFactory()),
-                config.getString("database.name"),
-                config.getString("database.vault.mountpath")) as DataSource
+        getDataSource(
+            createHikariConfig(config.getjdbcUrlFromProperties(), prometheusMetricsTrackerFactory = PrometheusMetricsTrackerFactory()),
+            config.getString("database.name"),
+            config.getString("database.vault.mountpath")
+        ) as DataSource
     }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
     single { PostgresKvitteringRepository(get(), get()) as KvitteringRepository }
     single { PostgresRefusjonskravService(get(), get(), get(), get(), get()) as RefusjonskravService }
     single { PostgresBakgrunnsjobbRepository(get()) as BakgrunnsjobbRepository }
 
-
     single {
         val altinnClient = AltinnRestClient(
-                config.getString("altinn.service_owner_api_url"),
-                config.getString("altinn.gw_api_key"),
-                config.getString("altinn.altinn_api_key"),
-                config.getString("altinn.service_id"),
-                get()
+            config.getString("altinn.service_owner_api_url"),
+            config.getString("altinn.gw_api_key"),
+            config.getString("altinn.altinn_api_key"),
+            config.getString("altinn.service_id"),
+            get()
         )
 
         CachedAuthRepo(altinnClient) as AltinnOrganisationsRepository
     }
 
-    single {SensuClientImpl("sensu.nais", 3030) as SensuClient }
-    single {InfluxReporterImpl("sporenstreks", "dev-fss", "default", get()) as InfluxReporter}
+    single { SensuClientImpl("sensu.nais", 3030) as SensuClient }
+    single { InfluxReporterImpl("sporenstreks", "dev-fss", "default", get()) as InfluxReporter }
 
-    single { RestSTSAccessTokenProvider(
+    single {
+        RestSTSAccessTokenProvider(
             config.getString("service_user.username"),
             config.getString("service_user.password"),
             config.getString("sts_url_rest"),
             get()
-    ) as AccessTokenProvider }
+        ) as AccessTokenProvider
+    }
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
     single { JoarkService(get()) as JoarkService }
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
-
     single { DefaultAltinnAuthorizer(get()) as AltinnAuthorizer }
     single {
-        AktorConsumerImpl(get(),
-                config.getString("service_user.username"),
-                config.getString("aktoerregister.url"),
-                get()
+        AktorConsumerImpl(
+            get(),
+            config.getString("service_user.username"),
+            config.getString("aktoerregister.url"),
+            get()
         ) as AktorConsumer
     }
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
     single { OppgaveService(get(), get()) as OppgaveService }
 
-
-
     single {
         val altinnMeldingWsClient = Clients.iCorrespondenceExternalBasic(
-                config.getString("altinn_melding.pep_gw_endpoint")
+            config.getString("altinn_melding.pep_gw_endpoint")
         )
         val sts = wsStsClient(
-                config.getString("sts_url_ws"),
-                config.getString("service_user.username") to config.getString("service_user.password")
+            config.getString("sts_url_ws"),
+            config.getString("service_user.username") to config.getString("service_user.password")
         )
         sts.configureFor(altinnMeldingWsClient)
         altinnMeldingWsClient as ICorrespondenceAgencyExternalBasic
@@ -226,12 +226,13 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single {
         AltinnKvitteringSender(
-                AltinnKvitteringMapper(config.getString("altinn_melding.service_id")),
-                get(),
-                config.getString("altinn_melding.username"),
-                config.getString("altinn_melding.password"),
-                get())
-                as KvitteringSender
+            AltinnKvitteringMapper(config.getString("altinn_melding.service_id")),
+            get(),
+            config.getString("altinn_melding.username"),
+            config.getString("altinn_melding.password"),
+            get()
+        )
+            as KvitteringSender
     }
 
     single { RefusjonskravProcessor(get(), get(), get(), get(), get()) }
@@ -242,32 +243,35 @@ fun preprodConfig(config: ApplicationConfig) = module {
 @KtorExperimentalAPI
 fun prodConfig(config: ApplicationConfig) = module {
     single {
-        getDataSource(createHikariConfig(config.getjdbcUrlFromProperties(), prometheusMetricsTrackerFactory = PrometheusMetricsTrackerFactory()),
-                config.getString("database.name"),
-                config.getString("database.vault.mountpath")
+        getDataSource(
+            createHikariConfig(config.getjdbcUrlFromProperties(), prometheusMetricsTrackerFactory = PrometheusMetricsTrackerFactory()),
+            config.getString("database.name"),
+            config.getString("database.vault.mountpath")
         ) as DataSource
     }
 
     single {
         val altinn = AltinnRestClient(
-                config.getString("altinn.service_owner_api_url"),
-                config.getString("altinn.gw_api_key"),
-                config.getString("altinn.altinn_api_key"),
-                config.getString("altinn.service_id"),
-                get()
+            config.getString("altinn.service_owner_api_url"),
+            config.getString("altinn.gw_api_key"),
+            config.getString("altinn.altinn_api_key"),
+            config.getString("altinn.service_id"),
+            get()
         )
 
         CachedAuthRepo(altinn) as AltinnOrganisationsRepository
     }
 
-    single {SensuClientImpl("sensu.nais", 3030) as SensuClient }
-    single {InfluxReporterImpl("sporenstreks", "prod-fss", "default", get()) as InfluxReporter}
-    single { RestSTSAccessTokenProvider(
+    single { SensuClientImpl("sensu.nais", 3030) as SensuClient }
+    single { InfluxReporterImpl("sporenstreks", "prod-fss", "default", get()) as InfluxReporter }
+    single {
+        RestSTSAccessTokenProvider(
             config.getString("service_user.username"),
             config.getString("service_user.password"),
             config.getString("sts_url_rest"),
             get()
-    ) as AccessTokenProvider }
+        ) as AccessTokenProvider
+    }
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
     single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
     single { PostgresKvitteringRepository(get(), get()) as KvitteringRepository }
@@ -279,20 +283,21 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
     single { OppgaveService(get(), get()) as OppgaveService }
     single {
-        AktorConsumerImpl(get(),
-                config.getString("service_user.username"),
-                config.getString("aktoerregister.url"),
-                get()
+        AktorConsumerImpl(
+            get(),
+            config.getString("service_user.username"),
+            config.getString("aktoerregister.url"),
+            get()
         ) as AktorConsumer
     }
 
     single {
         val altinnMeldingWsClient = Clients.iCorrespondenceExternalBasic(
-                config.getString("altinn_melding.pep_gw_endpoint")
+            config.getString("altinn_melding.pep_gw_endpoint")
         )
         val sts = wsStsClient(
-                config.getString("sts_url_ws"),
-                config.getString("service_user.username") to config.getString("service_user.password")
+            config.getString("sts_url_ws"),
+            config.getString("service_user.username") to config.getString("service_user.password")
         )
         sts.configureFor(altinnMeldingWsClient)
         altinnMeldingWsClient as ICorrespondenceAgencyExternalBasic
@@ -300,13 +305,13 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single {
         AltinnKvitteringSender(
-                AltinnKvitteringMapper(config.getString("altinn_melding.service_id")),
-                get(),
-                config.getString("altinn_melding.username"),
-                config.getString("altinn_melding.password"),
-                get()
+            AltinnKvitteringMapper(config.getString("altinn_melding.service_id")),
+            get(),
+            config.getString("altinn_melding.username"),
+            config.getString("altinn_melding.password"),
+            get()
         )
-                as KvitteringSender
+            as KvitteringSender
     }
 
     single { RefusjonskravProcessor(get(), get(), get(), get(), get()) }
@@ -322,17 +327,19 @@ fun ApplicationConfig.getString(path: String): String {
 
 @KtorExperimentalAPI
 fun ApplicationConfig.getjdbcUrlFromProperties(): String {
-    return String.format("jdbc:postgresql://%s:%s/%s?reWriteBatchedInserts=true",
-            this.property("database.host").getString(),
-            this.property("database.port").getString(),
-            this.property("database.name").getString())
+    return String.format(
+        "jdbc:postgresql://%s:%s/%s?reWriteBatchedInserts=true",
+        this.property("database.host").getString(),
+        this.property("database.port").getString(),
+        this.property("database.name").getString()
+    )
 }
 
 inline fun <reified T : Any> Koin.getAllOfType(): Collection<T> =
-        let { koin ->
-            koin.rootScope.beanRegistry
-                    .getAllDefinitions()
-                    .filter { it.kind == Kind.Single }
-                    .map { koin.get<Any>(clazz = it.primaryType, qualifier = null, parameters = null) }
-                    .filterIsInstance<T>()
-        }
+    let { koin ->
+        koin.rootScope.beanRegistry
+            .getAllDefinitions()
+            .filter { it.kind == Kind.Single }
+            .map { koin.get<Any>(clazz = it.primaryType, qualifier = null, parameters = null) }
+            .filterIsInstance<T>()
+    }

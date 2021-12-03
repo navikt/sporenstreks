@@ -5,7 +5,7 @@ import no.nav.helse.sporenstreks.web.dto.validation.isValidOrganisasjonsnummer
 import org.valiktor.validate
 
 @Location("/virksomhet/{virksomhetsnummer}")
-data class VirksomhetsOppslagDTO(val virksomhetsnummer: String){
+data class VirksomhetsOppslagDTO(val virksomhetsnummer: String) {
 
     init {
         validate(this) {

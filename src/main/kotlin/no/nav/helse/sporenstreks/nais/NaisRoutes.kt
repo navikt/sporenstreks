@@ -39,7 +39,7 @@ fun Application.nais() {
             val kubernetesProbeManager = this@routing.get<KubernetesProbeManager>()
             val checkResults = kubernetesProbeManager.runReadynessProbe()
             log.debug(checkResults.toString())
-            returnResultOfChecks( checkResults)
+            returnResultOfChecks(checkResults)
         }
 
         get("/metrics") {
@@ -54,10 +54,10 @@ fun Application.nais() {
             val readyResults = kubernetesProbeManager.runReadynessProbe()
             val liveResults = kubernetesProbeManager.runLivenessProbe()
             val combinedResults = ProbeResult(
-                    liveResults.healthyComponents +
-                            liveResults.unhealthyComponents +
-                            readyResults.healthyComponents +
-                            readyResults.unhealthyComponents
+                liveResults.healthyComponents +
+                    liveResults.unhealthyComponents +
+                    readyResults.healthyComponents +
+                    readyResults.unhealthyComponents
             )
 
             returnResultOfChecks(combinedResults)
@@ -72,5 +72,3 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.returnResultOfChecks(
     }
     call.respond(httpResult, checkResults)
 }
-
-

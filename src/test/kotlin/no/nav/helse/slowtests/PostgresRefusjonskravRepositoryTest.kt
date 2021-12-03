@@ -29,27 +29,30 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
     internal fun setUp() {
         startKoin {
             loadKoinModules(common)
-
         }
         repo = PostgresRefusjonskravRepository(HikariDataSource(createNonVaultHikariConfig()), get())
-        refusjonskrav = repo.insert(Refusjonskrav(
+        refusjonskrav = repo.insert(
+            Refusjonskrav(
                 TestData.opprettetAv,
                 TestData.notValidIdentitetsnummer,
                 TestData.validOrgNr,
                 setOf(
-                        Arbeidsgiverperiode(
-                                LocalDate.of(2020, 4, 1),
-                                LocalDate.of(2020, 4, 6),
-                                3, 1000.0
-                        ), Arbeidsgiverperiode(
+                    Arbeidsgiverperiode(
+                        LocalDate.of(2020, 4, 1),
+                        LocalDate.of(2020, 4, 6),
+                        3, 1000.0
+                    ),
+                    Arbeidsgiverperiode(
                         LocalDate.of(2020, 4, 10),
                         LocalDate.of(2020, 4, 12),
                         3, 1000.0
-                )),
+                    )
+                ),
                 RefusjonskravStatus.MOTTATT,
                 "oppgave-id-234234",
                 "joark-ref-1232"
-        ))
+            )
+        )
     }
 
     @AfterEach
@@ -61,7 +64,6 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
         }
         stopKoin()
     }
-
 
     @Test
     fun kan_finne_virksomhet_uten_kvittering() {
@@ -76,26 +78,29 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
 
     @Test
     fun kan_hente_ut_gammelt_refusjonskrav() {
-        val refusjonskrav2 = repo.insert(GammeltRefusjonskrav(
+        val refusjonskrav2 = repo.insert(
+            GammeltRefusjonskrav(
                 TestData.validIdentitetsnummer,
                 TestData.notValidIdentitetsnummer,
                 TestData.validOrgNr,
                 setOf(
-                        Arbeidsgiverperiode(
-                                LocalDate.of(2020, 4, 1),
-                                LocalDate.of(2020, 4, 6),
-                                3, 1000.0
-                        ), Arbeidsgiverperiode(
+                    Arbeidsgiverperiode(
+                        LocalDate.of(2020, 4, 1),
+                        LocalDate.of(2020, 4, 6),
+                        3, 1000.0
+                    ),
+                    Arbeidsgiverperiode(
                         LocalDate.of(2020, 4, 10),
                         LocalDate.of(2020, 4, 12),
                         3, 1000.0
-                )),
+                    )
+                ),
                 GammeltRefusjonskravStatus.MOTTATT,
                 "oppgave-id-234234",
                 "joark-ref-1232"
-        ))
+            )
+        )
         repo.delete(refusjonskrav2.id)
-
     }
 
     fun PostgresRefusjonskravRepository.insert(refusjonskrav: GammeltRefusjonskrav): Refusjonskrav {
@@ -106,7 +111,7 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
             }.executeUpdate()
         }
         return getById(refusjonskrav.id)
-                ?: throw IOException("Unable to read receipt for refusjonskrav with id ${refusjonskrav.id}")
+            ?: throw IOException("Unable to read receipt for refusjonskrav with id ${refusjonskrav.id}")
     }
 
     @Test
@@ -142,24 +147,28 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
     fun `Kan hente innenfor gitt limit fra status`() {
 
         for (i in 1..19) {
-            repo.insert(Refusjonskrav(
+            repo.insert(
+                Refusjonskrav(
                     TestData.opprettetAv,
                     TestData.notValidIdentitetsnummer,
                     TestData.validOrgNr,
                     setOf(
-                            Arbeidsgiverperiode(
-                                    LocalDate.of(2020, 4, 1),
-                                    LocalDate.of(2020, 4, 6),
-                                    3, 1000.0
-                            ), Arbeidsgiverperiode(
+                        Arbeidsgiverperiode(
+                            LocalDate.of(2020, 4, 1),
+                            LocalDate.of(2020, 4, 6),
+                            3, 1000.0
+                        ),
+                        Arbeidsgiverperiode(
                             LocalDate.of(2020, 4, 10),
                             LocalDate.of(2020, 4, 12),
                             3, 1000.0
-                    )),
+                        )
+                    ),
                     RefusjonskravStatus.MOTTATT,
                     "oppgave-id-234234",
                     "joark-ref-1232"
-            ))
+                )
+            )
         }
 
         val tiKrav = repo.getByStatus(RefusjonskravStatus.MOTTATT, 10)
@@ -196,38 +205,42 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
     }
 
     @Test
-    fun `Finner bare krav som er indeksert` (){
+    fun `Finner bare krav som er indeksert`() {
         val ikkeIndeksertListe = repo.getByIkkeIndeksertInflux(100)
         assertThat(ikkeIndeksertListe).hasSize(1)
         val ikkeIndeksert = ikkeIndeksertListe.first()
         ikkeIndeksert.indeksertInflux = true
         repo.update(ikkeIndeksert)
         assertThat(repo.getByIkkeIndeksertInflux(100)).isEmpty()
-        val krav2 = repo.insert(GammeltRefusjonskrav(
+        val krav2 = repo.insert(
+            GammeltRefusjonskrav(
                 TestData.validIdentitetsnummer,
                 TestData.notValidIdentitetsnummer,
                 TestData.validOrgNr,
                 setOf(
-                        Arbeidsgiverperiode(
-                                LocalDate.of(2020, 4, 1),
-                                LocalDate.of(2020, 4, 6),
-                                3, 1000.0
-                        ), Arbeidsgiverperiode(
+                    Arbeidsgiverperiode(
+                        LocalDate.of(2020, 4, 1),
+                        LocalDate.of(2020, 4, 6),
+                        3, 1000.0
+                    ),
+                    Arbeidsgiverperiode(
                         LocalDate.of(2020, 4, 10),
                         LocalDate.of(2020, 4, 12),
                         3, 1000.0
-                )),
+                    )
+                ),
                 GammeltRefusjonskravStatus.MOTTATT,
                 "oppgave-id-234234",
                 "joark-ref-1232"
-        ))
+            )
+        )
         assertThat(repo.getByIkkeIndeksertInflux(100)).hasSize(1)
         repo.delete(krav2.id)
     }
 
     @Test
     fun `Ignorerer ikke opprettetAv ved serialisering til database`() {
-        val savedKrav =  repo.insert(refusjonskrav)
+        val savedKrav = repo.insert(refusjonskrav)
 
         repo.getById(savedKrav.id)
 

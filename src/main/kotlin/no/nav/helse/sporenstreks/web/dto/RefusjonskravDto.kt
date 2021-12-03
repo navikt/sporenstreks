@@ -15,9 +15,9 @@ import org.valiktor.validate
 import java.time.LocalDate
 
 data class RefusjonskravDto(
-        val identitetsnummer: String,
-        val virksomhetsnummer: String,
-        val perioder: Set<Arbeidsgiverperiode>
+    val identitetsnummer: String,
+    val virksomhetsnummer: String,
+    val perioder: Set<Arbeidsgiverperiode>
 ) {
 
     init {
@@ -38,7 +38,6 @@ data class RefusjonskravDto(
                 validate(Arbeidsgiverperiode::tom).isGreaterThanOrEqualTo(it.fom)
                 validate(Arbeidsgiverperiode::tom).isLessThanOrEqualTo(LocalDate.now())
             }
-
 
             // antall refusjonsdager kan ikke være lenger enn periodens lengde
             validate(RefusjonskravDto::perioder).refujonsDagerIkkeOverstigerPeriodelengder()

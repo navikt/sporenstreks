@@ -10,7 +10,6 @@ import no.nav.helse.sporenstreks.web.sporenstreksModule
 import org.junit.jupiter.api.Test
 import org.koin.ktor.ext.get
 
-
 @KtorExperimentalAPI
 class HealthCheckTests : ControllerIntegrationTestBase() {
     @Test
@@ -18,7 +17,6 @@ class HealthCheckTests : ControllerIntegrationTestBase() {
         configuredTestApplication({
             sporenstreksModule()
             get<StaticMockAuthRepo>().failSelfCheck = true
-
         }) {
             val probeManager = application.get<KubernetesProbeManager>()
             probeManager.registerReadynessComponent(application.get<StaticMockAuthRepo>())
@@ -34,7 +32,6 @@ class HealthCheckTests : ControllerIntegrationTestBase() {
         configuredTestApplication({
             sporenstreksModule()
             get<StaticMockAuthRepo>().failSelfCheck = false
-
         }) {
             val probeManager = application.get<KubernetesProbeManager>()
             probeManager.registerReadynessComponent(application.get<StaticMockAuthRepo>())

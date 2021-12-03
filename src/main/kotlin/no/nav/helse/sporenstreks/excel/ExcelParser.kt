@@ -1,9 +1,9 @@
 package no.nav.helse.sporenstreks.excel
 
 import no.nav.helse.arbeidsgiver.web.auth.AltinnAuthorizer
-import no.nav.helse.sporenstreks.excel.ExcelBulkService.Companion.startDataRowAt
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
+import no.nav.helse.sporenstreks.excel.ExcelBulkService.Companion.startDataRowAt
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import no.nav.helse.sporenstreks.web.dto.validation.getContextualMessage
 import org.apache.poi.ss.usermodel.CellType
@@ -18,7 +18,6 @@ import javax.ws.rs.ForbiddenException
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
 
-
 class ExcelParser(private val authorizer: AltinnAuthorizer) {
     fun parseAndValidateExcelContent(workbook: Workbook, opprettetAv: String): ExcelParsingResult {
         val sheet = workbook.getSheetAt(0)
@@ -28,37 +27,44 @@ class ExcelParser(private val authorizer: AltinnAuthorizer) {
 
         var currentDataRow = startDataRowAt
         val parseRunId = UUID.randomUUID().toString()
-        var row :Row? = sheet.getRow(currentDataRow)
+        var row: Row? = sheet.getRow(currentDataRow)
 
         while (row != null && row.extractRawValue(0) != "") {
             try {
                 val krav = extractRefusjonsKravFromExcelRow(row, opprettetAv, parseRunId)
                 refusjonsKrav.add(krav)
             } catch (ex: ForbiddenException) {
-                errorRows.add(ExcelFileRowError(
-                        currentDataRow+1,
+                errorRows.add(
+                    ExcelFileRowError(
+                        currentDataRow + 1,
                         "Virksomhetsnummer",
-                        "Du har ikke korrekte tilganger for denne virksomheten, eller dette er ikke et virksomhetsnummer")
+                        "Du har ikke korrekte tilganger for denne virksomheten, eller dette er ikke et virksomhetsnummer"
+                    )
                 )
-            } catch(valErr: ConstraintViolationException) {
+            } catch (valErr: ConstraintViolationException) {
                 errorRows.addAll(
-                        valErr.constraintViolations.map { ExcelFileRowError(
-                            currentDataRow+1, valiktorPropertiesToExcelColumnNames(it.property), it.getContextualMessage())
-                        }
+                    valErr.constraintViolations.map {
+                        ExcelFileRowError(
+                            currentDataRow + 1, valiktorPropertiesToExcelColumnNames(it.property), it.getContextualMessage()
+                        )
+                    }
                 )
             } catch (ex: CellValueExtractionException) {
-                errorRows.add(ExcelFileRowError(
-                        currentDataRow+1,
+                errorRows.add(
+                    ExcelFileRowError(
+                        currentDataRow + 1,
                         ex.columnName,
-                        ex.message ?: "Ukjent feil")
+                        ex.message ?: "Ukjent feil"
+                    )
                 )
-            } catch(ex: Exception) {
-                errorRows.add(ExcelFileRowError(
-                        currentDataRow+1,
+            } catch (ex: Exception) {
+                errorRows.add(
+                    ExcelFileRowError(
+                        currentDataRow + 1,
                         "Ukjent feil",
-                        ex.message ?: "Ukjent feil")
+                        ex.message ?: "Ukjent feil"
+                    )
                 )
-
             } finally {
                 row = sheet.getRow(++currentDataRow)
             }
@@ -76,12 +82,11 @@ class ExcelParser(private val authorizer: AltinnAuthorizer) {
         val antallDager = row.extractDouble(4, "Antall arbeidsdager med refusjon").toInt()
         val beloep = row.extractDouble(5, "Beløp")
 
-
         // create DTO instance for validation
         val refusjonskrav = RefusjonskravDto(
-                identitetsnummer,
-                virksomhetsNummer,
-                setOf(Arbeidsgiverperiode(fom, tom, antallDager, beloep))
+            identitetsnummer,
+            virksomhetsNummer,
+            setOf(Arbeidsgiverperiode(fom, tom, antallDager, beloep))
         )
 
         // authorize the use
@@ -91,11 +96,11 @@ class ExcelParser(private val authorizer: AltinnAuthorizer) {
 
         // map to domain instance for insertion into Database
         return Refusjonskrav(
-                opprettetAv,
-                refusjonskrav.identitetsnummer,
-                refusjonskrav.virksomhetsnummer,
-                refusjonskrav.perioder,
-                kilde = "XLSX-$correlationId"
+            opprettetAv,
+            refusjonskrav.identitetsnummer,
+            refusjonskrav.virksomhetsnummer,
+            refusjonskrav.perioder,
+            kilde = "XLSX-$correlationId"
         )
     }
 
@@ -136,7 +141,7 @@ class ExcelParser(private val authorizer: AltinnAuthorizer) {
     }
 
     private fun valiktorPropertiesToExcelColumnNames(valiktokProp: String): String {
-        return when(valiktokProp) {
+        return when (valiktokProp) {
             "identitetsnummer" -> "Fødselsnummer"
             "virksomhetsnummer" -> "Virksomhetsnummer"
             "perioder" -> "Arbeidsgiverperioden (fom+tom)"
@@ -156,4 +161,3 @@ class ExcelParser(private val authorizer: AltinnAuthorizer) {
         fun hasErrors(): Boolean = errors.isNotEmpty()
     }
 }
-

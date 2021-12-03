@@ -54,5 +54,4 @@ class PDFGenerator {
         doc.close()
         return ba
     }
-
 }

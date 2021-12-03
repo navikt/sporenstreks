@@ -5,21 +5,19 @@ import io.ktor.config.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.util.*
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
-import no.nav.helse.sporenstreks.prosessering.kvittering.KvitteringProcessor
-import no.nav.helse.sporenstreks.prosessering.metrics.ProcessInfluxJob
 import kotlinx.coroutines.runBlocking
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import no.nav.helse.arbeidsgiver.system.AppEnv
 import no.nav.helse.arbeidsgiver.system.getEnvironment
 import no.nav.helse.sporenstreks.auth.localCookieDispenser
+import no.nav.helse.sporenstreks.prosessering.kvittering.KvitteringProcessor
+import no.nav.helse.sporenstreks.prosessering.metrics.ProcessInfluxJob
 import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravProcessor
 import org.koin.ktor.ext.getKoin
 import org.slf4j.LoggerFactory
-
-
 
 val mainLogger = LoggerFactory.getLogger("main")
 
@@ -34,14 +32,16 @@ fun main() {
 
         try {
             initBackgroundWorkers(app)
-        } catch(ex: Exception) {
+        } catch (ex: Exception) {
             // Ved enhver feil i oppstart av bakgrunnsjobbene dra ned applikasjonen slik at vi blir restartet av kubernetes
-            app.stop(1000,1000)
+            app.stop(1000, 1000)
         }
 
-        Runtime.getRuntime().addShutdownHook(Thread {
-            app.stop(1000, 1000)
-        })
+        Runtime.getRuntime().addShutdownHook(
+            Thread {
+                app.stop(1000, 1000)
+            }
+        )
     }
 }
 
@@ -69,12 +69,11 @@ private suspend fun autoDetectProbeableComponents(koin: org.koin.core.Koin) {
     val kubernetesProbeManager = koin.get<KubernetesProbeManager>()
 
     koin.getAllOfType<LivenessComponent>()
-            .forEach { kubernetesProbeManager.registerLivenessComponent(it) }
+        .forEach { kubernetesProbeManager.registerLivenessComponent(it) }
 
     koin.getAllOfType<ReadynessComponent>()
-            .forEach { kubernetesProbeManager.registerReadynessComponent(it) }
+        .forEach { kubernetesProbeManager.registerReadynessComponent(it) }
 }
-
 
 @KtorExperimentalAPI
 fun createApplicationEnvironment() = applicationEngineEnvironment {
@@ -91,4 +90,3 @@ fun createApplicationEnvironment() = applicationEngineEnvironment {
         sporenstreksModule(config)
     }
 }
-

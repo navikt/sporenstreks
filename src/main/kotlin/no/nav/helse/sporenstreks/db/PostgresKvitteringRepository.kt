@@ -26,7 +26,6 @@ class PostgresKvitteringRepository(val ds: DataSource, val mapper: ObjectMapper)
 
     private val deleteStatement = "DELETE FROM $tableName WHERE data ->> 'id' = ?"
 
-
     override fun insert(kvittering: Kvittering): Kvittering {
         val json = mapper.writeValueAsString(kvittering)
         ds.connection.use {
@@ -36,7 +35,7 @@ class PostgresKvitteringRepository(val ds: DataSource, val mapper: ObjectMapper)
         }
 
         return getById(kvittering.id)
-                ?: throw IOException("Unable to read receipt for kvittering with id ${kvittering.id}")
+            ?: throw IOException("Unable to read receipt for kvittering with id ${kvittering.id}")
     }
 
     override fun insert(kvittering: Kvittering, connection: Connection): Kvittering {
@@ -61,7 +60,6 @@ class PostgresKvitteringRepository(val ds: DataSource, val mapper: ObjectMapper)
             return existingYpList.firstOrNull()
         }
     }
-
 
     override fun getByStatus(status: KvitteringStatus, limit: Int): List<Kvittering> {
         ds.connection.use { con ->

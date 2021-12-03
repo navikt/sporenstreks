@@ -11,7 +11,7 @@ class CachedAuthRepo(private val sourceRepo: AltinnOrganisationsRepository) : Al
     val logger = LoggerFactory.getLogger(CachedAuthRepo::class.java)
 
     override fun hentOrgMedRettigheterForPerson(identitetsnummer: String): Set<AltinnOrganisasjon> {
-        if(cache.hasValidCacheEntry(identitetsnummer)) {
+        if (cache.hasValidCacheEntry(identitetsnummer)) {
             logger.debug("Cache hit")
             return cache.get(identitetsnummer)
         }

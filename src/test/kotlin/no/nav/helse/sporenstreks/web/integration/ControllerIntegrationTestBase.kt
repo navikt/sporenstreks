@@ -3,7 +3,6 @@ package no.nav.helse.sporenstreks.web.integration
 import io.ktor.application.Application
 import io.ktor.config.ApplicationConfig
 import io.ktor.config.MapApplicationConfig
-import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.server.testing.*
 import io.ktor.util.KtorExperimentalAPI
@@ -21,7 +20,7 @@ open class ControllerIntegrationTestBase : KoinTest {
     protected val defaultSubject = TestData.validIdentitetsnummer
     private val testConfig: ApplicationConfig
     protected val idTokenCookieName = "selvbetjening-idtoken"
-    var server : MockOAuth2Server? = null
+    var server: MockOAuth2Server? = null
 
     @BeforeAll
     fun before() {
@@ -48,9 +47,9 @@ open class ControllerIntegrationTestBase : KoinTest {
     }
 
     fun TestApplicationEngine.doAuthenticatedRequest(
-            method: HttpMethod,
-            uri: String,
-            setup: TestApplicationRequest.() -> Unit = {}
+        method: HttpMethod,
+        uri: String,
+        setup: TestApplicationRequest.() -> Unit = {}
     ): TestApplicationCall = handleRequest {
 
         this.uri = uri
@@ -60,7 +59,7 @@ open class ControllerIntegrationTestBase : KoinTest {
     }
 
     @KtorExperimentalAPI
-    private fun addIntegrationTestConfigValues(config : MapApplicationConfig) {
+    private fun addIntegrationTestConfigValues(config: MapApplicationConfig) {
         val acceptedIssuer = "default"
         val acceptedAudience = "default"
 
@@ -74,5 +73,3 @@ open class ControllerIntegrationTestBase : KoinTest {
         }
     }
 }
-
-

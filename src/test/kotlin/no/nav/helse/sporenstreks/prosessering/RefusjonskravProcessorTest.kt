@@ -30,14 +30,13 @@ class RefusjonskravProcessorTest {
     @BeforeEach
     fun setup() {
         refusjonskrav = Refusjonskrav(
-                opprettetAv = "123",
-                identitetsnummer = "123",
-                virksomhetsnummer = "213",
-                perioder = emptySet(),
-                status = RefusjonskravStatus.JOBB
+            opprettetAv = "123",
+            identitetsnummer = "123",
+            virksomhetsnummer = "213",
+            perioder = emptySet(),
+            status = RefusjonskravStatus.JOBB
         )
     }
-
 
     @Test
     fun `skal ikke journalføre når det allerede foreligger en journalpostId `() {
@@ -74,7 +73,6 @@ class RefusjonskravProcessorTest {
         verify(exactly = 1) { oppgaveMock.opprettOppgave(any(), any(), any(), any()) }
         verify(exactly = 1) { repositoryMock.update(refusjonskrav) }
     }
-
 
     @Test
     fun `Ved feil skal kravet fortsatt ha status JOBB og joarkref om det finnes  og kaste exception oppover`() {

@@ -25,5 +25,4 @@ class MockRefusjonskravService(val refusjonskravRepo: RefusjonskravRepository) :
     override fun bulkInsert(kravListe: List<Refusjonskrav>): List<Int> {
         return refusjonskravRepo.bulkInsert(kravListe)
     }
-
 }

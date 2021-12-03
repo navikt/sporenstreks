@@ -19,7 +19,6 @@ class MockRefusjonskravRepo : RefusjonskravRepository {
         return insert(refusjonskrav)
     }
 
-
     override fun update(krav: Refusjonskrav, connection: Connection) {
         update(krav)
     }
@@ -50,8 +49,9 @@ class MockRefusjonskravRepo : RefusjonskravRepository {
 
     override fun delete(id: UUID): Int {
         return if (refusjonskravListe.removeIf {
-                    it.id == id
-                }) 1 else 0
+            it.id == id
+        }
+        ) 1 else 0
     }
 
     override fun getById(id: UUID): Refusjonskrav {
@@ -71,7 +71,6 @@ class MockRefusjonskravRepo : RefusjonskravRepository {
     }
 
     override fun update(krav: Refusjonskrav) {
-
     }
 
     override fun bulkInsert(kravListe: List<Refusjonskrav>): List<Int> {

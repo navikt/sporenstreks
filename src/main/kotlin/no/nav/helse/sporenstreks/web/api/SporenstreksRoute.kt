@@ -63,10 +63,10 @@ fun Route.sporenstreks(authorizer: AltinnAuthorizer, authRepo: AltinnOrganisatio
                     val opprettetAv = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
 
                     val domeneKrav = Refusjonskrav(
-                            opprettetAv,
-                            refusjonskrav.identitetsnummer,
-                            refusjonskrav.virksomhetsnummer,
-                            refusjonskrav.perioder
+                        opprettetAv,
+                        refusjonskrav.identitetsnummer,
+                        refusjonskrav.virksomhetsnummer,
+                        refusjonskrav.perioder
                     )
                     val saved = refusjonskravService.saveKravWithKvittering(domeneKrav)
                     call.respond(HttpStatusCode.OK, saved)
@@ -79,12 +79,17 @@ fun Route.sporenstreks(authorizer: AltinnAuthorizer, authRepo: AltinnOrganisatio
             get("/virksomhet/{virksomhetsnummer}") {
                 val virksomhetsnummer = requireNotNull(call.parameters["virksomhetsnummer"])
                 authorize(authorizer, virksomhetsnummer)
-                call.respond(HttpStatusCode.OK, refusjonskravService.getAllForVirksomhet(virksomhetsnummer)
+                call.respond(
+                    HttpStatusCode.OK,
+                    refusjonskravService.getAllForVirksomhet(virksomhetsnummer)
                         .map {
-                            RefusjonskravDto(it.identitetsnummer,
-                                    it.virksomhetsnummer,
-                                    it.perioder)
-                        })
+                            RefusjonskravDto(
+                                it.identitetsnummer,
+                                it.virksomhetsnummer,
+                                it.perioder
+                            )
+                        }
+                )
             }
 
             post("/list") {
@@ -101,12 +106,12 @@ fun Route.sporenstreks(authorizer: AltinnAuthorizer, authRepo: AltinnOrganisatio
                     try {
                         val dto = om.readValue<RefusjonskravDto>(jsonTree[i].traverse())
                         authorize(authorizer, dto.virksomhetsnummer)
-                        val opprettetAv = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request) //burde denne være lengre opp?
+                        val opprettetAv = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request) // burde denne være lengre opp?
                         domeneListeMedIndex[i] = Refusjonskrav(
-                                opprettetAv,
-                                dto.identitetsnummer,
-                                dto.virksomhetsnummer,
-                                dto.perioder
+                            opprettetAv,
+                            dto.identitetsnummer,
+                            dto.virksomhetsnummer,
+                            dto.perioder
                         )
                     } catch (forbiddenEx: ForbiddenException) {
                         responseBody[i] = PostListResponseDto(status = PostListResponseDto.Status.GENERIC_ERROR, genericMessage = "Ingen tilgang til virksomheten")
@@ -152,9 +157,9 @@ fun Route.sporenstreks(authorizer: AltinnAuthorizer, authRepo: AltinnOrganisatio
                 val multipart = call.receiveMultipart()
 
                 val fileItem = multipart.readAllParts()
-                        .filterIsInstance<PartData.FileItem>()
-                        .firstOrNull()
-                        ?: throw IllegalArgumentException()
+                    .filterIsInstance<PartData.FileItem>()
+                    .firstOrNull()
+                    ?: throw IllegalArgumentException()
 
                 val maxUploadSize = 250 * 1024
 
@@ -165,12 +170,11 @@ fun Route.sporenstreks(authorizer: AltinnAuthorizer, authRepo: AltinnOrganisatio
                 }
 
                 ExcelBulkService(refusjonskravService, ExcelParser(authorizer))
-                        .processExcelFile(bytes.inputStream(), id)
+                    .processExcelFile(bytes.inputStream(), id)
 
                 call.respond(HttpStatusCode.OK, "Søknaden er mottatt.")
             }
         }
-
 
         route("/arbeidsgivere") {
             get() {

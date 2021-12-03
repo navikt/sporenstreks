@@ -6,12 +6,10 @@ import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.util.*
-import io.prometheus.client.hotspot.DefaultExports
 import no.nav.helse.arbeidsgiver.system.AppEnv
 import no.nav.helse.arbeidsgiver.system.getEnvironment
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import org.slf4j.LoggerFactory
-import java.net.InetAddress
 
 @KtorExperimentalAPI
 fun Application.localCookieDispenser(config: ApplicationConfig) {
@@ -29,9 +27,9 @@ fun Application.localCookieDispenser(config: ApplicationConfig) {
         get("/local/cookie-please") {
 
             val token = server.issueToken(
-                    subject = call.request.queryParameters["subject"].toString(),
-                    issuerId = issuerName,
-                    audience = audience
+                subject = call.request.queryParameters["subject"].toString(),
+                issuerId = issuerName,
+                audience = audience
             )
             call.response.cookies.append(Cookie(cookieName, token.serialize(), CookieEncoding.RAW, domain = domain, path = "/"))
 
