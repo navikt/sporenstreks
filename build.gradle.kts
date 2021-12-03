@@ -46,22 +46,6 @@ sonarqube {
     }
 }
 
-tasks.jacocoTestReport {
-    executionData("build/jacoco/test.exec", "build/jacoco/slowTests.exec")
-    reports {
-        xml.isEnabled = true
-        html.isEnabled = true
-    }
-}
-
-tasks.withType<JacocoReport> {
-    classDirectories.setFrom(
-        sourceSets.main.get().output.asFileTree.matching {
-            exclude("**/Koin**", "**/App**", "**Mock**")
-        }
-    )
-}
-
 buildscript {
     dependencies {
         classpath("org.junit.platform:junit-platform-gradle-plugin:1.2.0")
@@ -139,8 +123,6 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
 }
 
-tasks.named<KotlinCompile>("compileKotlin")
-
 tasks.named<KotlinCompile>("compileKotlin") {
     kotlinOptions.jvmTarget = "11"
 }
@@ -202,6 +184,22 @@ task<Test>("slowTests") {
     include("no/nav/helse/slowtests/**")
     outputs.upToDateWhen { false }
     group = "verification"
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.isEnabled = true
+        html.isEnabled = true
+    }
+}
+
+tasks.withType<JacocoReport> {
+    classDirectories.setFrom(
+        sourceSets.main.get().output.asFileTree.matching {
+            exclude("**/Koin**", "**/App**", "**Mock**")
+        }
+    )
 }
 
 configure<io.snyk.gradle.plugin.SnykExtension> {
