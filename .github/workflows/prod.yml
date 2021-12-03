@@ -71,6 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      
       - uses: nais/deploy/actions/deploy@v1
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
@@ -78,4 +79,4 @@ jobs:
           RESOURCE: deploy/prod.yaml
           TEAM: helsearbeidsgiver
           REF: ${{ env.COMMIT }}
-          IMAGE: ${{ env.IMAGE }}
+          IMAGE: ${{ env.IMAGE }}:${{ github.sha }}
