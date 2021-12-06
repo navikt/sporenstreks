@@ -56,8 +56,6 @@ import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravProcess
 import no.nav.helse.sporenstreks.service.MockRefusjonskravService
 import no.nav.helse.sporenstreks.service.PostgresRefusjonskravService
 import no.nav.helse.sporenstreks.service.RefusjonskravService
-import org.koin.core.Koin
-import org.koin.core.definition.Kind
 import org.koin.core.module.Module
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -334,12 +332,3 @@ fun ApplicationConfig.getjdbcUrlFromProperties(): String {
         this.property("database.name").getString()
     )
 }
-
-inline fun <reified T : Any> Koin.getAllOfType(): Collection<T> =
-    let { koin ->
-        koin.rootScope.beanRegistry
-            .getAllDefinitions()
-            .filter { it.kind == Kind.Single }
-            .map { koin.get<Any>(clazz = it.primaryType, qualifier = null, parameters = null) }
-            .filterIsInstance<T>()
-    }
