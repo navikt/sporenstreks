@@ -14,7 +14,7 @@ val assertJVersion = "3.21.0"
 val mockKVersion = "1.12.1"
 val tokenSupportVersion = "1.3.9"
 val mockOAuth2ServerVersion = "0.3.6"
-val koinVersion = "2.0.1"
+val koinVersion = "3.1.3"
 val valiktorVersion = "0.12.0"
 val cxfVersion = "3.4.5"
 val jaxwsVersion = "2.3.1"
@@ -42,22 +42,6 @@ repositories {
             password = githubPassword
         }
         setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
-    }
-}
-
-sonarqube {
-    properties {
-        property("sonar.projectKey", "navikt_sporenstreks")
-        property("sonar.organization", "navit")
-        property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.login", System.getenv("SONAR_TOKEN"))
-        property("sonar.exclusions", "**/Koin*,**Mock**,**/App**")
-    }
-}
-
-buildscript {
-    dependencies {
-        classpath("org.junit.platform:junit-platform-gradle-plugin:1.2.0")
     }
 }
 
@@ -119,20 +103,13 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
 }
 
-tasks.named<KotlinCompile>("compileKotlin") {
+tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "11"
 }
 
-tasks.named<KotlinCompile>("compileTestKotlin") {
-    kotlinOptions.jvmTarget = "11"
+tasks.test {
+    useJUnitPlatform()
 }
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-}
-
-
 
 tasks.jar {
     archiveBaseName.set("app")
@@ -150,6 +127,29 @@ tasks.jar {
         }
     }
 }
+
+
+
+buildscript {
+    dependencies {
+        classpath("org.junit.platform:junit-platform-gradle-plugin:1.2.0")
+    }
+}
+
+tasks.named<KotlinCompile>("compileKotlin") {
+    kotlinOptions.jvmTarget = "11"
+}
+
+tasks.named<KotlinCompile>("compileTestKotlin") {
+    kotlinOptions.jvmTarget = "11"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+
 
 tasks.withType<Test> {
     useJUnitPlatform()
@@ -196,4 +196,14 @@ configure<io.snyk.gradle.plugin.SnykExtension> {
 
 tasks.withType<Wrapper> {
     gradleVersion = "7.3"
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "navikt_sporenstreks")
+        property("sonar.organization", "navit")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.login", System.getenv("SONAR_TOKEN"))
+        property("sonar.exclusions", "**/Koin*,**Mock**,**/App**")
+    }
 }
