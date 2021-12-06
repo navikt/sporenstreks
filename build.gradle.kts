@@ -32,6 +32,10 @@ plugins {
     jacoco
 }
 
+application {
+    mainClass.set("no.nav.helse.sporenstreks.web.AppKt")
+}
+
 sonarqube {
     properties {
         property("sonar.projectKey", "navikt_sporenstreks")

@@ -2,6 +2,7 @@ package no.nav.helse.sporenstreks.excel
 
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.verify
 import no.nav.helse.TestData
 import no.nav.helse.arbeidsgiver.web.auth.AltinnAuthorizer
@@ -10,6 +11,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 internal class ExcelParserTest {
 
@@ -21,6 +23,8 @@ internal class ExcelParserTest {
     @BeforeEach
     fun setup() {
         every { authorizerMock.hasAccess(any(), any()) } returns true
+        mockkStatic(LocalDate::class)
+        every { LocalDate.now() } returns LocalDate.parse("2020-06-06")
     }
 
     @Test

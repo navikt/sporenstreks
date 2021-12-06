@@ -5,7 +5,6 @@ import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.arbeidsgiv
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.maksOppholdMellomPerioder
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.maksimalAGPLengde
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.refusjonFraDato
-import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.refusjonTilDato
 import no.nav.helse.sporenstreks.web.dto.validation.*
 import org.valiktor.functions.isGreaterThanOrEqualTo
 import org.valiktor.functions.isLessThanOrEqualTo
@@ -31,8 +30,8 @@ data class RefusjonskravDto(
                 validate(Arbeidsgiverperiode::antallDagerMedRefusjon).isPositiveOrZero()
             }
 
-            // kan ikke kreve refusjon for dager etter gjenåpning 1 oktober 2021
-            validate(RefusjonskravDto::perioder).refusjonsdatoIkkeEtterGjenåpning(refusjonTilDato)
+            // Det kan ikke kreves refusjon fra og med 1. oktober 2021 til og med 30. november 2021 eller for lenger enn 6 måneder siden.
+            validate(RefusjonskravDto::perioder).refusjonsdatoIkkeiGjenåpning()
 
             validate(RefusjonskravDto::perioder).validateForEach {
                 validate(Arbeidsgiverperiode::tom).isGreaterThanOrEqualTo(it.fom)
@@ -42,7 +41,7 @@ data class RefusjonskravDto(
             // antall refusjonsdager kan ikke være lenger enn periodens lengde
             validate(RefusjonskravDto::perioder).refujonsDagerIkkeOverstigerPeriodelengder()
 
-            // kan ikke kreve refusjon for dager før 16. mars
+            // kan ikke kreve refusjon for dager før 16. mars 2020
             validate(RefusjonskravDto::perioder).refusjonsdagerInnenforGyldigPeriode(refusjonFraDato)
 
             // Summen av antallDagerMedRefusjon kan ikke overstige total periodelengde - 3 dager

@@ -36,7 +36,7 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.arbeidsgiverBetale
                 arbeidsgiverdagerUtenRefusjon += ChronoUnit.DAYS.between(it.fom, d).toInt()
             }
         }
-        val oppgitteRefusjonsdager = ps!!.sumBy { it.antallDagerMedRefusjon }
+        val oppgitteRefusjonsdager = ps.sumOf { it.antallDagerMedRefusjon }
 
         arbeidsgiverdagerUtenRefusjon = min(arbeidsgiverdagerUtenRefusjon, arbeidsgiverensDager)
 
@@ -114,9 +114,9 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdagerInne
     }
 
 class RefusjonsdagerInnenforGjenaapningConstraint : CustomConstraint
-fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdatoIkkeEtterGjenåpning(refusjonsdagerTom: LocalDate) =
+fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdatoIkkeiGjenåpning() =
     this.validate(RefusjonsdagerInnenforGjenaapningConstraint()) { ps ->
         ps!!.all { p ->
-            (p.fom < refusjonsdagerTom)
+            p.innenforGammelPeriode(p) || p.innenforNyPeriode(p)
         }
     }
