@@ -66,15 +66,13 @@ private fun initBackgroundWorkers(app: NettyApplicationEngine) {
     mainLogger.info("La til probeable komponenter")
 }
 
-private suspend fun autoDetectProbeableComponents(koin: org.koin.core.Koin) {
+private fun autoDetectProbeableComponents(koin: org.koin.core.Koin) {
     val kubernetesProbeManager = koin.get<KubernetesProbeManager>()
-
     getKoin().getAll<LivenessComponent>()
         .forEach { kubernetesProbeManager.registerLivenessComponent(it) }
 
     getKoin().getAll<ReadynessComponent>()
         .forEach { kubernetesProbeManager.registerReadynessComponent(it) }
-
 }
 
 @KtorExperimentalAPI
