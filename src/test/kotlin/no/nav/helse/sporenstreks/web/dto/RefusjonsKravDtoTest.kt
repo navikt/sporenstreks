@@ -25,11 +25,13 @@ internal class RefusjonsKravDtoTest {
         RefusjonskravDto(
             TestData.validIdentitetsnummer,
             TestData.validOrgNr,
-            setOf(Arbeidsgiverperiode(
-                LocalDate.of(2021, 12, 2),
-                LocalDate.of(2021, 12, 6),
-                2, 2.3
-            ))
+            setOf(
+                Arbeidsgiverperiode(
+                    LocalDate.of(2021, 12, 2),
+                    LocalDate.of(2021, 12, 6),
+                    2, 2.3
+                )
+            )
         )
     }
 
@@ -38,11 +40,13 @@ internal class RefusjonsKravDtoTest {
         RefusjonskravDto(
             TestData.validIdentitetsnummer,
             TestData.validOrgNr,
-            setOf(Arbeidsgiverperiode(
-                LocalDate.of(2021, 9, 2),
-                LocalDate.of(2021, 9, 6),
-                2, 2.3
-            ))
+            setOf(
+                Arbeidsgiverperiode(
+                    LocalDate.of(2021, 9, 2),
+                    LocalDate.of(2021, 9, 6),
+                    2, 2.3
+                )
+            )
         )
     }
 
