@@ -5,13 +5,13 @@ val kotlinVersion = "1.5.30"
 val ktorVersion = "1.6.6"
 val logbackVersion = "1.2.1"
 val logbackContribVersion = "0.1.5"
-val jacksonVersion = "2.11.2"
-val prometheusVersion = "0.6.0"
+val jacksonVersion = "2.13.0"
+val prometheusVersion = "0.12.0"
 val hikariVersion = "3.3.1"
 val vaultJdbcVersion = "1.3.7"
 val junitJupiterVersion = "5.8.1"
 val assertJVersion = "3.21.0"
-val mockKVersion = "1.9.3"
+val mockKVersion = "1.12.1"
 val tokenSupportVersion = "1.3.9"
 val mockOAuth2ServerVersion = "0.3.6"
 val koinVersion = "3.1.4"
@@ -20,7 +20,7 @@ val cxfVersion = "3.4.1"
 val jaxwsVersion = "2.3.1"
 val jaxwsToolsVersion = "2.3.3"
 val apachePoiVersion = "5.0.0"
-val influxVersion = "2.20"
+val influxVersion = "2.21"
 val githubPassword: String by project
 
 plugins {
@@ -101,12 +101,12 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:4.9")
     implementation("org.codehaus.janino:janino:3.0.6")
     implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:1.2019.09.25-00.21-49b69f0625e0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("no.nav:vault-jdbc:$vaultJdbcVersion")
-    implementation("org.postgresql:postgresql:42.2.23")
+    implementation("org.postgresql:postgresql:42.3.1")
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("org.influxdb:influxdb-java:$influxVersion")
