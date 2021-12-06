@@ -2,25 +2,25 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val mainClass = "no.nav.helse.sporenstreks.web.AppKt"
 val kotlinVersion = "1.5.30"
-val ktorVersion = "1.5.3"
-val logbackVersion = "1.2.1"
+val ktorVersion = "1.6.6"
+val logbackVersion = "1.2.7"
 val logbackContribVersion = "0.1.5"
-val jacksonVersion = "2.11.2"
-val prometheusVersion = "0.6.0"
-val hikariVersion = "3.3.1"
+val jacksonVersion = "2.13.0"
+val prometheusVersion = "0.12.0"
+val hikariVersion = "5.0.0"
 val vaultJdbcVersion = "1.3.7"
-val junitJupiterVersion = "5.7.0"
-val assertJVersion = "3.12.2"
-val mockKVersion = "1.9.3"
-val tokenSupportVersion = "1.3.8"
-val mockOAuth2ServerVersion = "0.3.4"
+val junitJupiterVersion = "5.8.1"
+val assertJVersion = "3.21.0"
+val mockKVersion = "1.12.1"
+val tokenSupportVersion = "1.3.9"
+val mockOAuth2ServerVersion = "0.3.6"
 val koinVersion = "2.0.1"
-val valiktorVersion = "0.10.0"
-val cxfVersion = "3.4.1"
+val valiktorVersion = "0.12.0"
+val cxfVersion = "3.4.5"
 val jaxwsVersion = "2.3.1"
-val jaxwsToolsVersion = "2.3.3"
-val apachePoiVersion = "4.1.2"
-val influxVersion = "2.20"
+val jaxwsToolsVersion = "3.0.1"
+val apachePoiVersion = "5.0.0"
+val influxVersion = "2.21"
 val githubPassword: String by project
 
 plugins {
@@ -53,19 +53,6 @@ buildscript {
 }
 
 dependencies {
-    // SNYK-fikser - Disse kan fjernes etterhver som våre avhengigheter oppdaterer sine versjoner
-    // Forsøk å fjerne en og en og kjør snyk test --configuration-matching=runtimeClasspath
-    implementation("commons-collections:commons-collections:3.2.2") // overstyrer transiente 3.2.1
-    implementation("io.netty:netty-codec:4.1.59.Final") // overstyrer transiente 4.1.44
-    implementation("io.netty:netty-codec-http:4.1.59.Final") // overstyrer transiente 4.1.51.Final
-    implementation("io.netty:netty-codec-http2:4.1.59.Final") // overstyrer transiente 4.1.51.Final
-    implementation("io.netty:netty-transport-native-epoll:4.1.59.Final")
-    implementation("org.glassfish.jersey.media:jersey-media-jaxb:2.31") // overstyrer transiente 2.30.1
-    implementation("junit:junit:4.13.1") // overstyrer transiente 4.12
-    implementation("org.apache.httpcomponents:httpclient:4.5.13") // overstyrer transiente 4.5.6 via ktor-client-apache
-    implementation("com.google.guava:guava:30.0-jre") // overstyrer transiente 29.0-jre
-    implementation("org.eclipse.jetty:jetty-server:9.4.37.v20210219")
-    // -- end snyk fixes
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
@@ -77,7 +64,7 @@ dependencies {
     implementation("io.ktor:ktor-locations:$ktorVersion")
     implementation("org.valiktor:valiktor-core:$valiktorVersion")
     implementation("org.valiktor:valiktor-javatime:$valiktorVersion")
-    implementation("org.apache.pdfbox:pdfbox:2.0.19")
+    implementation("org.apache.pdfbox:pdfbox:2.0.24")
     implementation("org.apache.poi:poi:$apachePoiVersion")
     implementation("org.apache.poi:poi-ooxml:$apachePoiVersion")
     implementation("javax.xml.ws:jaxws-api:$jaxwsVersion")
@@ -85,7 +72,7 @@ dependencies {
     implementation("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-transports-http:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-ws-security:$cxfVersion")
-    implementation("org.apache.ws.xmlschema:xmlschema-core:2.2.4") // Force newer version of XMLSchema to fix illegal reflective access warning
+    implementation("org.apache.ws.xmlschema:xmlschema-core:2.2.5") // Force newer version of XMLSchema to fix illegal reflective access warning
     implementation("com.sun.xml.ws:jaxws-tools:$jaxwsToolsVersion") {
         exclude(group = "com.sun.xml.ws", module = "policy")
     }
@@ -94,21 +81,21 @@ dependencies {
     implementation("org.koin:koin-ktor:$koinVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
-    implementation("no.nav.common:log:2.2020.10.15_11.43-b1f02e7bd6ae")
+    implementation("no.nav.common:log:2.2021.11.15_14.58-d7a174cfb6a8")
     implementation(kotlin("stdlib", kotlinVersion))
-    implementation("org.slf4j:slf4j-api:1.7.30")
+    implementation("org.slf4j:slf4j-api:1.7.32")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("ch.qos.logback.contrib:logback-jackson:$logbackContribVersion")
     implementation("ch.qos.logback.contrib:logback-json-classic:$logbackContribVersion")
-    implementation("net.logstash.logback:logstash-logback-encoder:4.9")
-    implementation("org.codehaus.janino:janino:3.0.6")
+    implementation("net.logstash.logback:logstash-logback-encoder:7.0")
+    implementation("org.codehaus.janino:janino:3.1.6")
     implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:1.2019.09.25-00.21-49b69f0625e0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("no.nav:vault-jdbc:$vaultJdbcVersion")
-    implementation("org.postgresql:postgresql:42.2.23")
+    implementation("org.postgresql:postgresql:42.3.1")
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("org.influxdb:influxdb-java:$influxVersion")
