@@ -18,4 +18,3 @@ fun validationShouldFailFor(propertyPath: String, block: () -> Unit): Exception 
     Assertions.assertThat(thrown.constraintViolations.first().property).isEqualTo(propertyPath)
     return thrown
 }
-
