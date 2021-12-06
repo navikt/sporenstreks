@@ -3,11 +3,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val mainClass = "no.nav.helse.sporenstreks.web.AppKt"
 val kotlinVersion = "1.5.30"
 val ktorVersion = "1.6.6"
-val logbackVersion = "1.2.1"
+val logbackVersion = "1.2.7"
 val logbackContribVersion = "0.1.5"
 val jacksonVersion = "2.13.0"
 val prometheusVersion = "0.12.0"
-val hikariVersion = "3.3.1"
+val hikariVersion = "5.0.0"
 val vaultJdbcVersion = "1.3.7"
 val junitJupiterVersion = "5.8.1"
 val assertJVersion = "3.21.0"
@@ -94,12 +94,12 @@ dependencies {
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
     implementation("no.nav.common:log:2.2021.11.15_14.58-d7a174cfb6a8")
     implementation(kotlin("stdlib", kotlinVersion))
-    implementation("org.slf4j:slf4j-api:1.7.30")
+    implementation("org.slf4j:slf4j-api:1.7.32")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("ch.qos.logback.contrib:logback-jackson:$logbackContribVersion")
     implementation("ch.qos.logback.contrib:logback-json-classic:$logbackContribVersion")
-    implementation("net.logstash.logback:logstash-logback-encoder:4.9")
-    implementation("org.codehaus.janino:janino:3.0.6")
+    implementation("net.logstash.logback:logstash-logback-encoder:7.0")
+    implementation("org.codehaus.janino:janino:3.1.6")
     implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:1.2019.09.25-00.21-49b69f0625e0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
