@@ -16,6 +16,7 @@ import no.nav.helse.sporenstreks.auth.localCookieDispenser
 import no.nav.helse.sporenstreks.prosessering.kvittering.KvitteringProcessor
 import no.nav.helse.sporenstreks.prosessering.metrics.ProcessInfluxJob
 import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravProcessor
+import org.koin.java.KoinJavaComponent.getKoin
 import org.koin.ktor.ext.getKoin
 import org.slf4j.LoggerFactory
 
@@ -65,13 +66,12 @@ private fun initBackgroundWorkers(app: NettyApplicationEngine) {
     mainLogger.info("La til probeable komponenter")
 }
 
-private suspend fun autoDetectProbeableComponents(koin: org.koin.core.Koin) {
+private fun autoDetectProbeableComponents(koin: org.koin.core.Koin) {
     val kubernetesProbeManager = koin.get<KubernetesProbeManager>()
-
-    koin.getAllOfType<LivenessComponent>()
+    getKoin().getAll<LivenessComponent>()
         .forEach { kubernetesProbeManager.registerLivenessComponent(it) }
 
-    koin.getAllOfType<ReadynessComponent>()
+    getKoin().getAll<ReadynessComponent>()
         .forEach { kubernetesProbeManager.registerReadynessComponent(it) }
 }
 
