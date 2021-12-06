@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val mainClass = "no.nav.helse.sporenstreks.web.AppKt"
 val kotlinVersion = "1.5.30"
-val ktorVersion = "1.5.3"
+val ktorVersion = "1.6.6"
 val logbackVersion = "1.2.1"
 val logbackContribVersion = "0.1.5"
 val jacksonVersion = "2.11.2"
@@ -12,14 +12,14 @@ val vaultJdbcVersion = "1.3.7"
 val junitJupiterVersion = "5.7.0"
 val assertJVersion = "3.12.2"
 val mockKVersion = "1.9.3"
-val tokenSupportVersion = "1.3.8"
-val mockOAuth2ServerVersion = "0.3.4"
+val tokenSupportVersion = "1.3.9"
+val mockOAuth2ServerVersion = "0.3.6"
 val koinVersion = "2.0.1"
-val valiktorVersion = "0.10.0"
+val valiktorVersion = "0.12.0"
 val cxfVersion = "3.4.1"
 val jaxwsVersion = "2.3.1"
 val jaxwsToolsVersion = "2.3.3"
-val apachePoiVersion = "4.1.2"
+val apachePoiVersion = "5.0.0"
 val influxVersion = "2.20"
 val githubPassword: String by project
 
@@ -73,7 +73,7 @@ dependencies {
     implementation("io.ktor:ktor-locations:$ktorVersion")
     implementation("org.valiktor:valiktor-core:$valiktorVersion")
     implementation("org.valiktor:valiktor-javatime:$valiktorVersion")
-    implementation("org.apache.pdfbox:pdfbox:2.0.19")
+    implementation("org.apache.pdfbox:pdfbox:2.0.24")
     implementation("org.apache.poi:poi:$apachePoiVersion")
     implementation("org.apache.poi:poi-ooxml:$apachePoiVersion")
     implementation("javax.xml.ws:jaxws-api:$jaxwsVersion")
@@ -90,7 +90,7 @@ dependencies {
     implementation("org.koin:koin-ktor:$koinVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
-    implementation("no.nav.common:log:2.2020.10.15_11.43-b1f02e7bd6ae")
+    implementation("no.nav.common:log:2.2021.11.15_14.58-d7a174cfb6a8")
     implementation(kotlin("stdlib", kotlinVersion))
     implementation("org.slf4j:slf4j-api:1.7.30")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
