@@ -32,8 +32,17 @@ plugins {
     jacoco
 }
 
-application {
-    mainClassName = "no.nav.helse.sporenstreks.web.AppKt"
+repositories {
+    mavenCentral()
+    google()
+    maven(url = "https://packages.confluent.io/maven/")
+    maven {
+        credentials {
+            username = "x-access-token"
+            password = githubPassword
+        }
+        setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
+    }
 }
 
 sonarqube {
@@ -123,18 +132,7 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
-repositories {
-    maven("https://kotlin.bintray.com/ktor")
-    mavenCentral()
-    jcenter()
-    maven {
-        credentials {
-            username = "x-access-token"
-            password = githubPassword
-        }
-        setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
-    }
-}
+
 
 tasks.jar {
     archiveBaseName.set("app")
