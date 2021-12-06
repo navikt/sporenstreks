@@ -14,11 +14,11 @@ val assertJVersion = "3.21.0"
 val mockKVersion = "1.12.1"
 val tokenSupportVersion = "1.3.9"
 val mockOAuth2ServerVersion = "0.3.6"
-val koinVersion = "3.1.3"
+val koinVersion = "3.1.4"
 val valiktorVersion = "0.12.0"
-val cxfVersion = "3.4.5"
+val cxfVersion = "3.4.1"
 val jaxwsVersion = "2.3.1"
-val jaxwsToolsVersion = "3.0.1"
+val jaxwsToolsVersion = "2.3.3"
 val apachePoiVersion = "5.0.0"
 val influxVersion = "2.21"
 val githubPassword: String by project
@@ -65,7 +65,7 @@ dependencies {
     implementation("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-transports-http:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-ws-security:$cxfVersion")
-    implementation("org.apache.ws.xmlschema:xmlschema-core:2.2.5") // Force newer version of XMLSchema to fix illegal reflective access warning
+    implementation("org.apache.ws.xmlschema:xmlschema-core:2.2.4") // Force newer version of XMLSchema to fix illegal reflective access warning
     implementation("com.sun.xml.ws:jaxws-tools:$jaxwsToolsVersion") {
         exclude(group = "com.sun.xml.ws", module = "policy")
     }
@@ -128,8 +128,6 @@ tasks.jar {
         }
     }
 }
-
-
 
 buildscript {
     dependencies {
