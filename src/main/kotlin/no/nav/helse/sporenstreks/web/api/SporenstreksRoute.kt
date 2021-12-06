@@ -40,7 +40,6 @@ import no.nav.helse.sporenstreks.web.dto.validation.getContextualMessage
 import org.koin.ktor.ext.get
 import org.valiktor.ConstraintViolationException
 import java.io.IOException
-import javax.ws.rs.ForbiddenException
 
 private val excelContentType = ContentType.parse("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 

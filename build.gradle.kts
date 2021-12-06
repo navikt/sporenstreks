@@ -21,6 +21,7 @@ val jaxwsVersion = "2.3.1"
 val jaxwsToolsVersion = "2.3.3"
 val apachePoiVersion = "5.0.0"
 val influxVersion = "2.21"
+val nettyVersion = "4.1.59.Final"
 val githubPassword: String by project
 
 plugins {
@@ -49,19 +50,6 @@ buildscript {
 }
 
 dependencies {
-    // SNYK-fikser - Disse kan fjernes etterhver som våre avhengigheter oppdaterer sine versjoner
-    // Forsøk å fjerne en og en og kjør snyk test --configuration-matching=runtimeClasspath
-    implementation("commons-collections:commons-collections:3.2.2") // overstyrer transiente 3.2.1
-    implementation("io.netty:netty-codec:4.1.59.Final") // overstyrer transiente 4.1.44
-    implementation("io.netty:netty-codec-http:4.1.59.Final") // overstyrer transiente 4.1.51.Final
-    implementation("io.netty:netty-codec-http2:4.1.59.Final") // overstyrer transiente 4.1.51.Final
-    implementation("io.netty:netty-transport-native-epoll:4.1.59.Final")
-    implementation("org.glassfish.jersey.media:jersey-media-jaxb:2.31") // overstyrer transiente 2.30.1
-    implementation("junit:junit:4.13.1") // overstyrer transiente 4.12
-    implementation("org.apache.httpcomponents:httpclient:4.5.13") // overstyrer transiente 4.5.6 via ktor-client-apache
-    implementation("com.google.guava:guava:30.0-jre") // overstyrer transiente 29.0-jre
-    implementation("org.eclipse.jetty:jetty-server:9.4.37.v20210219")
-    // -- end snyk fixes
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
@@ -81,10 +69,7 @@ dependencies {
     implementation("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-transports-http:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-ws-security:$cxfVersion")
-    implementation("org.apache.ws.xmlschema:xmlschema-core:2.2.5") // Force newer version of XMLSchema to fix illegal reflective access warning
-    implementation("com.sun.xml.ws:jaxws-tools:$jaxwsToolsVersion") {
-        exclude(group = "com.sun.xml.ws", module = "policy")
-    }
+//    implementation("org.apache.ws.xmlschema:xmlschema-core:2.2.5") // Force newer version of XMLSchema to fix illegal reflective access warning
     implementation("com.sun.activation:javax.activation:1.2.0")
     implementation("io.insert-koin:koin-core-jvm:$koinVersion")
     implementation("io.insert-koin:koin-core:$koinVersion")
@@ -99,7 +84,7 @@ dependencies {
     implementation("ch.qos.logback.contrib:logback-jackson:$logbackContribVersion")
     implementation("ch.qos.logback.contrib:logback-json-classic:$logbackContribVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:7.0")
-    implementation("org.codehaus.janino:janino:3.1.6")
+//    implementation("org.codehaus.janino:janino:3.1.6")
     implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:1.2019.09.25-00.21-49b69f0625e0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
@@ -116,8 +101,8 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
-    testImplementation("org.assertj:assertj-core:$assertJVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+    testImplementation("org.assertj:assertj-core:$assertJVersion")
 }
 
 tasks.named<KotlinCompile>("compileKotlin") {

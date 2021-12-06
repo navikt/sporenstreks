@@ -24,6 +24,7 @@ import io.ktor.routing.routing
 import io.ktor.util.DataConversionException
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.sporenstreks.excel.ExcelFileParsingException
+import no.nav.helse.sporenstreks.excel.ForbiddenException
 import no.nav.helse.sporenstreks.nais.nais
 import no.nav.helse.sporenstreks.web.api.sporenstreks
 import no.nav.helse.sporenstreks.web.dto.validation.*
@@ -36,7 +37,6 @@ import java.lang.reflect.InvocationTargetException
 import java.net.URI
 import java.time.LocalDate
 import java.util.*
-import javax.ws.rs.ForbiddenException
 
 @KtorExperimentalLocationsAPI
 @KtorExperimentalAPI
