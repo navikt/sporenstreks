@@ -29,6 +29,7 @@ import no.nav.helse.sporenstreks.auth.hentUtløpsdatoFraLoginToken
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.excel.ExcelBulkService
 import no.nav.helse.sporenstreks.excel.ExcelParser
+import no.nav.helse.sporenstreks.excel.ForbiddenException
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTER
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
 import no.nav.helse.sporenstreks.metrics.REQUEST_TIME
