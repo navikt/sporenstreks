@@ -16,8 +16,6 @@ import no.nav.helse.sporenstreks.auth.localCookieDispenser
 import no.nav.helse.sporenstreks.prosessering.kvittering.KvitteringProcessor
 import no.nav.helse.sporenstreks.prosessering.metrics.ProcessInfluxJob
 import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravProcessor
-import org.koin.core.component.get
-import org.koin.java.KoinJavaComponent.get
 import org.koin.java.KoinJavaComponent.getKoin
 import org.koin.ktor.ext.getKoin
 import org.slf4j.LoggerFactory
