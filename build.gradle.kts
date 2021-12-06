@@ -133,9 +133,9 @@ java {
 }
 
 repositories {
-    maven("https://kotlin.bintray.com/ktor")
     mavenCentral()
-    jcenter()
+    google()
+    maven(url = "https://packages.confluent.io/maven/")
     maven {
         credentials {
             username = "x-access-token"
