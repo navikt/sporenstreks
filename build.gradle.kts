@@ -14,7 +14,7 @@ val assertJVersion = "3.12.2"
 val mockKVersion = "1.9.3"
 val tokenSupportVersion = "1.3.9"
 val mockOAuth2ServerVersion = "0.3.6"
-val koinVersion = "2.0.1"
+val koinVersion = "3.1.3"
 val valiktorVersion = "0.12.0"
 val cxfVersion = "3.4.1"
 val jaxwsVersion = "2.3.1"
@@ -86,8 +86,10 @@ dependencies {
         exclude(group = "com.sun.xml.ws", module = "policy")
     }
     implementation("com.sun.activation:javax.activation:1.2.0")
-    implementation("org.koin:koin-core:$koinVersion")
-    implementation("org.koin:koin-ktor:$koinVersion")
+    implementation("io.insert-koin:koin-core-jvm:$koinVersion")
+    implementation("io.insert-koin:koin-core:$koinVersion")
+    implementation("io.insert-koin:koin-ktor:$koinVersion")
+    testImplementation("io.insert-koin:koin-test:$koinVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
     implementation("no.nav.common:log:2.2021.11.15_14.58-d7a174cfb6a8")
@@ -109,7 +111,6 @@ dependencies {
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("org.influxdb:influxdb-java:$influxVersion")
     implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.08.27-14-31-53a8b")
-    testImplementation("org.koin:koin-test:$koinVersion")
     testImplementation("io.mockk:mockk:$mockKVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
