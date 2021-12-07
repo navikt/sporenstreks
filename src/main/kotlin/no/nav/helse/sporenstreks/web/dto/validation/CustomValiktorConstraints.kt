@@ -13,15 +13,18 @@ interface CustomConstraint : Constraint {
 }
 
 class IdentitetsnummerConstraint : CustomConstraint
+
 fun <E> Validator<E>.Property<String?>.isValidIdentitetsnummer() =
     this.validate(IdentitetsnummerConstraint()) { FoedselsNrValidator.isValid(it) }
 
 class OrganisasjonsnummerConstraint : CustomConstraint
+
 fun <E> Validator<E>.Property<String?>.isValidOrganisasjonsnummer() =
     this.validate(OrganisasjonsnummerConstraint()) { OrganisasjonsnummerValidator.isValid(it) }
 
 class RefusjonsDagerConstraint : CustomConstraint
-fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.arbeidsgiverBetalerForDager(arbeidsgiverensDager: Int, d: LocalDate) =
+
+fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.arbeidsgiverBetalerForDager(d: LocalDate) =
     this.validate(RefusjonsDagerConstraint()) { ps ->
         var refusjonsdager = 0
         var arbeidsgiverdagerUtenRefusjon = 0
@@ -37,7 +40,7 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.arbeidsgiverBetale
             }
         }
         val oppgitteRefusjonsdager = ps.sumOf { it.antallDagerMedRefusjon }
-
+        val arbeidsgiverensDager = antallDagerArbeidsgiverBetalerFor(ps.first())
         arbeidsgiverdagerUtenRefusjon = min(arbeidsgiverdagerUtenRefusjon, arbeidsgiverensDager)
 
         if (arbeidsgiverdagerUtenRefusjon > 0) {
@@ -48,6 +51,7 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.arbeidsgiverBetale
     }
 
 class SammenhengeneArbeidsgiverPeriode : CustomConstraint
+
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.harMaksimaltOppholdMellomPerioder(maksDagerMedOpphold: Int) =
     this.validate(SammenhengeneArbeidsgiverPeriode()) {
         val sorted = it!!.sortedBy { p -> p.fom }
@@ -70,6 +74,7 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.harMaksimaltOpphol
     }
 
 class IngenOverlapptomePerioderContraint : CustomConstraint
+
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.harIngenOverlappendePerioder() =
     this.validate(IngenOverlapptomePerioderContraint()) {
         !it!!.any { a ->
@@ -80,6 +85,7 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.harIngenOverlappen
     }
 
 class MaksArbeidsgiverperiodeLengdeConstraint : CustomConstraint
+
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.totalPeriodeLengdeErMaks(maksDager: Int) =
     this.validate(MaksArbeidsgiverperiodeLengdeConstraint()) { ps ->
         val sum = ps!!.map {
@@ -89,6 +95,7 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.totalPeriodeLengde
     }
 
 class RefusjonsdagerKanIkkeOverstigePeriodelengdenConstraint : CustomConstraint
+
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refujonsDagerIkkeOverstigerPeriodelengder() =
     this.validate(RefusjonsdagerKanIkkeOverstigePeriodelengdenConstraint()) { ps ->
         !ps!!.any { p ->
@@ -97,6 +104,7 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refujonsDagerIkkeO
     }
 
 class TomPeriodeKanIkkeHaBeloepConstraint : CustomConstraint
+
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.tomPeriodeKanIkkeHaBeloepConstraint() =
     this.validate(TomPeriodeKanIkkeHaBeloepConstraint()) { ps ->
         !ps!!.any { p ->
@@ -105,6 +113,7 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.tomPeriodeKanIkkeH
     }
 
 class RefusjonsdagerInnenforGyldigPeriodeConstraint : CustomConstraint
+
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdagerInnenforGyldigPeriode(refusjonsdagerFom: LocalDate) =
     this.validate(RefusjonsdagerInnenforGyldigPeriodeConstraint()) { ps ->
         ps!!.all { p ->
@@ -114,9 +123,10 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdagerInne
     }
 
 class RefusjonsdagerInnenforGjenaapningConstraint : CustomConstraint
+
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdatoIkkeiGjenåpning() =
     this.validate(RefusjonsdagerInnenforGjenaapningConstraint()) { ps ->
         ps!!.all { p ->
-            p.innenforGammelPeriode(p) || p.innenforNyPeriode(p)
+            innenforGammelPeriode(p) || innenforNyPeriode(p)
         }
     }

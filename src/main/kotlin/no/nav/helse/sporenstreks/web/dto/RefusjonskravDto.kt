@@ -1,10 +1,9 @@
 package no.nav.helse.sporenstreks.web.dto
 
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
-import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.arbeidsgiverBetalerForDager
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.maksOppholdMellomPerioder
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.maksimalAGPLengde
-import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.refusjonFraDato
+import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.refusjonFraDatoGammelPeriode
 import no.nav.helse.sporenstreks.web.dto.validation.*
 import org.valiktor.functions.isGreaterThanOrEqualTo
 import org.valiktor.functions.isLessThanOrEqualTo
@@ -42,10 +41,10 @@ data class RefusjonskravDto(
             validate(RefusjonskravDto::perioder).refujonsDagerIkkeOverstigerPeriodelengder()
 
             // kan ikke kreve refusjon for dager før 16. mars 2020
-            validate(RefusjonskravDto::perioder).refusjonsdagerInnenforGyldigPeriode(refusjonFraDato)
+            validate(RefusjonskravDto::perioder).refusjonsdagerInnenforGyldigPeriode(refusjonFraDatoGammelPeriode)
 
             // Summen av antallDagerMedRefusjon kan ikke overstige total periodelengde - 3 dager
-            validate(RefusjonskravDto::perioder).arbeidsgiverBetalerForDager(arbeidsgiverBetalerForDager, refusjonFraDato)
+            validate(RefusjonskravDto::perioder).arbeidsgiverBetalerForDager(refusjonFraDatoGammelPeriode)
 
             // opphold mellom periodene kan ikke overstige 16 dager
             validate(RefusjonskravDto::perioder).harMaksimaltOppholdMellomPerioder(maksOppholdMellomPerioder)

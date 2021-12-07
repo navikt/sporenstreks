@@ -17,7 +17,7 @@ internal class RefusjonsKravDtoTest {
     @BeforeAll
     fun setup() {
         mockkStatic(LocalDate::class)
-        every { LocalDate.now() } returns LocalDate.parse("2021-12-06")
+        every { LocalDate.now() } returns LocalDate.parse("2021-12-15")
     }
 
     @Test
@@ -27,8 +27,8 @@ internal class RefusjonsKravDtoTest {
             TestData.validOrgNr,
             setOf(
                 Arbeidsgiverperiode(
-                    LocalDate.of(2021, 12, 2),
-                    LocalDate.of(2021, 12, 6),
+                    LocalDate.of(2021, 12, 1),
+                    LocalDate.of(2021, 12, 7),
                     2, 2.3
                 )
             )
@@ -248,7 +248,58 @@ internal class RefusjonsKravDtoTest {
     }
 
     @Test
-    fun `Maks refusjonsdager er totalperiode minus 3 dager`() {
+    fun `Maks refusjonsdager er totalperiode minus 5 dager for ny periode`() {
+        RefusjonskravDto(
+            TestData.validIdentitetsnummer,
+            TestData.validOrgNr,
+            setOf(
+                Arbeidsgiverperiode(
+                    LocalDate.of(2021, 12, 1),
+                    LocalDate.of(2021, 12, 6),
+                    1, 2000.0
+                ),
+                Arbeidsgiverperiode(
+                    LocalDate.of(2021, 12, 6),
+                    LocalDate.of(2021, 12, 7),
+                    2, 2000.0
+                )
+            )
+        )
+
+        Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
+            RefusjonskravDto(
+                TestData.validIdentitetsnummer,
+                TestData.validOrgNr,
+                setOf(
+                    Arbeidsgiverperiode(
+                        LocalDate.of(2021, 12, 1),
+                        LocalDate.of(2021, 12, 6),
+                        1, 2000.0
+                    ),
+                    Arbeidsgiverperiode(
+                        LocalDate.of(2021, 12, 6),
+                        LocalDate.of(2021, 12, 7),
+                        3, 2000.0
+                    )
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `Maks refusjonsdager er totalperiode minus 3 dager for gammel periode`() {
+        RefusjonskravDto(
+            TestData.validIdentitetsnummer,
+            TestData.validOrgNr,
+            setOf(
+                Arbeidsgiverperiode(
+                    LocalDate.of(2021, 9, 1),
+                    LocalDate.of(2021, 9, 4),
+                    1, 2000.0
+                )
+            )
+        )
+
         Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
             RefusjonskravDto(
                 TestData.validIdentitetsnummer,
@@ -260,8 +311,8 @@ internal class RefusjonsKravDtoTest {
                         4, 2000.0
                     ),
                     Arbeidsgiverperiode(
-                        LocalDate.of(2020, 4, 10),
-                        LocalDate.of(2020, 4, 12),
+                        LocalDate.of(2021, 9, 10),
+                        LocalDate.of(2021, 9, 12),
                         3, 1500.0
                     )
                 )
