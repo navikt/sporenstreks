@@ -4,8 +4,8 @@ import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import java.time.LocalDate
 
 fun innenforGammelPeriode(arbeidsgiverPeriode: Arbeidsgiverperiode): Boolean {
-    val seksMndSiden = LocalDate.now().minusMonths(6)
-    return arbeidsgiverPeriode.fom.isAfter(seksMndSiden) &&
+    val treMndSiden = LocalDate.now().minusMonths(3).minusDays(1)
+    return arbeidsgiverPeriode.fom.isAfter(treMndSiden) &&
         arbeidsgiverPeriode.tom.isBefore(Arbeidsgiverperiode.refusjonTilDatoGammelPeriode)
 }
 

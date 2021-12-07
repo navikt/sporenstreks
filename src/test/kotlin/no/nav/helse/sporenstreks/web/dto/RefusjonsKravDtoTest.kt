@@ -17,7 +17,7 @@ internal class RefusjonsKravDtoTest {
     @BeforeAll
     fun setup() {
         mockkStatic(LocalDate::class)
-        every { LocalDate.now() } returns LocalDate.parse("2021-12-15")
+        every { LocalDate.now() } returns LocalDate.parse("2021-12-07")
     }
 
     @Test
@@ -42,8 +42,8 @@ internal class RefusjonsKravDtoTest {
             TestData.validOrgNr,
             setOf(
                 Arbeidsgiverperiode(
-                    LocalDate.of(2021, 9, 2),
-                    LocalDate.of(2021, 9, 6),
+                    LocalDate.of(2021, 9, 8),
+                    LocalDate.of(2021, 9, 12),
                     2, 2.3
                 )
             )
@@ -98,13 +98,13 @@ internal class RefusjonsKravDtoTest {
                 TestData.validOrgNr,
                 setOf(
                     Arbeidsgiverperiode(
-                        LocalDate.of(2021, 9, 1),
-                        LocalDate.of(2021, 9, 6),
+                        LocalDate.of(2021, 9, 16),
+                        LocalDate.of(2021, 9, 21),
                         2, 1.0
                     ),
                     Arbeidsgiverperiode(
-                        LocalDate.of(2021, 9, 5),
-                        LocalDate.of(2021, 9, 10),
+                        LocalDate.of(2021, 9, 20),
+                        LocalDate.of(2021, 9, 25),
                         4, 2.0
                     )
                 )
@@ -120,8 +120,8 @@ internal class RefusjonsKravDtoTest {
                 TestData.validOrgNr,
                 setOf(
                     Arbeidsgiverperiode(
-                        LocalDate.of(2021, 9, 1),
-                        LocalDate.of(2021, 9, 5),
+                        LocalDate.of(2021, 9, 8),
+                        LocalDate.of(2021, 9, 15),
                         2, -14.65
                     )
                 )
@@ -137,14 +137,14 @@ internal class RefusjonsKravDtoTest {
                 TestData.validOrgNr,
                 setOf(
                     Arbeidsgiverperiode(
-                        LocalDate.of(2021, 9, 1),
-                        LocalDate.of(2021, 9, 5),
-                        2, 2.0
+                        LocalDate.of(2021, 9, 7),
+                        LocalDate.of(2021, 9, 8),
+                        0, 0.0
                     ),
                     Arbeidsgiverperiode(
-                        LocalDate.of(2021, 9, 23),
+                        LocalDate.of(2021, 9, 26),
                         LocalDate.of(2021, 9, 29),
-                        8, 0.0
+                        2, 0.0
                     )
                 )
             )
@@ -159,8 +159,8 @@ internal class RefusjonsKravDtoTest {
                 TestData.validOrgNr,
                 setOf(
                     Arbeidsgiverperiode(
-                        LocalDate.of(2021, 9, 1),
-                        LocalDate.of(2021, 9, 5),
+                        LocalDate.of(2021, 9, 7),
+                        LocalDate.of(2021, 9, 19),
                         5, 2.0
                     ),
                     Arbeidsgiverperiode(
@@ -181,13 +181,13 @@ internal class RefusjonsKravDtoTest {
                 TestData.validOrgNr,
                 setOf(
                     Arbeidsgiverperiode(
-                        LocalDate.of(2021, 9, 1),
-                        LocalDate.of(2021, 9, 6),
+                        LocalDate.of(2021, 9, 10),
+                        LocalDate.of(2021, 9, 20),
                         5, 2.0
                     ),
                     Arbeidsgiverperiode(
-                        LocalDate.of(2021, 9, 10),
                         LocalDate.of(2021, 9, 20),
+                        LocalDate.of(2021, 9, 30),
                         9, 2.0
                     )
                 )
@@ -202,14 +202,14 @@ internal class RefusjonsKravDtoTest {
             TestData.validOrgNr,
             setOf(
                 Arbeidsgiverperiode(
-                    LocalDate.of(2021, 9, 13),
-                    LocalDate.of(2021, 9, 17),
-                    2, 2.0
+                    LocalDate.of(2021, 9, 14),
+                    LocalDate.of(2021, 9, 21),
+                    2, 2.3
                 ),
                 Arbeidsgiverperiode(
-                    LocalDate.of(2021, 9, 17),
-                    LocalDate.of(2021, 9, 27),
-                    11, 2.0
+                    LocalDate.of(2021, 9, 22),
+                    LocalDate.of(2021, 9, 29),
+                    4, 2.4
                 )
             )
         )
@@ -238,8 +238,8 @@ internal class RefusjonsKravDtoTest {
                 TestData.validOrgNr,
                 setOf(
                     Arbeidsgiverperiode(
-                        LocalDate.of(2021, 9, 1),
-                        LocalDate.of(2021, 9, 6),
+                        LocalDate.of(2021, 9, 10),
+                        LocalDate.of(2021, 9, 16),
                         7, 2.0
                     )
                 )
@@ -293,8 +293,8 @@ internal class RefusjonsKravDtoTest {
             TestData.validOrgNr,
             setOf(
                 Arbeidsgiverperiode(
-                    LocalDate.of(2021, 9, 1),
-                    LocalDate.of(2021, 9, 4),
+                    LocalDate.of(2021, 9, 15),
+                    LocalDate.of(2021, 9, 19),
                     1, 2000.0
                 )
             )
@@ -306,14 +306,9 @@ internal class RefusjonsKravDtoTest {
                 TestData.validOrgNr,
                 setOf(
                     Arbeidsgiverperiode(
-                        LocalDate.of(2021, 9, 1),
-                        LocalDate.of(2021, 9, 6),
-                        4, 2000.0
-                    ),
-                    Arbeidsgiverperiode(
                         LocalDate.of(2021, 9, 10),
-                        LocalDate.of(2021, 9, 12),
-                        3, 1500.0
+                        LocalDate.of(2021, 9, 15),
+                        4, 2000.0
                     )
                 )
             )
@@ -327,8 +322,8 @@ internal class RefusjonsKravDtoTest {
             TestData.validOrgNr,
             setOf(
                 Arbeidsgiverperiode(
-                    LocalDate.of(2021, 9, 9),
-                    LocalDate.of(2021, 9, 19),
+                    LocalDate.of(2021, 9, 15),
+                    LocalDate.of(2021, 9, 22),
                     4, 2000.0
                 )
             )
@@ -359,13 +354,13 @@ internal class RefusjonsKravDtoTest {
             TestData.validOrgNr,
             setOf(
                 Arbeidsgiverperiode(
-                    LocalDate.of(2021, 9, 10),
                     LocalDate.of(2021, 9, 15),
+                    LocalDate.of(2021, 9, 20),
                     0, 0.0
                 ),
                 Arbeidsgiverperiode(
-                    LocalDate.of(2021, 9, 20),
                     LocalDate.of(2021, 9, 25),
+                    LocalDate.of(2021, 9, 30),
                     5, 10000.0
                 )
             )
@@ -387,15 +382,15 @@ internal class RefusjonsKravDtoTest {
     }
 
     @Test
-    fun `Kan ikke kreve refusjon for dager før seks måneder siden`() {
+    fun `Kan ikke kreve refusjon for dager før tre måneder siden`() {
         Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
             RefusjonskravDto(
                 TestData.validIdentitetsnummer,
                 TestData.validOrgNr,
                 setOf(
                     Arbeidsgiverperiode(
-                        LocalDate.of(2021, 6, 5),
-                        LocalDate.of(2021, 6, 17),
+                        LocalDate.of(2021, 9, 1),
+                        LocalDate.of(2021, 9, 10),
                         4, 4000.0
                     )
                 )
@@ -407,8 +402,8 @@ internal class RefusjonsKravDtoTest {
             TestData.validOrgNr,
             setOf(
                 Arbeidsgiverperiode(
-                    LocalDate.of(2021, 7, 10),
-                    LocalDate.of(2021, 7, 17),
+                    LocalDate.of(2021, 9, 15),
+                    LocalDate.of(2021, 9, 17),
                     0, 0.0
                 )
             )
