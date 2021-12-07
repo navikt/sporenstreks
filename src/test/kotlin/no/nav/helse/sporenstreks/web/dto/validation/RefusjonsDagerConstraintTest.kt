@@ -97,4 +97,23 @@ class RefusjonsDagerConstraintTest {
             validate(RefusjonskravDtoTestClass::perioder).arbeidsgiverBetalerForDager(LocalDate.of(2020, 3, 6))
         }
     }
+
+    @Test
+    fun `Ugyldig periode som starter før 1 desember`() {
+        val testRefusjon = RefusjonskravDtoTestClass(
+            perioder = setOf(
+                Arbeidsgiverperiode(
+                    LocalDate.of(2021, 11, 22),
+                    LocalDate.of(2021, 12, 2),
+                    5,
+                    2590.8
+                )
+            )
+        )
+        validationShouldFailFor(RefusjonskravDtoTestClass::perioder) {
+            validate(testRefusjon) {
+                validate(RefusjonskravDtoTestClass::perioder).arbeidsgiverBetalerForDager(LocalDate.of(2020, 3, 6))
+            }
+        }
+    }
 }
