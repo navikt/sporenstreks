@@ -1,7 +1,6 @@
 package no.nav.helse.sporenstreks.web.dto
 
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
-import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.antallMånederTilStengtGammelPeriode
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.arbeidsgiverBetalerForDagerGammelPeriode
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.arbeidsgiverBetalerForDagerNyPeriode
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.maksOppholdMellomPerioder
