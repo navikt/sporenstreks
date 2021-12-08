@@ -22,10 +22,10 @@ class OrganisasjonsnummerConstraint : CustomConstraint
 fun <E> Validator<E>.Property<String?>.isValidOrganisasjonsnummer() =
     this.validate(OrganisasjonsnummerConstraint()) { OrganisasjonsnummerValidator.isValid(it) }
 
-class RefusjonsDagerConstraint : CustomConstraint
+class RefusjonsDagerConstraint(override val messageParams: Map<String, *>) : CustomConstraint
 
-fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.arbeidsgiverBetalerForDager(d: LocalDate) =
-    this.validate(RefusjonsDagerConstraint()) { ps ->
+fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.arbeidsgiverBetalerForDager(arbeidsgiverensDager: Int, d: LocalDate) =
+    this.validate(RefusjonsDagerConstraint(mapOf("dager" to arbeidsgiverensDager))) { ps ->
         var refusjonsdager = 0
         var arbeidsgiverdagerUtenRefusjon = 0
         ps!!.forEach() {
@@ -40,7 +40,7 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.arbeidsgiverBetale
             }
         }
         val oppgitteRefusjonsdager = ps.sumOf { it.antallDagerMedRefusjon }
-        val arbeidsgiverensDager = antallDagerArbeidsgiverBetalerFor(ps.first())
+
         arbeidsgiverdagerUtenRefusjon = min(arbeidsgiverdagerUtenRefusjon, arbeidsgiverensDager)
 
         if (arbeidsgiverdagerUtenRefusjon > 0) {
@@ -124,9 +124,20 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdagerInne
 
 class RefusjonsdagerInnenforGjenaapningConstraint : CustomConstraint
 
-fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdatoIkkeiGjenåpning() =
+fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdatoIkkeEtterGjenåpning(refusjonsdagerTom: LocalDate) =
     this.validate(RefusjonsdagerInnenforGjenaapningConstraint()) { ps ->
         ps!!.all { p ->
-            innenforGammelPeriode(p) || innenforNyPeriode(p)
+            (p.fom < refusjonsdagerTom)
+        }
+    }
+
+class RefusjonsdagerInnenforAntallMånederConstraint : CustomConstraint
+
+fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.innenforAntallMåneder(antallMåneder: Long) =
+    this.validate(RefusjonsdagerInnenforGjenaapningConstraint()) { ps ->
+        val antallMånederSiden = LocalDate.now().minusMonths(antallMåneder)
+
+        ps!!.all { p ->
+            (p.fom.isAfter(antallMånederSiden))
         }
     }
