@@ -30,9 +30,8 @@ class ExcelBulkService(private val service: RefusjonskravService, private val pa
             throw ExcelFileParsingException("Det er for mange rader i filen. Maks er $maxRowNum")
         }
 
-        val blandetOrdning = parsingResult.refusjonskrav.any { p -> !p.gammelOrdning } && parsingResult.refusjonskrav.any { p -> p.gammelOrdning }
-
-        if (blandetOrdning) throw ExcelFileParsingException("Det er ikke mulig å kreve refusjon for perioder som gjelder gammel ordning i samme skjema som ny ordning")
+        val første = parsingResult.refusjonskrav.first().gammelOrdning
+        if (parsingResult.refusjonskrav.any { it.gammelOrdning != første }) throw ExcelFileParsingException("Det er ikke mulig å kreve refusjon for perioder som gjelder gammel ordning i samme skjema som ny ordning")
 
         log.info("Lagrer ${parsingResult.refusjonskrav.size} krav")
         val referenceNumbers = service.bulkInsert(parsingResult.refusjonskrav)
