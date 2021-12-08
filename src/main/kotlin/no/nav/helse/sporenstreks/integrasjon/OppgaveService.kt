@@ -12,7 +12,7 @@ class OppgaveService(private val oppgaveKlient: OppgaveKlient, private val om: O
 
     fun opprettOppgave(refusjonskrav: Refusjonskrav, journalpostId: String, aktørId: String, callId: String): String {
         val response = runBlocking {
-            val request = mapOppgave(journalpostId, aktørId, mapStrukturert(refusjonskrav))
+            val request = mapOppgave(journalpostId, aktørId, mapStrukturert(refusjonskrav), refusjonskrav.gammelOrdning)
             oppgaveKlient.opprettOppgave(request, callId)
         }
         return "${response.id}"
@@ -23,7 +23,7 @@ class OppgaveService(private val oppgaveKlient: OppgaveKlient, private val om: O
         return om.writeValueAsString(kravForOppgave)
     }
 
-    private fun mapOppgave(journalpostId: String, aktørId: String, beskrivelse: String): OpprettOppgaveRequest {
+    private fun mapOppgave(journalpostId: String, aktørId: String, beskrivelse: String, gammel: Boolean?): OpprettOppgaveRequest {
         return OpprettOppgaveRequest(
             aktoerId = aktørId,
             journalpostId = journalpostId,

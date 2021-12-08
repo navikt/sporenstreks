@@ -39,6 +39,8 @@ data class Refusjonskrav(
             return 1
         return 0
     }
+
+    val gammelOrdning: Boolean = perioder.isEmpty() || perioder.first().tom.isBefore(Arbeidsgiverperiode.refusjonTilDatoGammelPeriode)
 }
 
 enum class RefusjonskravStatus {
