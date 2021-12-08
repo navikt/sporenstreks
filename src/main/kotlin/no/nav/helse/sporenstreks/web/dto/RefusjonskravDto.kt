@@ -41,7 +41,7 @@ data class RefusjonskravDto(
                 validate(RefusjonskravDto::perioder).refusjonsdatoIkkeEtterGjenåpning(refusjonTilDatoGammelPeriode)
 
                 // kan ikke kreve refusjon for dager før tre måneder siden
-                validate(RefusjonskravDto::perioder).innenforAntallMåneder(antallMånederTilStengtGammelPeriode)
+                // validate(RefusjonskravDto::perioder).innenforAntallMåneder(antallMånederTilStengtGammelPeriode)
             } else {
                 // kan ikke kreve refusjon for dager etter gjenåpning 1 juli 2022
                 validate(RefusjonskravDto::perioder).refusjonsdatoIkkeEtterGjenåpning(refusjonTilDatoNyPeriode)

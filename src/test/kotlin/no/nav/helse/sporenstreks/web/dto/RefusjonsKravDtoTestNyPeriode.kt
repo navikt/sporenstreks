@@ -68,6 +68,7 @@ internal class RefusjonsKravDtoTestNyPeriode {
         }
     }
 
+/*
     @Test
     fun `Det kan ikke kreves refusjon for perioder lenger enn 3 måneder siden i gammel periode`() {
         Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
@@ -84,4 +85,6 @@ internal class RefusjonsKravDtoTestNyPeriode {
             )
         }
     }
+
+ */
 }
