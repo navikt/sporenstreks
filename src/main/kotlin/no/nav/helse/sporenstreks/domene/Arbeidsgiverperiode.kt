@@ -32,4 +32,3 @@ data class Arbeidsgiverperiode(
         return 0
     }
 }
-
