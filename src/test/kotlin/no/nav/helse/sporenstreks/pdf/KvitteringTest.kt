@@ -21,14 +21,14 @@ internal class KvitteringTest {
             virksomhetsnummer = TestData.validOrgNr,
             perioder = setOf(
                 Arbeidsgiverperiode(
-                    LocalDate.of(2020, 4, 1),
-                    LocalDate.of(2020, 4, 5),
+                    LocalDate.of(2022, 4, 1),
+                    LocalDate.of(2022, 4, 5),
                     2,
                     4500800.50
                 ),
                 Arbeidsgiverperiode(
-                    LocalDate.of(2020, 4, 5),
-                    LocalDate.of(2020, 4, 10),
+                    LocalDate.of(2022, 4, 5),
+                    LocalDate.of(2022, 4, 10),
                     4,
                     1220800.50
                 )
@@ -54,8 +54,8 @@ internal class KvitteringTest {
             virksomhetsnummer = TestData.validOrgNr,
             perioder = setOf(
                 Arbeidsgiverperiode(
-                    LocalDate.of(2020, 4, 1),
-                    LocalDate.of(2020, 4, 5),
+                    LocalDate.of(2022, 4, 1),
+                    LocalDate.of(2022, 4, 5),
                     2,
                     250.50
                 )

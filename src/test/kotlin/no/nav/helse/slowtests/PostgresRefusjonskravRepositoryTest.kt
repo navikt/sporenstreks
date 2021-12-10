@@ -38,13 +38,13 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
                 TestData.validOrgNr,
                 setOf(
                     Arbeidsgiverperiode(
-                        LocalDate.of(2020, 4, 1),
-                        LocalDate.of(2020, 4, 6),
+                        LocalDate.of(2022, 4, 1),
+                        LocalDate.of(2022, 4, 6),
                         3, 1000.0
                     ),
                     Arbeidsgiverperiode(
-                        LocalDate.of(2020, 4, 10),
-                        LocalDate.of(2020, 4, 12),
+                        LocalDate.of(2022, 4, 10),
+                        LocalDate.of(2022, 4, 12),
                         3, 1000.0
                     )
                 ),
@@ -85,13 +85,13 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
                 TestData.validOrgNr,
                 setOf(
                     Arbeidsgiverperiode(
-                        LocalDate.of(2020, 4, 1),
-                        LocalDate.of(2020, 4, 6),
+                        LocalDate.of(2022, 4, 1),
+                        LocalDate.of(2022, 4, 6),
                         3, 1000.0
                     ),
                     Arbeidsgiverperiode(
-                        LocalDate.of(2020, 4, 10),
-                        LocalDate.of(2020, 4, 12),
+                        LocalDate.of(2022, 4, 10),
+                        LocalDate.of(2022, 4, 12),
                         3, 1000.0
                     )
                 ),
@@ -154,13 +154,13 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
                     TestData.validOrgNr,
                     setOf(
                         Arbeidsgiverperiode(
-                            LocalDate.of(2020, 4, 1),
-                            LocalDate.of(2020, 4, 6),
+                            LocalDate.of(2022, 4, 1),
+                            LocalDate.of(2022, 4, 6),
                             3, 1000.0
                         ),
                         Arbeidsgiverperiode(
-                            LocalDate.of(2020, 4, 10),
-                            LocalDate.of(2020, 4, 12),
+                            LocalDate.of(2022, 4, 10),
+                            LocalDate.of(2022, 4, 12),
                             3, 1000.0
                         )
                     ),
@@ -219,13 +219,13 @@ internal class PostgresRefusjonskravRepositoryTest : KoinComponent {
                 TestData.validOrgNr,
                 setOf(
                     Arbeidsgiverperiode(
-                        LocalDate.of(2020, 4, 1),
-                        LocalDate.of(2020, 4, 6),
+                        LocalDate.of(2022, 4, 1),
+                        LocalDate.of(2022, 4, 6),
                         3, 1000.0
                     ),
                     Arbeidsgiverperiode(
-                        LocalDate.of(2020, 4, 10),
-                        LocalDate.of(2020, 4, 12),
+                        LocalDate.of(2022, 4, 10),
+                        LocalDate.of(2022, 4, 12),
                         3, 1000.0
                     )
                 ),

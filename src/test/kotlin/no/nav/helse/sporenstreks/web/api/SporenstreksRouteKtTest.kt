@@ -99,8 +99,8 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
                     virksomhetsnummer = "910098896",
                     perioder = setOf(
                         Arbeidsgiverperiode(
-                            fom = LocalDate.of(2020, 3, 17),
-                            tom = LocalDate.of(2020, 3, 25),
+                            fom = LocalDate.of(2022, 3, 17),
+                            tom = LocalDate.of(2022, 3, 25),
                             antallDagerMedRefusjon = 20,
                             beloep = 6000.0
                         )
@@ -136,8 +136,8 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
                     virksomhetsnummer = "910098896",
                     perioder = setOf(
                         Arbeidsgiverperiode(
-                            fom = LocalDate.of(2020, 3, 20),
-                            tom = LocalDate.of(2020, 3, 25),
+                            fom = LocalDate.of(2022, 3, 20),
+                            tom = LocalDate.of(2022, 3, 25),
                             antallDagerMedRefusjon = 1,
                             beloep = 6000.0
                         )
@@ -148,8 +148,8 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
                     virksomhetsnummer = "910098896",
                     perioder = setOf(
                         Arbeidsgiverperiode(
-                            fom = LocalDate.of(2020, 3, 17),
-                            tom = LocalDate.of(2020, 3, 18),
+                            fom = LocalDate.of(2022, 3, 17),
+                            tom = LocalDate.of(2022, 3, 18),
                             antallDagerMedRefusjon = 4,
                             beloep = 6000.0
                         )
@@ -160,8 +160,8 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
                     virksomhetsnummer = "910098896",
                     perioder = setOf(
                         Arbeidsgiverperiode(
-                            fom = LocalDate.of(2020, 3, 27),
-                            tom = LocalDate.of(2020, 3, 29),
+                            fom = LocalDate.of(2022, 3, 27),
+                            tom = LocalDate.of(2022, 3, 29),
                             antallDagerMedRefusjon = 1,
                             beloep = 9000.0
                         )
@@ -172,8 +172,8 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
                     virksomhetsnummer = "910098896",
                     perioder = setOf(
                         Arbeidsgiverperiode(
-                            fom = LocalDate.of(2020, 4, 1),
-                            tom = LocalDate.of(2020, 4, 3),
+                            fom = LocalDate.of(2022, 4, 1),
+                            tom = LocalDate.of(2022, 4, 3),
                             antallDagerMedRefusjon = 1,
                             beloep = 999999999999.0
                         )
