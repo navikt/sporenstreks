@@ -23,15 +23,14 @@ internal class ExcelParserTest {
     @BeforeEach
     fun setup() {
         every { authorizerMock.hasAccess(any(), any()) } returns true
-        mockkStatic(LocalDate::class)
-        every { LocalDate.now() } returns LocalDate.parse("2020-06-06")
+        mockkStatic(Class.forName("java.time.LocalDate").kotlin)
+        every { LocalDate.now() } returns LocalDate.parse("2022-02-01")
     }
 
     @Test
     fun `Gyldig fil skal ikke gi noen feil`() {
         val workbook: Workbook = XSSFWorkbook(validFile)
         val result = ExcelParser(authorizerMock).parseAndValidateExcelContent(workbook, TestData.validIdentitetsnummer)
-
         verify(atLeast = 1) { authorizerMock.hasAccess(TestData.validIdentitetsnummer, any()) }
         assertThat(result.refusjonskrav.size).isEqualTo(11)
         assertThat(result.errors.size).isEqualTo(0)
@@ -43,7 +42,7 @@ internal class ExcelParserTest {
         val result = ExcelParser(authorizerMock).parseAndValidateExcelContent(workbook, TestData.validIdentitetsnummer)
 
         assertThat(result.refusjonskrav.size).isEqualTo(1)
-        assertThat(result.errors.size).isEqualTo(8)
+        assertThat(result.errors.size).isEqualTo(7)
 
         val rowErrors = result.errors.groupBy { it.rowNumber }
 
@@ -59,10 +58,9 @@ internal class ExcelParserTest {
         assertThat(rowErrors[15]?.size).isEqualTo(1)
         assertThat(rowErrors[15]?.get(0)?.column).isEqualTo("Til og med")
 
-        assertThat(rowErrors[16]?.size).isEqualTo(3)
+        assertThat(rowErrors[16]?.size).isEqualTo(2)
         assertThat(rowErrors[16]?.get(0)?.column).isEqualTo("Arbeidsgiverperioden (fom+tom)")
         assertThat(rowErrors[16]?.get(1)?.column).isEqualTo("Arbeidsgiverperioden (fom+tom)")
-        assertThat(rowErrors[16]?.get(2)?.column).isEqualTo("Arbeidsgiverperioden (fom+tom)")
 
         assertThat(rowErrors[17]?.size).isEqualTo(1)
         assertThat(rowErrors[17]?.get(0)?.column).isEqualTo("Beløp")
