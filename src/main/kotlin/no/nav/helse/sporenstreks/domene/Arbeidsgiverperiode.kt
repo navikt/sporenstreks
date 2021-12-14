@@ -9,8 +9,8 @@ data class Arbeidsgiverperiode(
     val beloep: Double
 ) : Comparable<Arbeidsgiverperiode> {
     companion object {
-        // Gammel periode 01.01.2022 - 30.06.2022
-        val refusjonFraDato = LocalDate.of(2022, 1, 1)
+        // Periode 01.12.2021 - 30.06.2022
+        val refusjonFraDato = LocalDate.of(2021, 12, 1)
         val refusjonTilDato = LocalDate.of(2022, 6, 30)
         val arbeidsgiverBetalerForDager = 5
         val antallMånederTilStengt: Long = 3

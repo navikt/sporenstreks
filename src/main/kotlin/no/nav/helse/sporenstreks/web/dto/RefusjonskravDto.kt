@@ -45,7 +45,7 @@ data class RefusjonskravDto(
             // antall refusjonsdager kan ikke være lenger enn periodens lengde
             validate(RefusjonskravDto::perioder).refujonsDagerIkkeOverstigerPeriodelengder()
 
-            // kan ikke kreve refusjon for dager før 1. januar 2022
+            // kan ikke kreve refusjon for dager før 1. desember 2021
             validate(RefusjonskravDto::perioder).refusjonsdagerInnenforGyldigPeriode(refusjonFraDato)
 
             // Summen av antallDagerMedRefusjon kan ikke overstige total periodelengde - 5 dager
