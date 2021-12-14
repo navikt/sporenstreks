@@ -1,9 +1,11 @@
 package no.nav.helse.sporenstreks.excel
 
+import no.nav.helse.arbeidsgiver.integrasjoner.aareg.AaregArbeidsforholdClient
 import no.nav.helse.arbeidsgiver.web.auth.AltinnAuthorizer
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.excel.ExcelBulkService.Companion.startDataRowAt
+import no.nav.helse.sporenstreks.web.api.dto.validation.validerArbeidsforhold
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import no.nav.helse.sporenstreks.web.dto.validation.getContextualMessage
 import org.apache.poi.ss.usermodel.CellType
@@ -18,8 +20,8 @@ import javax.ws.rs.ForbiddenException
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
 
-class ExcelParser(private val authorizer: AltinnAuthorizer) {
-    fun parseAndValidateExcelContent(workbook: Workbook, opprettetAv: String): ExcelParsingResult {
+class ExcelParser(private val authorizer: AltinnAuthorizer, val aaregClient: AaregArbeidsforholdClient) {
+    suspend fun parseAndValidateExcelContent(workbook: Workbook, opprettetAv: String): ExcelParsingResult {
         val sheet = workbook.getSheetAt(0)
 
         val refusjonsKrav = ArrayList<Refusjonskrav>()
@@ -31,7 +33,7 @@ class ExcelParser(private val authorizer: AltinnAuthorizer) {
 
         while (row != null && row.extractRawValue(0) != "") {
             try {
-                val krav = extractRefusjonsKravFromExcelRow(row, opprettetAv, parseRunId)
+                val krav = extractRefusjonsKravFromExcelRow(row, opprettetAv, parseRunId, aaregClient)
                 refusjonsKrav.add(krav)
             } catch (ex: ForbiddenException) {
                 errorRows.add(
@@ -73,7 +75,7 @@ class ExcelParser(private val authorizer: AltinnAuthorizer) {
         return ExcelParsingResult(refusjonsKrav, errorRows)
     }
 
-    private fun extractRefusjonsKravFromExcelRow(row: Row, opprettetAv: String, correlationId: String): Refusjonskrav {
+    private suspend fun extractRefusjonsKravFromExcelRow(row: Row, opprettetAv: String, correlationId: String, aaregClient: AaregArbeidsforholdClient): Refusjonskrav {
         // extract values
         val identitetsnummer = row.extract(0, "Fødselsnummer")
         val virksomhetsNummer = row.extract(1, "Virksomhetsnummer")
@@ -88,6 +90,18 @@ class ExcelParser(private val authorizer: AltinnAuthorizer) {
             virksomhetsNummer,
             setOf(Arbeidsgiverperiode(fom, tom, antallDager, beloep))
         )
+
+        val domeneKrav = Refusjonskrav(
+            opprettetAv,
+            refusjonskrav.identitetsnummer,
+            refusjonskrav.virksomhetsnummer,
+            refusjonskrav.perioder
+        )
+
+        val aktuelleArbeidsforhold = aaregClient.hentArbeidsforhold(domeneKrav.identitetsnummer, UUID.randomUUID().toString())
+            .filter { it.arbeidsgiver.organisasjonsnummer == domeneKrav.virksomhetsnummer }
+
+        validerArbeidsforhold(aktuelleArbeidsforhold, domeneKrav)
 
         // authorize the use
         if (!authorizer.hasAccess(opprettetAv, virksomhetsNummer)) {

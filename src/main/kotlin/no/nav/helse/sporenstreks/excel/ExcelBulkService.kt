@@ -11,7 +11,7 @@ class ExcelBulkService(private val service: RefusjonskravService, private val pa
     private val maxRowNum: Int = 5000
     private val log = LoggerFactory.getLogger(ExcelBulkService::class.java)
 
-    fun processExcelFile(file: InputStream, opprettetAvIdentitetsnummer: String) {
+    suspend fun processExcelFile(file: InputStream, opprettetAvIdentitetsnummer: String) {
         log.info("Starter prosseseringen av Excel fil")
         val workbook: Workbook = XSSFWorkbook(file)
 

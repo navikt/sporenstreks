@@ -34,6 +34,7 @@ import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTE
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
 import no.nav.helse.sporenstreks.metrics.REQUEST_TIME
 import no.nav.helse.sporenstreks.service.RefusjonskravService
+import no.nav.helse.sporenstreks.web.api.dto.validation.validerArbeidsforhold
 import no.nav.helse.sporenstreks.web.dto.PostListResponseDto
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import no.nav.helse.sporenstreks.web.dto.validation.ValidationProblemDetail
@@ -41,7 +42,9 @@ import no.nav.helse.sporenstreks.web.dto.validation.getContextualMessage
 import org.koin.ktor.ext.get
 import org.valiktor.ConstraintViolationException
 import java.io.IOException
+import java.util.*
 import javax.ws.rs.ForbiddenException
+import kotlin.collections.ArrayList
 
 private val excelContentType = ContentType.parse("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
@@ -74,6 +77,12 @@ fun Route.sporenstreks(
                         refusjonskrav.virksomhetsnummer,
                         refusjonskrav.perioder
                     )
+
+                    val aktuelleArbeidsforhold = aaregClient.hentArbeidsforhold(domeneKrav.identitetsnummer, UUID.randomUUID().toString())
+                        .filter { it.arbeidsgiver.organisasjonsnummer == domeneKrav.virksomhetsnummer }
+
+                    validerArbeidsforhold(aktuelleArbeidsforhold, domeneKrav)
+
                     val saved = refusjonskravService.saveKravWithKvittering(domeneKrav)
                     call.respond(HttpStatusCode.OK, saved)
                     INNKOMMENDE_REFUSJONSKRAV_COUNTER.inc()
@@ -113,12 +122,17 @@ fun Route.sporenstreks(
                         val dto = om.readValue<RefusjonskravDto>(jsonTree[i].traverse())
                         authorize(authorizer, dto.virksomhetsnummer)
                         val opprettetAv = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request) // burde denne være lengre opp?
-                        domeneListeMedIndex[i] = Refusjonskrav(
+                        val domeneKrav = Refusjonskrav(
                             opprettetAv,
                             dto.identitetsnummer,
                             dto.virksomhetsnummer,
                             dto.perioder
                         )
+                        domeneListeMedIndex[i] = domeneKrav
+                        val aktuelleArbeidsforhold = aaregClient.hentArbeidsforhold(domeneKrav.identitetsnummer, UUID.randomUUID().toString())
+                            .filter { it.arbeidsgiver.organisasjonsnummer == domeneKrav.virksomhetsnummer }
+
+                        validerArbeidsforhold(aktuelleArbeidsforhold, domeneKrav)
                     } catch (forbiddenEx: ForbiddenException) {
                         responseBody[i] = PostListResponseDto(status = PostListResponseDto.Status.GENERIC_ERROR, genericMessage = "Ingen tilgang til virksomheten")
                     } catch (validationEx: ConstraintViolationException) {
@@ -175,7 +189,7 @@ fun Route.sporenstreks(
                     throw IOException("Den opplastede filen er for stor")
                 }
 
-                ExcelBulkService(refusjonskravService, ExcelParser(authorizer))
+                ExcelBulkService(refusjonskravService, ExcelParser(authorizer, aaregClient))
                     .processExcelFile(bytes.inputStream(), id)
 
                 call.respond(HttpStatusCode.OK, "Søknaden er mottatt.")

@@ -1,5 +1,6 @@
 package no.nav.helse.sporenstreks.excel
 
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -16,15 +17,14 @@ internal class ExcelBulkServiceTest {
     val serviceMock = mockk<RefusjonskravService>()
 
     @Test
-    internal fun `thrower ved feil i excelarket`() {
+    internal suspend fun `thrower ved feil i excelarket`() {
         val bulkservice = ExcelBulkService(serviceMock, parserMock)
-        every { parserMock.parseAndValidateExcelContent(any(), TestData.validIdentitetsnummer) } returns ExcelParser.ExcelParsingResult(emptyList(), setOf(ExcelFileRowError(1, "test", "test")))
-
+        coEvery { parserMock.parseAndValidateExcelContent(any(), TestData.validIdentitetsnummer) } returns ExcelParser.ExcelParsingResult(emptyList(), setOf(ExcelFileRowError(1, "test", "test")))
         assertThrows<ExcelFileParsingException> { bulkservice.processExcelFile(excelFile, TestData.validIdentitetsnummer) }
     }
 
     @Test
-    internal fun `Lagrer til databasen ved feilfri parsing`() {
+    internal suspend fun `Lagrer til databasen ved feilfri parsing`() {
         val bulkservice = ExcelBulkService(serviceMock, parserMock)
         val refusjonskrabParsedFromFile = listOf(
             Refusjonskrav(
@@ -35,7 +35,7 @@ internal class ExcelBulkServiceTest {
             )
         )
 
-        every { parserMock.parseAndValidateExcelContent(any(), TestData.validIdentitetsnummer) } returns ExcelParser.ExcelParsingResult(refusjonskrabParsedFromFile, emptySet())
+        coEvery { parserMock.parseAndValidateExcelContent(any(), TestData.validIdentitetsnummer) } returns ExcelParser.ExcelParsingResult(refusjonskrabParsedFromFile, emptySet())
         val refernceNumber = 123
         every { serviceMock.bulkInsert(refusjonskrabParsedFromFile) } returns listOf(refernceNumber)
 
