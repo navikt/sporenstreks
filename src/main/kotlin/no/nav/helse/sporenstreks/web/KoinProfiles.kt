@@ -24,12 +24,15 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.MockBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.helse.arbeidsgiver.integrasjoner.RestSTSAccessTokenProvider
+import no.nav.helse.arbeidsgiver.integrasjoner.aareg.AaregArbeidsforholdClient
+import no.nav.helse.arbeidsgiver.integrasjoner.aareg.AaregArbeidsforholdClientImpl
 import no.nav.helse.arbeidsgiver.integrasjoner.altinn.AltinnRestClient
 import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.DokarkivKlient
 import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.DokarkivKlientImpl
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OppgaveKlient
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OppgaveKlientImpl
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
+import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.helse.arbeidsgiver.web.auth.AltinnAuthorizer
 import no.nav.helse.arbeidsgiver.web.auth.AltinnOrganisationsRepository
 import no.nav.helse.arbeidsgiver.web.auth.DefaultAltinnAuthorizer
@@ -37,6 +40,7 @@ import no.nav.helse.sporenstreks.auth.*
 import no.nav.helse.sporenstreks.db.*
 import no.nav.helse.sporenstreks.integrasjon.JoarkService
 import no.nav.helse.sporenstreks.integrasjon.OppgaveService
+import no.nav.helse.sporenstreks.integrasjon.rest.MockAaregArbeidsforholdClient
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumer
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumerImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.MockAktorConsumer
@@ -119,6 +123,7 @@ fun buildAndTestConfig() = module {
     single { MockRefusjonskravService(get()) as RefusjonskravService }
     single { MockBakgrunnsjobbRepository() as BakgrunnsjobbRepository }
     single { MockDokarkivKlient() as DokarkivKlient }
+    single { MockAaregArbeidsforholdClient() as AaregArbeidsforholdClient }
     single { JoarkService(get()) as JoarkService }
     single { OppgaveService(get(), get()) as OppgaveService }
     single { MockOppgaveKlient() as OppgaveKlient }
@@ -146,6 +151,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { PostgresBakgrunnsjobbRepository(get()) as BakgrunnsjobbRepository }
 
     single { MockDokarkivKlient() as DokarkivKlient }
+    single { MockAaregArbeidsforholdClient() as AaregArbeidsforholdClient }
     single { StaticMockAuthRepo(get()) as AltinnOrganisationsRepository }
     single { DefaultAltinnAuthorizer(get()) as AltinnAuthorizer }
     single { JoarkService(get()) as JoarkService }
@@ -195,6 +201,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
         ) as AccessTokenProvider
     }
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
+    single { AaregArbeidsforholdClientImpl(config.getString("aareg_url"), get(), get()) } bind AaregArbeidsforholdClient::class
     single { JoarkService(get()) as JoarkService }
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
@@ -276,6 +283,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { PostgresRefusjonskravService(get(), get(), get(), get(), get()) as RefusjonskravService }
     single { PostgresBakgrunnsjobbRepository(get()) as BakgrunnsjobbRepository }
     single { JoarkService(get()) as JoarkService }
+    single { AaregArbeidsforholdClientImpl(config.getString("aareg_url"), get(), get()) } bind AaregArbeidsforholdClient::class
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
     single { DefaultAltinnAuthorizer(get()) as AltinnAuthorizer }
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }

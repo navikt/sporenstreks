@@ -21,6 +21,7 @@ import io.ktor.routing.post
 import io.ktor.routing.route
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.pipeline.PipelineContext
+import no.nav.helse.arbeidsgiver.integrasjoner.aareg.AaregArbeidsforholdClient
 import no.nav.helse.arbeidsgiver.integrasjoner.altinn.AltinnBrukteForLangTidException
 import no.nav.helse.arbeidsgiver.web.auth.AltinnAuthorizer
 import no.nav.helse.arbeidsgiver.web.auth.AltinnOrganisationsRepository
@@ -45,7 +46,12 @@ import javax.ws.rs.ForbiddenException
 private val excelContentType = ContentType.parse("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
 @KtorExperimentalAPI
-fun Route.sporenstreks(authorizer: AltinnAuthorizer, authRepo: AltinnOrganisationsRepository, refusjonskravService: RefusjonskravService) {
+fun Route.sporenstreks(
+    authorizer: AltinnAuthorizer,
+    authRepo: AltinnOrganisationsRepository,
+    refusjonskravService: RefusjonskravService,
+    aaregClient: AaregArbeidsforholdClient
+) {
     route("api/v1") {
 
         route("/login-expiry") {
