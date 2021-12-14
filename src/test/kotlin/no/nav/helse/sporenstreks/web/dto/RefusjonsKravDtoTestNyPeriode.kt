@@ -15,8 +15,8 @@ import java.time.LocalDate
 internal class RefusjonsKravDtoTestNyPeriode {
     @BeforeAll
     fun setup() {
-        mockkStatic(LocalDate::class)
-        every { LocalDate.now() } returns LocalDate.parse("2021-12-07")
+        mockkStatic(Class.forName("java.time.LocalDate").kotlin)
+        every { LocalDate.now() } returns LocalDate.parse("2022-01-20")
     }
 
     @Test
@@ -26,8 +26,8 @@ internal class RefusjonsKravDtoTestNyPeriode {
             TestData.validOrgNr,
             setOf(
                 Arbeidsgiverperiode(
-                    LocalDate.of(2021, 12, 1),
-                    LocalDate.of(2021, 12, 7),
+                    LocalDate.of(2022, 1, 1),
+                    LocalDate.of(2022, 1, 7),
                     2, 2.3
                 )
             )
@@ -42,26 +42,9 @@ internal class RefusjonsKravDtoTestNyPeriode {
                 TestData.validOrgNr,
                 setOf(
                     Arbeidsgiverperiode(
-                        LocalDate.of(2021, 12, 1),
-                        LocalDate.of(2021, 12, 6),
+                        LocalDate.of(2022, 1, 1),
+                        LocalDate.of(2022, 1, 6),
                         2, 2000.0
-                    )
-                )
-            )
-        }
-    }
-
-    @Test
-    fun `Det kan ikke kreves refusjon fra og med 1 oktober 2021 til og med 30 november 2021`() {
-        Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
-            RefusjonskravDto(
-                TestData.validIdentitetsnummer,
-                TestData.validOrgNr,
-                setOf(
-                    Arbeidsgiverperiode(
-                        LocalDate.of(2021, 10, 1),
-                        LocalDate.of(2021, 10, 8),
-                        1, 2000.0
                     )
                 )
             )

@@ -15,7 +15,7 @@ object TestData {
         opprettetAv,
         validIdentitetsnummer,
         validOrgNr,
-        setOf(Arbeidsgiverperiode(of(2020, 4, 4), of(2020, 4, 10), 2, 1000.0)),
+        setOf(Arbeidsgiverperiode(of(2022, 4, 4), of(2022, 4, 10), 2, 1000.0)),
         RefusjonskravStatus.MOTTATT
     )
 }
