@@ -69,6 +69,8 @@ spec:
       value: https://sts.adeo.no/SecurityTokenServiceProvider/
     - name: DOKARKIV_URL
       value: https://dokarkiv.nais.adeo.no
+    - name: AAREG_URL
+      value: https://modapp.adeo.no/aareg-services
     - name: AKTOERREGISTER_URL
       value: https://app.adeo.no/aktoerregister/api/v1
     - name: OPPGAVEBEHANDLING_URL

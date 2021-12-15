@@ -66,6 +66,7 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
                     )
                 )
             )
+
             doAuthenticatedRequest(HttpMethod.Post, "api/v1/refusjonskrav") {
                 addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                 setBody(

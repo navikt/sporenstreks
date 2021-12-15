@@ -69,6 +69,8 @@ spec:
       value: https://sts-q1.preprod.local/SecurityTokenServiceProvider/
     - name: DOKARKIV_URL
       value: https://dokarkiv-q1.nais.preprod.local
+    - name: AAREG_URL
+      value: https://modapp-q1.adeo.no/aareg-services
     - name: AKTOERREGISTER_URL
       value: https://app-q1.adeo.no/aktoerregister/api/v1
     - name: OPPGAVEBEHANDLING_URL

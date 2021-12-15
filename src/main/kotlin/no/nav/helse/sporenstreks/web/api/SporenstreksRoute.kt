@@ -21,6 +21,7 @@ import io.ktor.routing.post
 import io.ktor.routing.route
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.pipeline.PipelineContext
+import no.nav.helse.arbeidsgiver.integrasjoner.aareg.AaregArbeidsforholdClient
 import no.nav.helse.arbeidsgiver.integrasjoner.altinn.AltinnBrukteForLangTidException
 import no.nav.helse.arbeidsgiver.web.auth.AltinnAuthorizer
 import no.nav.helse.arbeidsgiver.web.auth.AltinnOrganisationsRepository
@@ -40,12 +41,19 @@ import no.nav.helse.sporenstreks.web.dto.validation.getContextualMessage
 import org.koin.ktor.ext.get
 import org.valiktor.ConstraintViolationException
 import java.io.IOException
+import java.util.*
 import javax.ws.rs.ForbiddenException
+import kotlin.collections.ArrayList
 
 private val excelContentType = ContentType.parse("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
 @KtorExperimentalAPI
-fun Route.sporenstreks(authorizer: AltinnAuthorizer, authRepo: AltinnOrganisationsRepository, refusjonskravService: RefusjonskravService) {
+fun Route.sporenstreks(
+    authorizer: AltinnAuthorizer,
+    authRepo: AltinnOrganisationsRepository,
+    refusjonskravService: RefusjonskravService,
+    aaregClient: AaregArbeidsforholdClient
+) {
     route("api/v1") {
 
         route("/login-expiry") {
@@ -59,6 +67,8 @@ fun Route.sporenstreks(authorizer: AltinnAuthorizer, authRepo: AltinnOrganisatio
                 val timer = REQUEST_TIME.startTimer()
                 try {
                     val refusjonskrav = call.receive<RefusjonskravDto>()
+                    val arbeidsforhold = aaregClient.hentArbeidsforhold(refusjonskrav.identitetsnummer, UUID.randomUUID().toString())
+                    refusjonskrav.validate(arbeidsforhold)
                     authorize(authorizer, refusjonskrav.virksomhetsnummer)
                     val opprettetAv = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
 
@@ -68,6 +78,7 @@ fun Route.sporenstreks(authorizer: AltinnAuthorizer, authRepo: AltinnOrganisatio
                         refusjonskrav.virksomhetsnummer,
                         refusjonskrav.perioder
                     )
+
                     val saved = refusjonskravService.saveKravWithKvittering(domeneKrav)
                     call.respond(HttpStatusCode.OK, saved)
                     INNKOMMENDE_REFUSJONSKRAV_COUNTER.inc()
@@ -105,6 +116,9 @@ fun Route.sporenstreks(authorizer: AltinnAuthorizer, authRepo: AltinnOrganisatio
                 for (i in 0 until jsonTree.size()) {
                     try {
                         val dto = om.readValue<RefusjonskravDto>(jsonTree[i].traverse())
+                        val arbeidsforhold = aaregClient.hentArbeidsforhold(dto.identitetsnummer, UUID.randomUUID().toString())
+                        dto.validate(arbeidsforhold)
+
                         authorize(authorizer, dto.virksomhetsnummer)
                         val opprettetAv = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request) // burde denne være lengre opp?
                         domeneListeMedIndex[i] = Refusjonskrav(
@@ -114,7 +128,8 @@ fun Route.sporenstreks(authorizer: AltinnAuthorizer, authRepo: AltinnOrganisatio
                             dto.perioder
                         )
                     } catch (forbiddenEx: ForbiddenException) {
-                        responseBody[i] = PostListResponseDto(status = PostListResponseDto.Status.GENERIC_ERROR, genericMessage = "Ingen tilgang til virksomheten")
+                        responseBody[i] =
+                            PostListResponseDto(status = PostListResponseDto.Status.GENERIC_ERROR, genericMessage = "Ingen tilgang til virksomheten")
                     } catch (validationEx: ConstraintViolationException) {
                         val problems = validationEx.constraintViolations.map {
                             ValidationProblemDetail(it.constraint.name, it.getContextualMessage(), it.property, it.value)
@@ -169,7 +184,7 @@ fun Route.sporenstreks(authorizer: AltinnAuthorizer, authRepo: AltinnOrganisatio
                     throw IOException("Den opplastede filen er for stor")
                 }
 
-                ExcelBulkService(refusjonskravService, ExcelParser(authorizer))
+                ExcelBulkService(refusjonskravService, ExcelParser(authorizer, aaregClient))
                     .processExcelFile(bytes.inputStream(), id)
 
                 call.respond(HttpStatusCode.OK, "Søknaden er mottatt.")

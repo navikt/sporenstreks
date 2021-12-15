@@ -6,6 +6,7 @@ import io.mockk.mockkStatic
 import io.mockk.verify
 import no.nav.helse.TestData
 import no.nav.helse.arbeidsgiver.web.auth.AltinnAuthorizer
+import no.nav.helse.sporenstreks.integrasjon.rest.MockAaregArbeidsforholdClient
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.assertj.core.api.Assertions.assertThat
@@ -19,6 +20,7 @@ internal class ExcelParserTest {
     val invalidFile = ExcelParserTest::class.java.classLoader.getResourceAsStream("koronasykepengerefusjon_nav_ERRORFILE.xlsx")
 
     val authorizerMock = mockk<AltinnAuthorizer>()
+    val aaregMock = mockk<MockAaregArbeidsforholdClient>()
 
     @BeforeEach
     fun setup() {
@@ -28,18 +30,18 @@ internal class ExcelParserTest {
     }
 
     @Test
-    fun `Gyldig fil skal ikke gi noen feil`() {
+    suspend fun `Gyldig fil skal ikke gi noen feil`() {
         val workbook: Workbook = XSSFWorkbook(validFile)
-        val result = ExcelParser(authorizerMock).parseAndValidateExcelContent(workbook, TestData.validIdentitetsnummer)
+        val result = ExcelParser(authorizerMock, aaregMock).parseAndValidateExcelContent(workbook, TestData.validIdentitetsnummer)
         verify(atLeast = 1) { authorizerMock.hasAccess(TestData.validIdentitetsnummer, any()) }
         assertThat(result.refusjonskrav.size).isEqualTo(11)
         assertThat(result.errors.size).isEqualTo(0)
     }
 
     @Test
-    fun `Parseren skal gi feil på riktig rad og kolonne`() {
+    suspend fun `Parseren skal gi feil på riktig rad og kolonne`() {
         val workbook: Workbook = XSSFWorkbook(invalidFile)
-        val result = ExcelParser(authorizerMock).parseAndValidateExcelContent(workbook, TestData.validIdentitetsnummer)
+        val result = ExcelParser(authorizerMock, aaregMock).parseAndValidateExcelContent(workbook, TestData.validIdentitetsnummer)
 
         assertThat(result.refusjonskrav.size).isEqualTo(1)
         assertThat(result.errors.size).isEqualTo(7)
@@ -67,11 +69,11 @@ internal class ExcelParserTest {
     }
 
     @Test
-    fun `Har man ikke tilgang til virksomheten skal man få feil`() {
+    suspend fun `Har man ikke tilgang til virksomheten skal man få feil`() {
         val workbook: Workbook = XSSFWorkbook(validFile)
         every { authorizerMock.hasAccess(any(), any()) } returns false
 
-        val result = ExcelParser(authorizerMock).parseAndValidateExcelContent(workbook, TestData.validIdentitetsnummer)
+        val result = ExcelParser(authorizerMock, aaregMock).parseAndValidateExcelContent(workbook, TestData.validIdentitetsnummer)
 
         assertThat(result.errors.size).isEqualTo(11)
         assertThat(result.errors.all { it.column.equals("Virksomhetsnummer") && it.message.contains("tilgang") })

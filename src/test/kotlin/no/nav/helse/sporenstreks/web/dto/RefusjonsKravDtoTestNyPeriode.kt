@@ -31,7 +31,7 @@ internal class RefusjonsKravDtoTestNyPeriode {
                     2, 2.3
                 )
             )
-        )
+        ).validate(TestData.arbeidsForhold)
     }
 
     @Test
@@ -47,7 +47,7 @@ internal class RefusjonsKravDtoTestNyPeriode {
                         2, 2000.0
                     )
                 )
-            )
+            ).validate(TestData.arbeidsForhold)
         }
     }
 
