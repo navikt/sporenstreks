@@ -201,7 +201,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
         ) as AccessTokenProvider
     }
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
-    single { AaregArbeidsforholdClientImpl(config.getString("aareg_url"), get(), get()) } bind AaregArbeidsforholdClient::class
+    single { AaregArbeidsforholdClientImpl(config.getString("aareg_url") + "/api/v1/arbeidstaker/arbeidsforhold?sporingsinformasjon=false&historikk=false", get(), get()) } bind AaregArbeidsforholdClient::class
     single { JoarkService(get()) as JoarkService }
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
@@ -283,7 +283,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { PostgresRefusjonskravService(get(), get(), get(), get(), get()) as RefusjonskravService }
     single { PostgresBakgrunnsjobbRepository(get()) as BakgrunnsjobbRepository }
     single { JoarkService(get()) as JoarkService }
-    single { AaregArbeidsforholdClientImpl(config.getString("aareg_url"), get(), get()) } bind AaregArbeidsforholdClient::class
+    single { AaregArbeidsforholdClientImpl(config.getString("aareg_url") + "/api/v1/arbeidstaker/arbeidsforhold?sporingsinformasjon=false&historikk=false", get(), get()) } bind AaregArbeidsforholdClient::class
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
     single { DefaultAltinnAuthorizer(get()) as AltinnAuthorizer }
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
