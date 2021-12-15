@@ -9,7 +9,6 @@ import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.maksimalAG
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.refusjonFraDato
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.refusjonTilDato
 import no.nav.helse.sporenstreks.web.dto.validation.*
-import org.valiktor.Validator
 import org.valiktor.functions.isGreaterThanOrEqualTo
 import org.valiktor.functions.isLessThanOrEqualTo
 import org.valiktor.functions.isPositiveOrZero

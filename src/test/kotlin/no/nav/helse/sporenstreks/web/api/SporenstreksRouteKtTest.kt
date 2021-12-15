@@ -14,7 +14,6 @@ import io.mockk.every
 import io.mockk.mockkStatic
 import no.nav.helse.TestData
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
-import no.nav.helse.sporenstreks.integrasjon.rest.MockAaregArbeidsforholdClient
 import no.nav.helse.sporenstreks.web.dto.PostListResponseDto
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import no.nav.helse.sporenstreks.web.integration.ControllerIntegrationTestBase
@@ -24,7 +23,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.koin.ktor.ext.get
 import java.time.LocalDate
-import java.util.*
 
 @KtorExperimentalAPI
 class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
