@@ -34,7 +34,6 @@ import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTE
 import no.nav.helse.sporenstreks.metrics.INNKOMMENDE_REFUSJONSKRAV_COUNTER
 import no.nav.helse.sporenstreks.metrics.REQUEST_TIME
 import no.nav.helse.sporenstreks.service.RefusjonskravService
-import no.nav.helse.sporenstreks.web.api.dto.validation.validerArbeidsforhold
 import no.nav.helse.sporenstreks.web.dto.PostListResponseDto
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import no.nav.helse.sporenstreks.web.dto.validation.ValidationProblemDetail
@@ -68,6 +67,8 @@ fun Route.sporenstreks(
                 val timer = REQUEST_TIME.startTimer()
                 try {
                     val refusjonskrav = call.receive<RefusjonskravDto>()
+                    val arbeidsforhold = aaregClient.hentArbeidsforhold(refusjonskrav.identitetsnummer, UUID.randomUUID().toString())
+                    refusjonskrav.validate(arbeidsforhold)
                     authorize(authorizer, refusjonskrav.virksomhetsnummer)
                     val opprettetAv = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
 
@@ -77,11 +78,6 @@ fun Route.sporenstreks(
                         refusjonskrav.virksomhetsnummer,
                         refusjonskrav.perioder
                     )
-
-                    val aktuelleArbeidsforhold = aaregClient.hentArbeidsforhold(domeneKrav.identitetsnummer, UUID.randomUUID().toString())
-                        .filter { it.arbeidsgiver.organisasjonsnummer == domeneKrav.virksomhetsnummer }
-
-                    validerArbeidsforhold(aktuelleArbeidsforhold, domeneKrav)
 
                     val saved = refusjonskravService.saveKravWithKvittering(domeneKrav)
                     call.respond(HttpStatusCode.OK, saved)
@@ -120,21 +116,20 @@ fun Route.sporenstreks(
                 for (i in 0 until jsonTree.size()) {
                     try {
                         val dto = om.readValue<RefusjonskravDto>(jsonTree[i].traverse())
+                        val arbeidsforhold = aaregClient.hentArbeidsforhold(dto.identitetsnummer, UUID.randomUUID().toString())
+                        dto.validate(arbeidsforhold)
+
                         authorize(authorizer, dto.virksomhetsnummer)
                         val opprettetAv = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request) // burde denne være lengre opp?
-                        val domeneKrav = Refusjonskrav(
+                        domeneListeMedIndex[i] = Refusjonskrav(
                             opprettetAv,
                             dto.identitetsnummer,
                             dto.virksomhetsnummer,
                             dto.perioder
                         )
-                        domeneListeMedIndex[i] = domeneKrav
-                        val aktuelleArbeidsforhold = aaregClient.hentArbeidsforhold(domeneKrav.identitetsnummer, UUID.randomUUID().toString())
-                            .filter { it.arbeidsgiver.organisasjonsnummer == domeneKrav.virksomhetsnummer }
-
-                        validerArbeidsforhold(aktuelleArbeidsforhold, domeneKrav)
                     } catch (forbiddenEx: ForbiddenException) {
-                        responseBody[i] = PostListResponseDto(status = PostListResponseDto.Status.GENERIC_ERROR, genericMessage = "Ingen tilgang til virksomheten")
+                        responseBody[i] =
+                            PostListResponseDto(status = PostListResponseDto.Status.GENERIC_ERROR, genericMessage = "Ingen tilgang til virksomheten")
                     } catch (validationEx: ConstraintViolationException) {
                         val problems = validationEx.constraintViolations.map {
                             ValidationProblemDetail(it.constraint.name, it.getContextualMessage(), it.property, it.value)

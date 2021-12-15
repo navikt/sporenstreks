@@ -5,7 +5,6 @@ import no.nav.helse.arbeidsgiver.web.auth.AltinnAuthorizer
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.excel.ExcelBulkService.Companion.startDataRowAt
-import no.nav.helse.sporenstreks.web.api.dto.validation.validerArbeidsforhold
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import no.nav.helse.sporenstreks.web.dto.validation.getContextualMessage
 import org.apache.poi.ss.usermodel.CellType
@@ -91,17 +90,8 @@ class ExcelParser(private val authorizer: AltinnAuthorizer, val aaregClient: Aar
             setOf(Arbeidsgiverperiode(fom, tom, antallDager, beloep))
         )
 
-        val domeneKrav = Refusjonskrav(
-            opprettetAv,
-            refusjonskrav.identitetsnummer,
-            refusjonskrav.virksomhetsnummer,
-            refusjonskrav.perioder
-        )
-
-        val aktuelleArbeidsforhold = aaregClient.hentArbeidsforhold(domeneKrav.identitetsnummer, UUID.randomUUID().toString())
-            .filter { it.arbeidsgiver.organisasjonsnummer == domeneKrav.virksomhetsnummer }
-
-        validerArbeidsforhold(aktuelleArbeidsforhold, domeneKrav)
+        val arbeidsforhold = aaregClient.hentArbeidsforhold(refusjonskrav.identitetsnummer, UUID.randomUUID().toString())
+        refusjonskrav.validate(arbeidsforhold)
 
         // authorize the use
         if (!authorizer.hasAccess(opprettetAv, virksomhetsNummer)) {

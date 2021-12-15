@@ -34,7 +34,7 @@ internal class RefusjonsKravDtoTest {
                     4, 2.4
                 )
             )
-        )
+        ).validate(TestData.arbeidsForhold)
     }
 
     @Test
@@ -54,7 +54,7 @@ internal class RefusjonsKravDtoTest {
                     4, 2.0
                 )
             )
-        )
+        ).validate(TestData.arbeidsForhold)
     }
 
     @Test
@@ -75,7 +75,7 @@ internal class RefusjonsKravDtoTest {
                         4, 2.0
                     )
                 )
-            )
+            ).validate(TestData.arbeidsForhold)
         }
     }
 
@@ -92,7 +92,7 @@ internal class RefusjonsKravDtoTest {
                         2, -14.65
                     )
                 )
-            )
+            ).validate(TestData.arbeidsForhold)
         }
     }
 
@@ -114,7 +114,7 @@ internal class RefusjonsKravDtoTest {
                         8, 0.0
                     )
                 )
-            )
+            ).validate(TestData.arbeidsForhold)
         }
     }
 
@@ -136,7 +136,7 @@ internal class RefusjonsKravDtoTest {
                         9, 2.0
                     )
                 )
-            )
+            ).validate(TestData.arbeidsForhold)
         }
     }
 
@@ -158,7 +158,7 @@ internal class RefusjonsKravDtoTest {
                         9, 2.0
                     )
                 )
-            )
+            ).validate(TestData.arbeidsForhold)
         }
     }
 
@@ -179,7 +179,7 @@ internal class RefusjonsKravDtoTest {
                     9, 2.0
                 )
             )
-        )
+        ).validate(TestData.arbeidsForhold)
     }
 
     @Test
@@ -210,7 +210,7 @@ internal class RefusjonsKravDtoTest {
                         7, 2.0
                     )
                 )
-            )
+            ).validate(TestData.arbeidsForhold)
         }
     }
 
@@ -232,7 +232,7 @@ internal class RefusjonsKravDtoTest {
                         3, 1500.0
                     )
                 )
-            )
+            ).validate(TestData.arbeidsForhold)
         }
     }
 
@@ -248,7 +248,7 @@ internal class RefusjonsKravDtoTest {
                     4, 2000.0
                 )
             )
-        )
+        ).validate(TestData.arbeidsForhold)
     }
 
     @Test
@@ -264,7 +264,7 @@ internal class RefusjonsKravDtoTest {
                         4, 2000.0
                     )
                 )
-            )
+            ).validate(TestData.arbeidsForhold)
         }
     }
 
@@ -285,7 +285,7 @@ internal class RefusjonsKravDtoTest {
                     5, 10000.0
                 )
             )
-        )
+        ).validate(TestData.arbeidsForhold)
 
         Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
             RefusjonskravDto(
@@ -298,7 +298,7 @@ internal class RefusjonsKravDtoTest {
                         5, 10000.0
                     )
                 )
-            )
+            ).validate(TestData.arbeidsForhold)
         }
     }
 
@@ -320,7 +320,7 @@ internal class RefusjonsKravDtoTest {
                         5, 10000.0
                     )
                 )
-            )
+            ).validate(TestData.arbeidsForhold)
         }
     }
 
@@ -337,7 +337,7 @@ internal class RefusjonsKravDtoTest {
                         4, 4000.0
                     )
                 )
-            )
+            ).validate(TestData.arbeidsForhold)
         }
 
         RefusjonskravDto(
@@ -350,7 +350,7 @@ internal class RefusjonsKravDtoTest {
                     0, 0.0
                 )
             )
-        )
+        ).validate(TestData.arbeidsForhold)
     }
 
     @Test
@@ -367,7 +367,7 @@ internal class RefusjonsKravDtoTest {
                         1, 1000.0
                     )
                 )
-            )
+            ).validate(TestData.arbeidsForhold)
         }
     }
 
@@ -384,7 +384,7 @@ internal class RefusjonsKravDtoTest {
                         -5, 4000.0
                     )
                 )
-            )
+            ).validate(TestData.arbeidsForhold)
         }
     }
 
@@ -401,7 +401,7 @@ internal class RefusjonsKravDtoTest {
                         0, 4000.0
                     )
                 )
-            )
+            ).validate(TestData.arbeidsForhold)
         }
     }
 }

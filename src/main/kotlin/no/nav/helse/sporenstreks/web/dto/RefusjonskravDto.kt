@@ -1,5 +1,6 @@
 package no.nav.helse.sporenstreks.web.dto
 
+import no.nav.helse.arbeidsgiver.integrasjoner.aareg.Arbeidsforhold
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.antallMånederTilStengt
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.arbeidsgiverBetalerForDager
@@ -8,6 +9,7 @@ import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.maksimalAG
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.refusjonFraDato
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.refusjonTilDato
 import no.nav.helse.sporenstreks.web.dto.validation.*
+import org.valiktor.Validator
 import org.valiktor.functions.isGreaterThanOrEqualTo
 import org.valiktor.functions.isLessThanOrEqualTo
 import org.valiktor.functions.isPositiveOrZero
@@ -20,10 +22,11 @@ data class RefusjonskravDto(
     val virksomhetsnummer: String,
     val perioder: Set<Arbeidsgiverperiode>
 ) {
-    init {
+    fun validate(arbeidsforhold: List<Arbeidsforhold>) {
         validate(this) {
             validate(RefusjonskravDto::identitetsnummer).isValidIdentitetsnummer()
             validate(RefusjonskravDto::virksomhetsnummer).isValidOrganisasjonsnummer()
+            validate(RefusjonskravDto::perioder).måHaAktivtArbeidsforhold(it, arbeidsforhold)
 
             validate(RefusjonskravDto::perioder).validateForEach {
                 validate(Arbeidsgiverperiode::beloep).isPositiveOrZero()
