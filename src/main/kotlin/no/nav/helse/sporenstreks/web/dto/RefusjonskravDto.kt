@@ -20,7 +20,7 @@ data class RefusjonskravDto(
     val identitetsnummer: String,
     val virksomhetsnummer: String,
     val perioder: Set<Arbeidsgiverperiode>,
-    val endring: Boolean = false
+    val tariffEndring: Boolean = false
 ) {
     fun validate(arbeidsforhold: List<Arbeidsforhold>) {
         validate(this) {

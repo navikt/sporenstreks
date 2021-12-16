@@ -106,7 +106,8 @@ class ExcelParser(private val authorizer: AltinnAuthorizer, val aaregClient: Aar
             refusjonskrav.identitetsnummer,
             refusjonskrav.virksomhetsnummer,
             refusjonskrav.perioder,
-            kilde = "XLSX-$correlationId"
+            kilde = "XLSX-$correlationId",
+            tariffEndring = refusjonskrav.tariffEndring
         )
     }
 
