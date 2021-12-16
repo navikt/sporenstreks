@@ -26,13 +26,14 @@ class ExcelParser(private val authorizer: AltinnAuthorizer, val aaregClient: Aar
         val refusjonsKrav = ArrayList<Refusjonskrav>()
         val errorRows = HashSet<ExcelFileRowError>()
 
+        val rad2: Row? =  sheet.getRow(1)
+        val tariffEndring: Boolean = rad2?.extract(0, "Endring")?.contains("Tariffendring") ?: false
         var currentDataRow = startDataRowAt
         val parseRunId = UUID.randomUUID().toString()
         var row: Row? = sheet.getRow(currentDataRow)
-
         while (row != null && row.extractRawValue(0) != "") {
             try {
-                val krav = extractRefusjonsKravFromExcelRow(row, opprettetAv, parseRunId, aaregClient)
+                val krav = extractRefusjonsKravFromExcelRow(row, opprettetAv, parseRunId, aaregClient, tariffEndring)
                 refusjonsKrav.add(krav)
             } catch (ex: ForbiddenException) {
                 errorRows.add(
@@ -74,7 +75,7 @@ class ExcelParser(private val authorizer: AltinnAuthorizer, val aaregClient: Aar
         return ExcelParsingResult(refusjonsKrav, errorRows)
     }
 
-    private suspend fun extractRefusjonsKravFromExcelRow(row: Row, opprettetAv: String, correlationId: String, aaregClient: AaregArbeidsforholdClient): Refusjonskrav {
+    private suspend fun extractRefusjonsKravFromExcelRow(row: Row, opprettetAv: String, correlationId: String, aaregClient: AaregArbeidsforholdClient, tariffEndring: Boolean): Refusjonskrav {
         // extract values
         val identitetsnummer = row.extract(0, "Fødselsnummer")
         val virksomhetsNummer = row.extract(1, "Virksomhetsnummer")
@@ -87,7 +88,8 @@ class ExcelParser(private val authorizer: AltinnAuthorizer, val aaregClient: Aar
         val refusjonskrav = RefusjonskravDto(
             identitetsnummer,
             virksomhetsNummer,
-            setOf(Arbeidsgiverperiode(fom, tom, antallDager, beloep))
+            setOf(Arbeidsgiverperiode(fom, tom, antallDager, beloep)),
+            tariffEndring
         )
 
         val arbeidsforhold = aaregClient.hentArbeidsforhold(refusjonskrav.identitetsnummer, UUID.randomUUID().toString())
