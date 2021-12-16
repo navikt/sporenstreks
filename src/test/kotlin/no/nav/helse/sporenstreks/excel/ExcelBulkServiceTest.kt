@@ -4,6 +4,8 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.runBlocking
 import no.nav.helse.TestData
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
 import no.nav.helse.sporenstreks.service.RefusjonskravService
@@ -12,19 +14,26 @@ import org.junit.jupiter.api.assertThrows
 
 internal class ExcelBulkServiceTest {
 
+    fun suspendableTest(block: suspend CoroutineScope.() -> Unit) {
+        runBlocking {
+            block()
+            Unit
+        }
+    }
+
     val excelFile = ExcelParserTest::class.java.classLoader.getResourceAsStream("koronasykepengerefusjon_nav_TESTFILE.xlsx")
     val parserMock = mockk<ExcelParser>()
     val serviceMock = mockk<RefusjonskravService>()
 
     @Test
-    internal suspend fun `thrower ved feil i excelarket`() {
+    internal fun `thrower ved feil i excelarket`() = suspendableTest {
         val bulkservice = ExcelBulkService(serviceMock, parserMock)
         coEvery { parserMock.parseAndValidateExcelContent(any(), TestData.validIdentitetsnummer) } returns ExcelParser.ExcelParsingResult(emptyList(), setOf(ExcelFileRowError(1, "test", "test")))
         assertThrows<ExcelFileParsingException> { bulkservice.processExcelFile(excelFile, TestData.validIdentitetsnummer) }
     }
 
     @Test
-    internal suspend fun `Lagrer til databasen ved feilfri parsing`() {
+    internal fun `Lagrer til databasen ved feilfri parsing`() = suspendableTest {
         val bulkservice = ExcelBulkService(serviceMock, parserMock)
         val refusjonskrabParsedFromFile = listOf(
             Refusjonskrav(
