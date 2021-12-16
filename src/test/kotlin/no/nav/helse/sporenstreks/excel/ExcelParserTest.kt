@@ -53,8 +53,8 @@ internal class ExcelParserTest  {
         val workbook: Workbook = XSSFWorkbook(invalidFile)
         val result = ExcelParser(authorizerMock, aaregMock).parseAndValidateExcelContent(workbook, TestData.validIdentitetsnummer)
 
-        assertThat(result.refusjonskrav.size).isEqualTo(1)
-        assertThat(result.errors.size).isEqualTo(7)
+        assertThat(result.refusjonskrav.size).isEqualTo(0)
+        assertThat(result.errors.size).isEqualTo(11)
 
         val rowErrors = result.errors.groupBy { it.rowNumber }
 
