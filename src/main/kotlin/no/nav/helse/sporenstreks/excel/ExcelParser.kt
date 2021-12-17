@@ -26,8 +26,8 @@ class ExcelParser(private val authorizer: AltinnAuthorizer, val aaregClient: Aar
         val refusjonsKrav = ArrayList<Refusjonskrav>()
         val errorRows = HashSet<ExcelFileRowError>()
 
-        val rad2: Row? = sheet.getRow(1)
-        val tariffEndring: Boolean = rad2?.extract(0, "Endring")?.contains("Tariffendring") ?: false
+        val rad2: Row? = sheet.getRow(0)
+        val tariffEndring: Boolean = rad2?.extract(0, "Endring")?.contains("tariffendringer") ?: false
         var currentDataRow = startDataRowAt
         val parseRunId = UUID.randomUUID().toString()
         var row: Row? = sheet.getRow(currentDataRow)
