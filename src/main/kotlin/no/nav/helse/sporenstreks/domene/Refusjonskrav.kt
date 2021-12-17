@@ -14,11 +14,12 @@ data class Refusjonskrav(
     var oppgaveId: String? = null,
     var joarkReferanse: String? = null,
     var kilde: String = "WEBSKJEMA",
-
     val opprettet: LocalDateTime = LocalDateTime.now(),
     val id: UUID = UUID.randomUUID(),
     var kvitteringId: UUID? = null,
     var indeksertInflux: Boolean = false,
+
+    val tariffEndring: Boolean = false,
 
     // Dette referansenummeret overskrives av postgres ved lagring
     // og holdes utenfor JSON-data-feltet der. Det er kun skrivbart for mapping fra databasen

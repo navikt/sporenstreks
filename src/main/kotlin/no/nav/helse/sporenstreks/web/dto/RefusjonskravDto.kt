@@ -19,7 +19,8 @@ import java.time.LocalDate
 data class RefusjonskravDto(
     val identitetsnummer: String,
     val virksomhetsnummer: String,
-    val perioder: Set<Arbeidsgiverperiode>
+    val perioder: Set<Arbeidsgiverperiode>,
+    val tariffEndring: Boolean = false
 ) {
     fun validate(arbeidsforhold: List<Arbeidsforhold>) {
         validate(this) {
