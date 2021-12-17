@@ -166,6 +166,12 @@ fun Route.sporenstreks(
                 call.respondBytes(template.readAllBytes(), excelContentType)
             }
 
+            get("/tariff-template") {
+                val template = javaClass.getResourceAsStream("/bulk-upload/sykepengerefusjon_tariffendringer_mal_v16-12-2021.xlsx")
+                call.response.headers.append("Content-Disposition", "attachment; filename=\"koronasykepenger_tariffendringer_nav.xlsx\"")
+                call.respondBytes(template.readAllBytes(), excelContentType)
+            }
+
             post("/upload") {
 
                 val id = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
