@@ -71,7 +71,7 @@ internal class RefusjonsKravDtoTestNyPeriode {
             val validationError = ex.constraintViolations
                 .map { "${it.constraint.name}: ${it.toMessage().message}" }
                 .first()
-            assertEquals("RefusjonsdagerIkkeFørDatoConstraint: Det kan ikke kreves refusjon før 2021-12-01", validationError)
+            assertEquals("RefusjonsdagerIkkeFørDatoConstraint: Det kan ikke kreves refusjon før 01.12.2021", validationError)
         }
     }
 
