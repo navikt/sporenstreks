@@ -6,8 +6,11 @@ import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import org.valiktor.Constraint
 import org.valiktor.Validator
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.min
+
+val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
 interface CustomConstraint : Constraint {
     override val messageBundle: String
@@ -135,7 +138,7 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.tomPeriodeKanIkkeH
 class RefusjonsdagerInnenforGyldigPeriodeConstraint(override val messageParams: Map<String, *>) : CustomConstraint
 
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdagerInnenforGyldigPeriode(refusjonsdagerFom: LocalDate) =
-    this.validate(RefusjonsdagerInnenforGyldigPeriodeConstraint(mapOf("dato" to refusjonsdagerFom.toString()))) { ps ->
+    this.validate(RefusjonsdagerInnenforGyldigPeriodeConstraint(mapOf("dato" to dateFormatter.format(refusjonsdagerFom)))) { ps ->
         ps!!.all { p ->
             val validDays = ChronoUnit.DAYS.between(refusjonsdagerFom, p.tom.plusDays(1))
             (p.fom >= refusjonsdagerFom || (p.antallDagerMedRefusjon == 0 || p.antallDagerMedRefusjon <= validDays))
@@ -145,7 +148,7 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdagerInne
 class RefusjonsdagerInnenforGjenaapningConstraint(override val messageParams: Map<String, *>) : CustomConstraint
 
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdatoIkkeEtterGjenåpning(refusjonsdagerTom: LocalDate) =
-    this.validate(RefusjonsdagerInnenforGjenaapningConstraint(mapOf("dato" to refusjonsdagerTom.toString()))) { ps ->
+    this.validate(RefusjonsdagerInnenforGjenaapningConstraint(mapOf("dato" to dateFormatter.format(refusjonsdagerTom)))) { ps ->
         ps!!.all { p ->
             (p.fom < refusjonsdagerTom)
         }
@@ -166,7 +169,7 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.innenforAntallMån
 class RefusjonsdagerIkkeFørDatoConstraint(override val messageParams: Map<String, *>) : CustomConstraint
 
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.ikkeFørDato(refusjonsdagerFom: LocalDate) =
-    this.validate(RefusjonsdagerIkkeFørDatoConstraint(mapOf("dato" to refusjonsdagerFom.toString()))) { ps ->
+    this.validate(RefusjonsdagerIkkeFørDatoConstraint(mapOf("dato" to dateFormatter.format(refusjonsdagerFom)))) { ps ->
         ps!!.all { p ->
             p.fom.isAfter(refusjonsdagerFom.minusDays(1))
         }
