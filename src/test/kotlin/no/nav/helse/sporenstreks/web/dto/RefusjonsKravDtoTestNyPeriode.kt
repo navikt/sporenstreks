@@ -51,6 +51,23 @@ internal class RefusjonsKravDtoTestNyPeriode {
         }
     }
 
+    @Test
+    fun `Kan ikke søke før 1 desember i ny periode`() {
+        Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
+            RefusjonskravDto(
+                TestData.validIdentitetsnummer,
+                TestData.validOrgNr,
+                setOf(
+                    Arbeidsgiverperiode(
+                        LocalDate.of(2021, 11, 29),
+                        LocalDate.of(2021, 12, 7),
+                        2, 2.3
+                    )
+                )
+            ).validate(TestData.arbeidsForhold)
+        }
+    }
+
 /*
     @Test
     fun `Det kan ikke kreves refusjon for perioder lenger enn 3 måneder siden i gammel periode`() {

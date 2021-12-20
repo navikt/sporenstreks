@@ -62,6 +62,7 @@ data class RefusjonskravDto(
                 validate(RefusjonskravDto::perioder).arbeidsgiverBetalerForDager(arbeidsgiverBetalerForDagerGammelPeriode, refusjonFraDatoGammelPeriode)
             } else {
                 // kan ikke kreve refusjon for dager før 1. desember 2021
+                validate(RefusjonskravDto::perioder).ikkeFørDato(refusjonFraDato)
                 validate(RefusjonskravDto::perioder).refusjonsdagerInnenforGyldigPeriode(refusjonFraDato)
 
                 // Summen av antallDagerMedRefusjon kan ikke overstige total periodelengde - 5 dager

@@ -132,33 +132,42 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.tomPeriodeKanIkkeH
         }
     }
 
-class RefusjonsdagerInnenforGyldigPeriodeConstraint : CustomConstraint
+class RefusjonsdagerInnenforGyldigPeriodeConstraint(override val messageParams: Map<String, *>) : CustomConstraint
 
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdagerInnenforGyldigPeriode(refusjonsdagerFom: LocalDate) =
-    this.validate(RefusjonsdagerInnenforGyldigPeriodeConstraint()) { ps ->
+    this.validate(RefusjonsdagerInnenforGyldigPeriodeConstraint(mapOf("dato" to refusjonsdagerFom.toString()))) { ps ->
         ps!!.all { p ->
             val validDays = ChronoUnit.DAYS.between(refusjonsdagerFom, p.tom.plusDays(1))
             (p.fom >= refusjonsdagerFom || (p.antallDagerMedRefusjon == 0 || p.antallDagerMedRefusjon <= validDays))
         }
     }
 
-class RefusjonsdagerInnenforGjenaapningConstraint : CustomConstraint
+class RefusjonsdagerInnenforGjenaapningConstraint(override val messageParams: Map<String, *>) : CustomConstraint
 
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdatoIkkeEtterGjenåpning(refusjonsdagerTom: LocalDate) =
-    this.validate(RefusjonsdagerInnenforGjenaapningConstraint()) { ps ->
+    this.validate(RefusjonsdagerInnenforGjenaapningConstraint(mapOf("dato" to refusjonsdagerTom.toString()))) { ps ->
         ps!!.all { p ->
             (p.fom < refusjonsdagerTom)
         }
     }
 
-class RefusjonsdagerInnenforAntallMånederConstraint : CustomConstraint
+class RefusjonsdagerInnenforAntallMånederConstraint(override val messageParams: Map<String, *>) : CustomConstraint
 
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.innenforAntallMåneder(antallMåneder: Long) =
-    this.validate(RefusjonsdagerInnenforGjenaapningConstraint()) { ps ->
+    this.validate(RefusjonsdagerInnenforAntallMånederConstraint(mapOf("antall" to antallMåneder.toString()))) { ps ->
         val antallMånederSiden = LocalDate.now()
             .minusMonths(antallMåneder)
 
         ps!!.all { p ->
             p.fom.isAfter(antallMånederSiden)
+        }
+    }
+
+class RefusjonsdagerIkkeFørDatoConstraint(override val messageParams: Map<String, *>) : CustomConstraint
+
+fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.ikkeFørDato(refusjonsdagerFom: LocalDate) =
+    this.validate(RefusjonsdagerIkkeFørDatoConstraint(mapOf("dato" to refusjonsdagerFom.toString()))) { ps ->
+        ps!!.all { p ->
+            p.fom.isAfter(refusjonsdagerFom.minusDays(1))
         }
     }
