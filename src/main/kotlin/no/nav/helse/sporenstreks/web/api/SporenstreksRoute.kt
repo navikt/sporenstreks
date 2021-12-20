@@ -190,7 +190,7 @@ fun Route.sporenstreks(
                     throw IOException("Den opplastede filen er for stor")
                 }
 
-                ExcelBulkService(refusjonskravService, ExcelParser(authorizer, aaregClient))
+                ExcelBulkService(refusjonskravService, ExcelParser(authorizer))
                     .processExcelFile(bytes.inputStream(), id)
 
                 call.respond(HttpStatusCode.OK, "Søknaden er mottatt.")

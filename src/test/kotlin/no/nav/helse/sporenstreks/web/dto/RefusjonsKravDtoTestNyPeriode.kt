@@ -9,7 +9,9 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.valiktor.ConstraintViolationException
+import org.valiktor.i18n.toMessage
 import java.time.LocalDate
+import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class RefusjonsKravDtoTestNyPeriode {
@@ -53,7 +55,7 @@ internal class RefusjonsKravDtoTestNyPeriode {
 
     @Test
     fun `Kan ikke søke før 1 desember i ny periode`() {
-        Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
+        try {
             RefusjonskravDto(
                 TestData.validIdentitetsnummer,
                 TestData.validOrgNr,
@@ -65,6 +67,11 @@ internal class RefusjonsKravDtoTestNyPeriode {
                     )
                 )
             ).validate(TestData.arbeidsForhold)
+        } catch (ex: ConstraintViolationException) {
+            val validationError = ex.constraintViolations
+                .map { "${it.constraint.name}: ${it.toMessage().message}" }
+                .first()
+            assertEquals("RefusjonsdagerIkkeFørDatoConstraint: Det kan ikke kreves refusjon før 2021-12-01", validationError)
         }
     }
 
