@@ -9,7 +9,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
-import io.ktor.util.KtorExperimentalAPI
 import io.mockk.every
 import io.mockk.mockkStatic
 import no.nav.helse.TestData
@@ -24,7 +23,6 @@ import org.junit.jupiter.api.Test
 import org.koin.ktor.ext.get
 import java.time.LocalDate
 
-@KtorExperimentalAPI
 class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
 
     @BeforeEach
@@ -194,7 +192,8 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
                 Assertions.assertThat(resultat).hasSize(4)
                 Assertions.assertThat(resultat[0].status == PostListResponseDto.Status.OK)
                 Assertions.assertThat(resultat[1].status == PostListResponseDto.Status.VALIDATION_ERRORS)
-                Assertions.assertThat(resultat[1].validationErrors?.map { it.validationType }).contains("RefusjonsdagerKanIkkeOverstigePeriodelengdenConstraint")
+                Assertions.assertThat(resultat[1].validationErrors?.map { it.validationType })
+                    .contains("RefusjonsdagerKanIkkeOverstigePeriodelengdenConstraint")
                 Assertions.assertThat(resultat[2].status == PostListResponseDto.Status.OK)
                 Assertions.assertThat(resultat[3].status == PostListResponseDto.Status.VALIDATION_ERRORS)
                 Assertions.assertThat(resultat[3].validationErrors?.map { it.validationType }).contains("LessOrEqual")

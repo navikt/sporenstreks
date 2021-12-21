@@ -8,7 +8,6 @@ import no.nav.helse.sporenstreks.web.sporenstreksModule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-@KtorExperimentalAPI
 class ApplicationAuthenticationTest : ControllerIntegrationTestBase() {
 
     @KtorExperimentalLocationsAPI

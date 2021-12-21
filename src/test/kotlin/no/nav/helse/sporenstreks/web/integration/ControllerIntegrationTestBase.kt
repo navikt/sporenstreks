@@ -5,7 +5,6 @@ import io.ktor.config.ApplicationConfig
 import io.ktor.config.MapApplicationConfig
 import io.ktor.http.HttpMethod
 import io.ktor.server.testing.*
-import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.TestData
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import org.junit.jupiter.api.AfterAll
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.TestInstance
 import org.koin.test.KoinTest
 
-@KtorExperimentalAPI
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 open class ControllerIntegrationTestBase : KoinTest {
 
@@ -58,7 +56,6 @@ open class ControllerIntegrationTestBase : KoinTest {
         setup()
     }
 
-    @KtorExperimentalAPI
     private fun addIntegrationTestConfigValues(config: MapApplicationConfig) {
         val acceptedIssuer = "default"
         val acceptedAudience = "default"
