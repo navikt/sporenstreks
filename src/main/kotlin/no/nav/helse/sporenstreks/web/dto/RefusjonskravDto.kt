@@ -25,11 +25,13 @@ data class RefusjonskravDto(
     val perioder: Set<Arbeidsgiverperiode>,
     val tariffEndring: Boolean = false
 ) {
-    fun validate(arbeidsforhold: List<Arbeidsforhold>) {
+    fun validate(arbeidsforhold: List<Arbeidsforhold>, skipArbeidsforholdValidation: Boolean = false) {
         validate(this) {
             validate(RefusjonskravDto::identitetsnummer).isValidIdentitetsnummer()
             validate(RefusjonskravDto::virksomhetsnummer).isValidOrganisasjonsnummer()
-            validate(RefusjonskravDto::perioder).måHaAktivtArbeidsforhold(it, arbeidsforhold)
+            if (!skipArbeidsforholdValidation) {
+                validate(RefusjonskravDto::perioder).måHaAktivtArbeidsforhold(it, arbeidsforhold)
+            }
 
             validate(RefusjonskravDto::perioder).validateForEach {
                 validate(Arbeidsgiverperiode::beloep).isPositiveOrZero()
