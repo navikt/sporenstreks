@@ -1,7 +1,6 @@
 package no.nav.helse.sporenstreks.integrasjon
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.sun.tools.javac.code.Kinds.KindSelector.VAL
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OppgaveKlient
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OpprettOppgaveRequest
