@@ -294,7 +294,6 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
             }
         }
     }
-
 }
 
 data class RefusjonskravDtoMock(
