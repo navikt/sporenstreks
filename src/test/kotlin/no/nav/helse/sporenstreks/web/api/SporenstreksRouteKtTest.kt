@@ -119,7 +119,7 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
                 val resultat: List<PostListResponseDto> = om.readValue(response.content!!)
                 assertThat(resultat).hasSize(1)
-                assertThat(resultat.first().status == PostListResponseDto.Status.VALIDATION_ERRORS)
+                assertThat(resultat.first().status).isEqualTo(PostListResponseDto.Status.VALIDATION_ERRORS)
             }
         }
     }
@@ -192,12 +192,15 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
                 val resultat: List<PostListResponseDto> = om.readValue(response.content!!)
                 assertThat(resultat).hasSize(4)
-                assertThat(resultat[0].status == PostListResponseDto.Status.OK)
-                assertThat(resultat[1].status == PostListResponseDto.Status.VALIDATION_ERRORS)
+                assertThat(resultat[0].status).isEqualTo(PostListResponseDto.Status.VALIDATION_ERRORS)
+                assertThat(resultat[0].validationErrors).isNull()
+                assertThat(resultat[1].status).isEqualTo(PostListResponseDto.Status.VALIDATION_ERRORS)
                 assertThat(resultat[1].validationErrors?.map { it.validationType })
                     .contains("RefusjonsdagerKanIkkeOverstigePeriodelengdenConstraint")
-                assertThat(resultat[2].status == PostListResponseDto.Status.OK)
-                assertThat(resultat[3].status == PostListResponseDto.Status.VALIDATION_ERRORS)
+                assertThat(resultat[2].status).isEqualTo(PostListResponseDto.Status.VALIDATION_ERRORS)
+                assertThat(resultat[2].validationErrors?.map { it.validationType })
+                    .contains("RefusjonsDagerConstraint")
+                assertThat(resultat[3].status).isEqualTo(PostListResponseDto.Status.VALIDATION_ERRORS)
                 assertThat(resultat[3].validationErrors?.map { it.validationType }).contains("LessOrEqual")
             }
         }

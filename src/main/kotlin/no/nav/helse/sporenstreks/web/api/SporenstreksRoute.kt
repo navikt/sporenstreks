@@ -111,7 +111,7 @@ fun Route.sporenstreks(
                 val domeneListeMedIndex = mutableMapOf<Int, Refusjonskrav>()
 
                 for (i in 0 until jsonTree.size())
-                    responseBody.add(i, PostListResponseDto(PostListResponseDto.Status.GENERIC_ERROR))
+                    responseBody.add(i, PostListResponseDto(PostListResponseDto.Status.OK))
 
                 for (i in 0 until jsonTree.size()) {
                     try {
