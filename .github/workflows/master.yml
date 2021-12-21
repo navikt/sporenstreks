@@ -74,12 +74,11 @@ jobs:
   deploy:
     name: Deploy to dev-fss
     needs: buildAndTest
-    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v1
       
-      - uses: nais/deploy/actions/deploy@master
+      - uses: nais/deploy/actions/deploy@v1
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-fss
