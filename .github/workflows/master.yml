@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - 'preprod/**'
 
 env:
   IMAGE: ghcr.io/${{ github.repository }}/${{ github.event.repository.name }}
