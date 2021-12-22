@@ -19,7 +19,6 @@ import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
-import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.pipeline.PipelineContext
 import no.nav.helse.arbeidsgiver.integrasjoner.aareg.AaregArbeidsforholdClient
 import no.nav.helse.arbeidsgiver.integrasjoner.altinn.AltinnBrukteForLangTidException
@@ -47,7 +46,6 @@ import kotlin.collections.ArrayList
 
 private val excelContentType = ContentType.parse("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
-@KtorExperimentalAPI
 fun Route.sporenstreks(
     authorizer: AltinnAuthorizer,
     authRepo: AltinnOrganisationsRepository,
@@ -82,7 +80,7 @@ fun Route.sporenstreks(
                     val saved = refusjonskravService.saveKravWithKvittering(domeneKrav)
                     call.respond(HttpStatusCode.OK, saved)
                     INNKOMMENDE_REFUSJONSKRAV_COUNTER.inc()
-                    INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTER.inc(refusjonskrav.perioder.sumByDouble { it.beloep }.div(1000))
+                    INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTER.inc(refusjonskrav.perioder.sumOf { it.beloep }.div(1000))
                 } finally {
                     timer.observeDuration()
                 }
@@ -220,7 +218,6 @@ fun Route.sporenstreks(
     }
 }
 
-@KtorExperimentalAPI
 private fun PipelineContext<Unit, ApplicationCall>.authorize(authorizer: AltinnAuthorizer, arbeidsgiverId: String) {
     val identitetsnummer = hentIdentitetsnummerFraLoginToken(application.environment.config, call.request)
     if (!authorizer.hasAccess(identitetsnummer, arbeidsgiverId)) {

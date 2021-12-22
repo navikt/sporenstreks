@@ -22,7 +22,6 @@ import io.ktor.locations.Locations
 import io.ktor.response.respond
 import io.ktor.routing.routing
 import io.ktor.util.DataConversionException
-import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.sporenstreks.excel.ExcelFileParsingException
 import no.nav.helse.sporenstreks.nais.nais
 import no.nav.helse.sporenstreks.web.api.sporenstreks
@@ -39,7 +38,6 @@ import java.util.*
 import javax.ws.rs.ForbiddenException
 
 @KtorExperimentalLocationsAPI
-@KtorExperimentalAPI
 fun Application.sporenstreksModule(config: ApplicationConfig = environment.config) {
     install(Koin) {
         modules(selectModuleBasedOnProfile(config))

@@ -9,7 +9,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
-import io.ktor.util.KtorExperimentalAPI
 import io.mockk.every
 import io.mockk.mockkStatic
 import no.nav.helse.TestData
@@ -24,7 +23,6 @@ import org.junit.jupiter.api.Test
 import org.koin.ktor.ext.get
 import java.time.LocalDate
 
-@KtorExperimentalAPI
 class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
 
     @BeforeEach

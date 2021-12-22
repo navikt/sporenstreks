@@ -14,7 +14,6 @@ import io.ktor.client.*
 import io.ktor.client.engine.apache.*
 import io.ktor.client.features.json.*
 import io.ktor.config.*
-import io.ktor.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import no.altinn.services.serviceengine.correspondence._2009._10.ICorrespondenceAgencyExternalBasic
@@ -65,7 +64,6 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
 
-@KtorExperimentalAPI
 fun selectModuleBasedOnProfile(config: ApplicationConfig): List<Module> {
     val envModule = when (config.property("koin.profile").getString()) {
         "TEST" -> buildAndTestConfig()
@@ -116,25 +114,24 @@ val common = module {
 }
 
 fun buildAndTestConfig() = module {
-    single { StaticMockAuthRepo(get()) as AltinnOrganisationsRepository } bind StaticMockAuthRepo::class
-    single { DefaultAltinnAuthorizer(get()) as AltinnAuthorizer }
-    single { MockRefusjonskravRepo() as RefusjonskravRepository }
-    single { MockKvitteringRepository() as KvitteringRepository }
-    single { MockRefusjonskravService(get()) as RefusjonskravService }
-    single { MockBakgrunnsjobbRepository() as BakgrunnsjobbRepository }
-    single { MockDokarkivKlient() as DokarkivKlient }
-    single { MockAaregArbeidsforholdClient() as AaregArbeidsforholdClient }
-    single { JoarkService(get()) as JoarkService }
-    single { OppgaveService(get(), get()) as OppgaveService }
-    single { MockOppgaveKlient() as OppgaveKlient }
-    single { MockAktorConsumer() as AktorConsumer }
-    single { DummyKvitteringSender() as KvitteringSender }
+    single<AltinnOrganisationsRepository> { StaticMockAuthRepo(get()) } bind StaticMockAuthRepo::class
+    single<AltinnAuthorizer> { DefaultAltinnAuthorizer(get()) }
+    single<RefusjonskravRepository> { MockRefusjonskravRepo() }
+    single<KvitteringRepository> { MockKvitteringRepository() }
+    single<RefusjonskravService> { MockRefusjonskravService(get()) }
+    single<BakgrunnsjobbRepository> { MockBakgrunnsjobbRepository() }
+    single<DokarkivKlient> { MockDokarkivKlient() }
+    single<AaregArbeidsforholdClient> { MockAaregArbeidsforholdClient() }
+    single<JoarkService> { JoarkService(get()) }
+    single<OppgaveService> { OppgaveService(get(), get()) }
+    single<OppgaveKlient> { MockOppgaveKlient() }
+    single<AktorConsumer> { MockAktorConsumer() }
+    single<KvitteringSender> { DummyKvitteringSender() }
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
 }
 
-@KtorExperimentalAPI
 fun localDevConfig(config: ApplicationConfig) = module {
-    single {
+    single<DataSource> {
         getDataSource(
             createHikariConfig(
                 config.getjdbcUrlFromProperties(),
@@ -143,41 +140,40 @@ fun localDevConfig(config: ApplicationConfig) = module {
             ),
             config.getString("database.name"),
             config.getString("database.vault.mountpath")
-        ) as DataSource
+        )
     }
-    single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
-    single { PostgresKvitteringRepository(get(), get()) as KvitteringRepository }
-    single { PostgresRefusjonskravService(get(), get(), get(), get(), get()) as RefusjonskravService }
-    single { PostgresBakgrunnsjobbRepository(get()) as BakgrunnsjobbRepository }
+    single<RefusjonskravRepository> { PostgresRefusjonskravRepository(get(), get()) }
+    single<KvitteringRepository> { PostgresKvitteringRepository(get(), get()) }
+    single<RefusjonskravService> { PostgresRefusjonskravService(get(), get(), get(), get(), get()) }
+    single<BakgrunnsjobbRepository> { PostgresBakgrunnsjobbRepository(get()) }
 
-    single { MockDokarkivKlient() as DokarkivKlient }
-    single { MockAaregArbeidsforholdClient() as AaregArbeidsforholdClient }
-    single { StaticMockAuthRepo(get()) as AltinnOrganisationsRepository }
-    single { DefaultAltinnAuthorizer(get()) as AltinnAuthorizer }
-    single { JoarkService(get()) as JoarkService }
+    single<DokarkivKlient> { MockDokarkivKlient() }
+    single<AaregArbeidsforholdClient> { MockAaregArbeidsforholdClient() }
+    single<AltinnOrganisationsRepository> { StaticMockAuthRepo(get()) }
+    single<AltinnAuthorizer> { DefaultAltinnAuthorizer(get()) }
+    single<JoarkService> { JoarkService(get()) }
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
-    single { MockAktorConsumer() as AktorConsumer }
-    single { MockOppgaveKlient() as OppgaveKlient }
-    single { OppgaveService(get(), get()) as OppgaveService }
-    single { DummyKvitteringSender() as KvitteringSender }
+    single<AktorConsumer> { MockAktorConsumer() }
+    single<OppgaveKlient> { MockOppgaveKlient() }
+    single<OppgaveService> { OppgaveService(get(), get()) }
+    single<KvitteringSender> { DummyKvitteringSender() }
 }
 
-@KtorExperimentalAPI
 fun preprodConfig(config: ApplicationConfig) = module {
-    single {
+    single<DataSource> {
         getDataSource(
             createHikariConfig(config.getjdbcUrlFromProperties(), prometheusMetricsTrackerFactory = PrometheusMetricsTrackerFactory()),
             config.getString("database.name"),
             config.getString("database.vault.mountpath")
-        ) as DataSource
+        )
     }
-    single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
-    single { PostgresKvitteringRepository(get(), get()) as KvitteringRepository }
-    single { PostgresRefusjonskravService(get(), get(), get(), get(), get()) as RefusjonskravService }
-    single { PostgresBakgrunnsjobbRepository(get()) as BakgrunnsjobbRepository }
+    single<RefusjonskravRepository> { PostgresRefusjonskravRepository(get(), get()) }
+    single<KvitteringRepository> { PostgresKvitteringRepository(get(), get()) }
+    single<RefusjonskravService> { PostgresRefusjonskravService(get(), get(), get(), get(), get()) }
+    single<BakgrunnsjobbRepository> { PostgresBakgrunnsjobbRepository(get()) }
 
-    single {
+    single<AltinnOrganisationsRepository> {
         val altinnClient = AltinnRestClient(
             config.getString("altinn.service_owner_api_url"),
             config.getString("altinn.gw_api_key"),
@@ -186,38 +182,44 @@ fun preprodConfig(config: ApplicationConfig) = module {
             get()
         )
 
-        CachedAuthRepo(altinnClient) as AltinnOrganisationsRepository
+        CachedAuthRepo(altinnClient)
     }
 
-    single { SensuClientImpl("sensu.nais", 3030) as SensuClient }
-    single { InfluxReporterImpl("sporenstreks", "dev-fss", "default", get()) as InfluxReporter }
+    single<SensuClient> { SensuClientImpl("sensu.nais", 3030) }
+    single<InfluxReporter> { InfluxReporterImpl("sporenstreks", "dev-fss", "default", get()) }
 
-    single {
+    single<AccessTokenProvider> {
         RestSTSAccessTokenProvider(
             config.getString("service_user.username"),
             config.getString("service_user.password"),
             config.getString("sts_url_rest"),
             get()
-        ) as AccessTokenProvider
+        )
     }
-    single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
-    single { AaregArbeidsforholdClientImpl(config.getString("aareg_url") + "/api/v1/arbeidstaker/arbeidsforhold?sporingsinformasjon=false&historikk=false", get(), get()) } bind AaregArbeidsforholdClient::class
-    single { JoarkService(get()) as JoarkService }
+    single<DokarkivKlient> { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) }
+    single {
+        AaregArbeidsforholdClientImpl(
+            config.getString("aareg_url") + "/api/v1/arbeidstaker/arbeidsforhold?sporingsinformasjon=false&historikk=false",
+            get(),
+            get()
+        )
+    } bind AaregArbeidsforholdClient::class
+    single<JoarkService> { JoarkService(get()) }
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
-    single { DefaultAltinnAuthorizer(get()) as AltinnAuthorizer }
-    single {
+    single<AltinnAuthorizer> { DefaultAltinnAuthorizer(get()) }
+    single<AktorConsumer> {
         AktorConsumerImpl(
             get(),
             config.getString("service_user.username"),
             config.getString("aktoerregister.url"),
             get()
-        ) as AktorConsumer
+        )
     }
-    single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
-    single { OppgaveService(get(), get()) as OppgaveService }
+    single<OppgaveKlient> { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) }
+    single<OppgaveService> { OppgaveService(get(), get()) }
 
-    single {
+    single<ICorrespondenceAgencyExternalBasic> {
         val altinnMeldingWsClient = Clients.iCorrespondenceExternalBasic(
             config.getString("altinn_melding.pep_gw_endpoint")
         )
@@ -226,10 +228,10 @@ fun preprodConfig(config: ApplicationConfig) = module {
             config.getString("service_user.username") to config.getString("service_user.password")
         )
         sts.configureFor(altinnMeldingWsClient)
-        altinnMeldingWsClient as ICorrespondenceAgencyExternalBasic
+        altinnMeldingWsClient
     }
 
-    single {
+    single<KvitteringSender> {
         AltinnKvitteringSender(
             AltinnKvitteringMapper(config.getString("altinn_melding.service_id")),
             get(),
@@ -237,25 +239,23 @@ fun preprodConfig(config: ApplicationConfig) = module {
             config.getString("altinn_melding.password"),
             get()
         )
-            as KvitteringSender
     }
 
     single { RefusjonskravProcessor(get(), get(), get(), get(), get()) }
     single { KvitteringProcessor(get(), get(), get()) }
-    single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60, get()) }
+    single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), (1000 * 60).toLong(), get()) }
 }
 
-@KtorExperimentalAPI
 fun prodConfig(config: ApplicationConfig) = module {
-    single {
+    single<DataSource> {
         getDataSource(
             createHikariConfig(config.getjdbcUrlFromProperties(), prometheusMetricsTrackerFactory = PrometheusMetricsTrackerFactory()),
             config.getString("database.name"),
             config.getString("database.vault.mountpath")
-        ) as DataSource
+        )
     }
 
-    single {
+    single<AltinnOrganisationsRepository> {
         val altinn = AltinnRestClient(
             config.getString("altinn.service_owner_api_url"),
             config.getString("altinn.gw_api_key"),
@@ -264,40 +264,46 @@ fun prodConfig(config: ApplicationConfig) = module {
             get()
         )
 
-        CachedAuthRepo(altinn) as AltinnOrganisationsRepository
+        CachedAuthRepo(altinn)
     }
 
-    single { SensuClientImpl("sensu.nais", 3030) as SensuClient }
-    single { InfluxReporterImpl("sporenstreks", "prod-fss", "default", get()) as InfluxReporter }
-    single {
+    single<SensuClient> { SensuClientImpl("sensu.nais", 3030) }
+    single<InfluxReporter> { InfluxReporterImpl("sporenstreks", "prod-fss", "default", get()) }
+    single<AccessTokenProvider> {
         RestSTSAccessTokenProvider(
             config.getString("service_user.username"),
             config.getString("service_user.password"),
             config.getString("sts_url_rest"),
             get()
-        ) as AccessTokenProvider
+        )
     }
-    single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
-    single { PostgresRefusjonskravRepository(get(), get()) as RefusjonskravRepository }
-    single { PostgresKvitteringRepository(get(), get()) as KvitteringRepository }
-    single { PostgresRefusjonskravService(get(), get(), get(), get(), get()) as RefusjonskravService }
-    single { PostgresBakgrunnsjobbRepository(get()) as BakgrunnsjobbRepository }
-    single { JoarkService(get()) as JoarkService }
-    single { AaregArbeidsforholdClientImpl(config.getString("aareg_url") + "/api/v1/arbeidstaker/arbeidsforhold?sporingsinformasjon=false&historikk=false", get(), get()) } bind AaregArbeidsforholdClient::class
-    single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
-    single { DefaultAltinnAuthorizer(get()) as AltinnAuthorizer }
-    single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
-    single { OppgaveService(get(), get()) as OppgaveService }
+    single<DokarkivKlient> { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) }
+    single<RefusjonskravRepository> { PostgresRefusjonskravRepository(get(), get()) }
+    single<KvitteringRepository> { PostgresKvitteringRepository(get(), get()) }
+    single<RefusjonskravService> { PostgresRefusjonskravService(get(), get(), get(), get(), get()) }
+    single<BakgrunnsjobbRepository> { PostgresBakgrunnsjobbRepository(get()) }
+    single<JoarkService> { JoarkService(get()) }
     single {
+        AaregArbeidsforholdClientImpl(
+            config.getString("aareg_url") + "/api/v1/arbeidstaker/arbeidsforhold?sporingsinformasjon=false&historikk=false",
+            get(),
+            get()
+        )
+    } bind AaregArbeidsforholdClient::class
+    single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
+    single<AltinnAuthorizer> { DefaultAltinnAuthorizer(get()) }
+    single<OppgaveKlient> { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) }
+    single<OppgaveService> { OppgaveService(get(), get()) }
+    single<AktorConsumer> {
         AktorConsumerImpl(
             get(),
             config.getString("service_user.username"),
             config.getString("aktoerregister.url"),
             get()
-        ) as AktorConsumer
+        )
     }
 
-    single {
+    single<ICorrespondenceAgencyExternalBasic> {
         val altinnMeldingWsClient = Clients.iCorrespondenceExternalBasic(
             config.getString("altinn_melding.pep_gw_endpoint")
         )
@@ -306,10 +312,10 @@ fun prodConfig(config: ApplicationConfig) = module {
             config.getString("service_user.username") to config.getString("service_user.password")
         )
         sts.configureFor(altinnMeldingWsClient)
-        altinnMeldingWsClient as ICorrespondenceAgencyExternalBasic
+        altinnMeldingWsClient
     }
 
-    single {
+    single<KvitteringSender> {
         AltinnKvitteringSender(
             AltinnKvitteringMapper(config.getString("altinn_melding.service_id")),
             get(),
@@ -317,21 +323,18 @@ fun prodConfig(config: ApplicationConfig) = module {
             config.getString("altinn_melding.password"),
             get()
         )
-            as KvitteringSender
     }
 
     single { RefusjonskravProcessor(get(), get(), get(), get(), get()) }
     single { KvitteringProcessor(get(), get(), get()) }
-    single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 2, get()) }
+    single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), (1000 * 60 * 2).toLong(), get()) }
 }
 
 // utils
-@KtorExperimentalAPI
 fun ApplicationConfig.getString(path: String): String {
     return this.property(path).getString()
 }
 
-@KtorExperimentalAPI
 fun ApplicationConfig.getjdbcUrlFromProperties(): String {
     return String.format(
         "jdbc:postgresql://%s:%s/%s?reWriteBatchedInserts=true",

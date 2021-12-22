@@ -51,8 +51,8 @@ class InfluxReporterImpl(
             tags = mapOf("kilde" to krav.kilde.substring(0, 3)),
             fields = mapOf(
                 "antallPerioder" to krav.perioder.size,
-                "antallDagerRefusjon" to krav.perioder.sumBy { it.antallDagerMedRefusjon },
-                "totalBeloep" to krav.perioder.sumByDouble { it.beloep }
+                "antallDagerRefusjon" to krav.perioder.sumOf { it.antallDagerMedRefusjon },
+                "totalBeloep" to krav.perioder.sumOf { it.beloep }
             ),
             nanos = nanos + instant.nano
         )

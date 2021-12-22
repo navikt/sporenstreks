@@ -4,7 +4,6 @@ import com.typesafe.config.ConfigFactory
 import io.ktor.config.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
@@ -22,7 +21,6 @@ import org.slf4j.LoggerFactory
 
 val mainLogger = LoggerFactory.getLogger("main")
 
-@KtorExperimentalAPI
 fun main() {
     Thread.currentThread().setUncaughtExceptionHandler { thread, err ->
         mainLogger.error("uncaught exception in thread ${thread.name}: ${err.message}", err)
@@ -75,7 +73,6 @@ private fun autoDetectProbeableComponents(koin: org.koin.core.Koin) {
         .forEach { kubernetesProbeManager.registerReadynessComponent(it) }
 }
 
-@KtorExperimentalAPI
 fun createApplicationEnvironment() = applicationEngineEnvironment {
     config = HoconApplicationConfig(ConfigFactory.load())
 
