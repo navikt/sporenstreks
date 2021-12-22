@@ -38,7 +38,7 @@ internal class KvitteringTest {
             referansenummer = 12345
         )
         val kv = PDFGenerator()
-        val ba = kv.lagPDF(refusjonskrav)
+        val ba = kv.lagPDF(refusjonskrav, TestData.virksomhetsNavn)
 //        val file = File("kvittering_vanlig.pdf")
         val file = File.createTempFile("kvittering_vanlig", "pdf")
         Files.write(ba, file)
@@ -64,7 +64,7 @@ internal class KvitteringTest {
             status = RefusjonskravStatus.MOTTATT,
             referansenummer = 12345
         )
-        val ba = kv.lagPDF(refusjonskrav)
+        val ba = kv.lagPDF(refusjonskrav, TestData.virksomhetsNavn)
 //        val file = File("kvittering_spesialtegn.pdf")
         val file = File.createTempFile("kvittering_spesialtegn", "pdf")
         Files.write(ba, file)
