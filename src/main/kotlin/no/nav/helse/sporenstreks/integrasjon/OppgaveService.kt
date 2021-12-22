@@ -12,7 +12,7 @@ class OppgaveService(private val oppgaveKlient: OppgaveKlient, private val om: O
 
     fun opprettOppgave(refusjonskrav: Refusjonskrav, journalpostId: String, aktørId: String, callId: String): String {
         val response = runBlocking {
-            val request = mapOppgave(journalpostId, aktørId, mapStrukturert(refusjonskrav))
+            val request = mapOppgave(journalpostId, aktørId, mapStrukturert(refusjonskrav), refusjonskrav.tariffEndring)
             oppgaveKlient.opprettOppgave(request, callId)
         }
         return "${response.id}"
@@ -23,14 +23,17 @@ class OppgaveService(private val oppgaveKlient: OppgaveKlient, private val om: O
         return om.writeValueAsString(kravForOppgave)
     }
 
-    private fun mapOppgave(journalpostId: String, aktørId: String, beskrivelse: String): OpprettOppgaveRequest {
+    private fun mapOppgave(journalpostId: String, aktørId: String, beskrivelse: String, tariffEndring: Boolean): OpprettOppgaveRequest {
+        val oppgaveType = if (!tariffEndring) "ROB_BEH" else "VUR_KONS_YTE"
+        val behandlingsTema = if (!tariffEndring) "ab0456" else "ab0433"
+
         return OpprettOppgaveRequest(
             aktoerId = aktørId,
             journalpostId = journalpostId,
             beskrivelse = beskrivelse,
             tema = "SYK",
-            oppgavetype = "ROB_BEH",
-            behandlingstema = "ab0433",
+            oppgavetype = oppgaveType,
+            behandlingstema = behandlingsTema,
             aktivDato = LocalDate.now(),
             fristFerdigstillelse = LocalDate.now().plusDays(7),
             prioritet = "NORM"
