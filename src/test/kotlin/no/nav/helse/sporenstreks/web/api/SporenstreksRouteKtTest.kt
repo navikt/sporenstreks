@@ -18,7 +18,7 @@ import no.nav.helse.sporenstreks.web.dto.PostListResponseDto
 import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import no.nav.helse.sporenstreks.web.integration.ControllerIntegrationTestBase
 import no.nav.helse.sporenstreks.web.sporenstreksModule
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.koin.ktor.ext.get
@@ -41,8 +41,8 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
         }) {
             doAuthenticatedRequest(HttpMethod.Get, "api/v1/refusjonskrav/virksomhet/910098896") {
             }.apply {
-                Assertions.assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
-                Assertions.assertThat(response.content).isEqualTo("[ ]")
+                assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
+                assertThat(response.content).isEqualTo("[ ]")
             }
         }
     }
@@ -75,14 +75,14 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
                     )
                 )
             }.apply {
-                Assertions.assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
+                assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
             }
 
             doAuthenticatedRequest(HttpMethod.Get, "api/v1/refusjonskrav/virksomhet/910098896") {
             }.apply {
-                Assertions.assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
+                assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
                 val resultat: List<RefusjonskravDto> = om.readValue(response.content!!)
-                Assertions.assertThat(resultat).isEqualTo(listOf(dto))
+                assertThat(resultat).isEqualTo(listOf(dto))
             }
         }
     }
@@ -116,10 +116,10 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
                     )
                 )
             }.apply {
-                Assertions.assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
+                assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
                 val resultat: List<PostListResponseDto> = om.readValue(response.content!!)
-                Assertions.assertThat(resultat).hasSize(1)
-                Assertions.assertThat(resultat.first().status == PostListResponseDto.Status.VALIDATION_ERRORS)
+                assertThat(resultat).hasSize(1)
+                assertThat(resultat.first().status).isEqualTo(PostListResponseDto.Status.VALIDATION_ERRORS)
             }
         }
     }
@@ -189,15 +189,19 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
                     )
                 )
             }.apply {
-                Assertions.assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
+                assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
                 val resultat: List<PostListResponseDto> = om.readValue(response.content!!)
-                Assertions.assertThat(resultat).hasSize(4)
-                Assertions.assertThat(resultat[0].status == PostListResponseDto.Status.OK)
-                Assertions.assertThat(resultat[1].status == PostListResponseDto.Status.VALIDATION_ERRORS)
-                Assertions.assertThat(resultat[1].validationErrors?.map { it.validationType }).contains("RefusjonsdagerKanIkkeOverstigePeriodelengdenConstraint")
-                Assertions.assertThat(resultat[2].status == PostListResponseDto.Status.OK)
-                Assertions.assertThat(resultat[3].status == PostListResponseDto.Status.VALIDATION_ERRORS)
-                Assertions.assertThat(resultat[3].validationErrors?.map { it.validationType }).contains("LessOrEqual")
+                assertThat(resultat).hasSize(4)
+                assertThat(resultat[0].status).isEqualTo(PostListResponseDto.Status.VALIDATION_ERRORS)
+                assertThat(resultat[0].validationErrors).isNull()
+                assertThat(resultat[1].status).isEqualTo(PostListResponseDto.Status.VALIDATION_ERRORS)
+                assertThat(resultat[1].validationErrors?.map { it.validationType })
+                    .contains("RefusjonsdagerKanIkkeOverstigePeriodelengdenConstraint")
+                assertThat(resultat[2].status).isEqualTo(PostListResponseDto.Status.VALIDATION_ERRORS)
+                assertThat(resultat[2].validationErrors?.map { it.validationType })
+                    .contains("RefusjonsDagerConstraint")
+                assertThat(resultat[3].status).isEqualTo(PostListResponseDto.Status.VALIDATION_ERRORS)
+                assertThat(resultat[3].validationErrors?.map { it.validationType }).contains("LessOrEqual")
             }
         }
     }
@@ -210,7 +214,83 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
         }) {
             handleRequest(HttpMethod.Get, "api/v1/refusjonskrav/virksomhet/${TestData.validOrgNr}") {
             }.apply {
-                Assertions.assertThat(response.status()).isEqualTo(HttpStatusCode.Unauthorized)
+                assertThat(response.status()).isEqualTo(HttpStatusCode.Unauthorized)
+            }
+        }
+    }
+
+    @KtorExperimentalLocationsAPI
+    @Test
+    fun `Alle krav får valideringsfeil hvis en har det`() {
+        configuredTestApplication({
+            sporenstreksModule()
+        }) {
+            val om = application.get<ObjectMapper>()
+            val dtoListe = listOf(
+                RefusjonskravDtoMock(
+                    identitetsnummer = TestData.validIdentitetsnummer,
+                    virksomhetsnummer = "910098896",
+                    perioder = setOf(
+                        Arbeidsgiverperiode(
+                            fom = LocalDate.of(2022, 1, 12),
+                            tom = LocalDate.of(2022, 1, 20),
+                            antallDagerMedRefusjon = 3,
+                            beloep = 50.0
+                        )
+                    )
+                ),
+                RefusjonskravDtoMock(
+                    identitetsnummer = TestData.validIdentitetsnummer,
+                    virksomhetsnummer = "910098896",
+                    perioder = setOf(
+                        Arbeidsgiverperiode(
+                            fom = LocalDate.of(2022, 1, 12),
+                            tom = LocalDate.of(2022, 1, 20),
+                            antallDagerMedRefusjon = 3,
+                            beloep = 50.0
+                        )
+                    )
+                ),
+                RefusjonskravDtoMock(
+                    identitetsnummer = TestData.validIdentitetsnummer,
+                    virksomhetsnummer = "910098896",
+                    perioder = setOf(
+                        Arbeidsgiverperiode(
+                            fom = LocalDate.of(2022, 1, 12),
+                            tom = LocalDate.of(2022, 1, 20),
+                            antallDagerMedRefusjon = 3,
+                            beloep = 50.0
+                        )
+                    )
+                ),
+                RefusjonskravDtoMock(
+                    identitetsnummer = TestData.validIdentitetsnummer,
+                    virksomhetsnummer = "910098896",
+                    perioder = setOf(
+                        Arbeidsgiverperiode(
+                            fom = LocalDate.of(2022, 1, 12),
+                            tom = LocalDate.of(2022, 1, 20),
+                            antallDagerMedRefusjon = 10,
+                            beloep = 50.0
+                        )
+                    )
+                )
+            )
+            doAuthenticatedRequest(HttpMethod.Post, "api/v1/refusjonskrav/list") {
+                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                setBody(
+                    om.writeValueAsString(
+                        dtoListe
+                    )
+                )
+            }.apply {
+                assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
+                val resultat: List<PostListResponseDto> = om.readValue(response.content!!)
+                assertThat(resultat).hasSize(4)
+                assertThat(resultat[0].status).isEqualTo(PostListResponseDto.Status.VALIDATION_ERRORS)
+                assertThat(resultat[1].status).isEqualTo(PostListResponseDto.Status.VALIDATION_ERRORS)
+                assertThat(resultat[2].status).isEqualTo(PostListResponseDto.Status.VALIDATION_ERRORS)
+                assertThat(resultat[3].status).isEqualTo(PostListResponseDto.Status.VALIDATION_ERRORS)
             }
         }
     }
