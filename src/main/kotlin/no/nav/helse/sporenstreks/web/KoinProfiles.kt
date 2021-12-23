@@ -11,6 +11,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.zaxxer.hikari.metrics.prometheus.PrometheusMetricsTrackerFactory
 import io.ktor.client.*
+import io.ktor.client.engine.*
+import io.ktor.client.engine.ProxyBuilder.http
 import io.ktor.client.engine.apache.*
 import io.ktor.client.features.json.*
 import io.ktor.config.*
@@ -101,7 +103,11 @@ val common = module {
 
     single { KubernetesProbeManager() }
 
+    val httpProxy = System.getenv("HTTPS_PROXY")
     val httpClient = HttpClient(Apache) {
+        engine {
+            proxy = if (httpProxy.isNullOrEmpty()) null else ProxyBuilder.http(httpProxy)
+        }
         install(JsonFeature) {
             serializer = JacksonSerializer {
                 registerModule(KotlinModule())
