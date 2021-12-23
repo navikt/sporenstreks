@@ -48,6 +48,10 @@ spec:
   leaderElection: false
   secureLogs:
     enabled: true
+  accessPolicy:
+    outbound:
+      external:
+        - host: data.brreg.no
   envFrom:
     - configmap: loginservice-idporten # tilgjengeliggjør LOGINSERVICE_IDPORTEN_DISCOVERY_URL og LOGINSERVICE_IDPORTEN_AUDIENCE
   env:
