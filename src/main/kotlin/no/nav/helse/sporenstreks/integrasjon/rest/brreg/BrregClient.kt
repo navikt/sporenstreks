@@ -21,13 +21,7 @@ class BrregClientImp(private val httpClient: HttpClient, private val om: ObjectM
     BrregClient {
     override suspend fun getVirksomhetsNavn(orgnr: String): String {
         return try {
-            httpClient.get<UnderenheterNavnResponse>(
-                url {
-                    protocol = URLProtocol.HTTPS
-                    host = berreUrl
-                    path(orgnr)
-                }
-            ).navn
+            httpClient.get<UnderenheterNavnResponse>("https://data.brreg.no/enhetsregisteret/api/underenheter/$orgnr").navn
         } catch (cause: ClientRequestException) {
             if (404 == cause.response.status.value) {
                 "Ukjent arbeidsgiver"
