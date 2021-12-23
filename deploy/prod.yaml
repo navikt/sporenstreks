@@ -77,3 +77,5 @@ spec:
       value: http://oppgave.default.svc.nais.local/api/v1/oppgaver
     - name: PARTNER_GATEWAY_ALTINN_ENDPOINT
       value: https://pep-gw.oera.no:9443/ekstern/altinn/BehandleAltinnMelding/v1
+    - name: ENHETSREGISTERET
+      value: data.brreg.no/enhetsregisteret/api/underenheter
