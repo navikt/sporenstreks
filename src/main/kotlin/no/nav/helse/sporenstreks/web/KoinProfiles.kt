@@ -44,6 +44,9 @@ import no.nav.helse.sporenstreks.integrasjon.rest.MockAaregArbeidsforholdClient
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumer
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumerImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.MockAktorConsumer
+import no.nav.helse.sporenstreks.integrasjon.rest.brreg.BrregClient
+import no.nav.helse.sporenstreks.integrasjon.rest.brreg.BrregClientImp
+import no.nav.helse.sporenstreks.integrasjon.rest.brreg.MockBrregClient
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.MockDokarkivKlient
 import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.MockOppgaveKlient
 import no.nav.helse.sporenstreks.integrasjon.rest.sensu.SensuClient
@@ -124,12 +127,13 @@ fun buildAndTestConfig() = module {
     single { MockBakgrunnsjobbRepository() as BakgrunnsjobbRepository }
     single { MockDokarkivKlient() as DokarkivKlient }
     single { MockAaregArbeidsforholdClient() as AaregArbeidsforholdClient }
-    single { JoarkService(get()) as JoarkService }
+    single { JoarkService(get(), get()) as JoarkService }
     single { OppgaveService(get(), get()) as OppgaveService }
     single { MockOppgaveKlient() as OppgaveKlient }
     single { MockAktorConsumer() as AktorConsumer }
     single { DummyKvitteringSender() as KvitteringSender }
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
+    single { MockBrregClient() } bind BrregClient::class
 }
 
 @KtorExperimentalAPI
@@ -154,13 +158,14 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { MockAaregArbeidsforholdClient() as AaregArbeidsforholdClient }
     single { StaticMockAuthRepo(get()) as AltinnOrganisationsRepository }
     single { DefaultAltinnAuthorizer(get()) as AltinnAuthorizer }
-    single { JoarkService(get()) as JoarkService }
+    single { JoarkService(get(), get()) as JoarkService }
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
     single { MockAktorConsumer() as AktorConsumer }
     single { MockOppgaveKlient() as OppgaveKlient }
     single { OppgaveService(get(), get()) as OppgaveService }
     single { DummyKvitteringSender() as KvitteringSender }
+    single { MockBrregClient() } bind BrregClient::class
 }
 
 @KtorExperimentalAPI
@@ -201,8 +206,14 @@ fun preprodConfig(config: ApplicationConfig) = module {
         ) as AccessTokenProvider
     }
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
-    single { AaregArbeidsforholdClientImpl(config.getString("aareg_url") + "/api/v1/arbeidstaker/arbeidsforhold?sporingsinformasjon=false&historikk=false", get(), get()) } bind AaregArbeidsforholdClient::class
-    single { JoarkService(get()) as JoarkService }
+    single {
+        AaregArbeidsforholdClientImpl(
+            config.getString("aareg_url") + "/api/v1/arbeidstaker/arbeidsforhold?sporingsinformasjon=false&historikk=false",
+            get(),
+            get()
+        )
+    } bind AaregArbeidsforholdClient::class
+    single { JoarkService(get(), get()) as JoarkService }
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
     single { DefaultAltinnAuthorizer(get()) as AltinnAuthorizer }
@@ -243,6 +254,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { RefusjonskravProcessor(get(), get(), get(), get(), get()) }
     single { KvitteringProcessor(get(), get(), get()) }
     single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60, get()) }
+    single { BrregClientImp(get(), get(), config.getString("berreg_enhet_url")) } bind BrregClient::class
 }
 
 @KtorExperimentalAPI
@@ -282,8 +294,14 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { PostgresKvitteringRepository(get(), get()) as KvitteringRepository }
     single { PostgresRefusjonskravService(get(), get(), get(), get(), get()) as RefusjonskravService }
     single { PostgresBakgrunnsjobbRepository(get()) as BakgrunnsjobbRepository }
-    single { JoarkService(get()) as JoarkService }
-    single { AaregArbeidsforholdClientImpl(config.getString("aareg_url") + "/api/v1/arbeidstaker/arbeidsforhold?sporingsinformasjon=false&historikk=false", get(), get()) } bind AaregArbeidsforholdClient::class
+    single { JoarkService(get(), get()) as JoarkService }
+    single {
+        AaregArbeidsforholdClientImpl(
+            config.getString("aareg_url") + "/api/v1/arbeidstaker/arbeidsforhold?sporingsinformasjon=false&historikk=false",
+            get(),
+            get()
+        )
+    } bind AaregArbeidsforholdClient::class
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
     single { DefaultAltinnAuthorizer(get()) as AltinnAuthorizer }
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
@@ -323,6 +341,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { RefusjonskravProcessor(get(), get(), get(), get(), get()) }
     single { KvitteringProcessor(get(), get(), get()) }
     single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 2, get()) }
+    single { BrregClientImp(get(), get(), config.getString("berreg_enhet_url")) } bind BrregClient::class
 }
 
 // utils

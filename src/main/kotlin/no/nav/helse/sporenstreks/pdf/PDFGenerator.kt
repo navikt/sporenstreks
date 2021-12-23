@@ -21,7 +21,7 @@ class PDFGenerator {
     val DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy")
     val NUMBER_FORMAT = DecimalFormat("#,###.00")
 
-    fun lagPDF(refusjonskrav: Refusjonskrav): ByteArray {
+    fun lagPDF(refusjonskrav: Refusjonskrav, virksomhetsNavn: String): ByteArray {
         val doc = PDDocument()
         val page = PDPage()
         val font = PDType0Font.load(doc, this::class.java.classLoader.getResource(FONT_NAME).openStream())
@@ -34,6 +34,8 @@ class PDFGenerator {
         val startY = mediaBox.upperRightY - MARGIN_Y
         contentStream.newLineAtOffset(startX, startY)
         contentStream.showText("Fødselsnummer: ${refusjonskrav.identitetsnummer}")
+        contentStream.newLineAtOffset(0F, -LINE_HEIGHT)
+        contentStream.showText("Virksomhetsnavn: $virksomhetsNavn")
         contentStream.newLineAtOffset(0F, -LINE_HEIGHT)
         contentStream.showText("Virksomhetsnummer: ${refusjonskrav.virksomhetsnummer}")
         contentStream.newLineAtOffset(0F, -LINE_HEIGHT * 2)

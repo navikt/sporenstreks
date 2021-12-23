@@ -1,15 +1,20 @@
 package no.nav.helse.sporenstreks.integrasjon
 
+import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.*
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
+import no.nav.helse.sporenstreks.integrasjon.rest.brreg.BrregClient
 import no.nav.helse.sporenstreks.pdf.PDFGenerator
 import java.util.*
 
-class JoarkService(val dokarkivKlient: DokarkivKlient) {
+class JoarkService(val dokarkivKlient: DokarkivKlient, val brreg: BrregClient) {
     val pdfGenerator = PDFGenerator()
 
     fun journalfør(refusjonskrav: Refusjonskrav, callId: String): String {
-        val base64EnkodetPdf = Base64.getEncoder().encodeToString(pdfGenerator.lagPDF(refusjonskrav))
+        val virksomhetsNavn = runBlocking {
+            brreg.getVirksomhetsNavn(refusjonskrav.virksomhetsnummer)
+        }
+        val base64EnkodetPdf = Base64.getEncoder().encodeToString(pdfGenerator.lagPDF(refusjonskrav, virksomhetsNavn))
         return dokarkivKlient.journalførDokument(
             JournalpostRequest(
                 journalposttype = Journalposttype.INNGAAENDE,
@@ -23,7 +28,7 @@ class JoarkService(val dokarkivKlient: DokarkivKlient) {
                 avsenderMottaker = AvsenderMottaker(
                     id = refusjonskrav.virksomhetsnummer,
                     idType = IdType.ORGNR,
-                    navn = "Arbeidsgiver"
+                    navn = virksomhetsNavn
                 ),
                 dokumenter = listOf(
                     Dokument(
