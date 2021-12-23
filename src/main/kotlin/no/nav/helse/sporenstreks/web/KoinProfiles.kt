@@ -12,7 +12,6 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.zaxxer.hikari.metrics.prometheus.PrometheusMetricsTrackerFactory
 import io.ktor.client.*
 import io.ktor.client.engine.*
-import io.ktor.client.engine.ProxyBuilder.http
 import io.ktor.client.engine.apache.*
 import io.ktor.client.features.json.*
 import io.ktor.config.*
@@ -66,6 +65,7 @@ import no.nav.helse.sporenstreks.service.MockRefusjonskravService
 import no.nav.helse.sporenstreks.service.PostgresRefusjonskravService
 import no.nav.helse.sporenstreks.service.RefusjonskravService
 import org.koin.core.module.Module
+import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
@@ -103,8 +103,22 @@ val common = module {
 
     single { KubernetesProbeManager() }
 
-    val httpProxy = System.getenv("HTTPS_PROXY")
     val httpClient = HttpClient(Apache) {
+        install(JsonFeature) {
+            serializer = JacksonSerializer {
+                registerModule(KotlinModule())
+                registerModule(Jdk8Module())
+                registerModule(JavaTimeModule())
+                disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                configure(SerializationFeature.INDENT_OUTPUT, true)
+                configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+            }
+        }
+    }
+
+    val httpProxy = System.getenv("HTTPS_PROXY")
+    val httpClientProxy = HttpClient(Apache) {
         engine {
             proxy = if (httpProxy.isNullOrEmpty()) null else ProxyBuilder.http(httpProxy)
         }
@@ -121,6 +135,7 @@ val common = module {
         }
     }
 
+    single(named("PROXY")) { httpClientProxy }
     single { httpClient }
 }
 
@@ -260,7 +275,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { RefusjonskravProcessor(get(), get(), get(), get(), get()) }
     single { KvitteringProcessor(get(), get(), get()) }
     single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60, get()) }
-    single { BrregClientImp(get(), config.getString("berreg_enhet_url")) } bind BrregClient::class
+    single { BrregClientImp(get(qualifier = named("PROXY")), config.getString("berreg_enhet_url")) } bind BrregClient::class
 }
 
 @KtorExperimentalAPI
@@ -347,7 +362,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { RefusjonskravProcessor(get(), get(), get(), get(), get()) }
     single { KvitteringProcessor(get(), get(), get()) }
     single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 2, get()) }
-    single { BrregClientImp(get(), config.getString("berreg_enhet_url")) } bind BrregClient::class
+    single { BrregClientImp(get(qualifier = named("PROXY")), config.getString("berreg_enhet_url")) } bind BrregClient::class
 }
 
 // utils
