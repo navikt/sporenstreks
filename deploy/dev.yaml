@@ -48,10 +48,6 @@ spec:
   leaderElection: false
   secureLogs:
     enabled: true
-  accessPolicy:
-    outbound:
-      external:
-        - host: data.brreg.no
   envFrom:
     - configmap: loginservice-idporten # tilgjengeliggjør LOGINSERVICE_IDPORTEN_DISCOVERY_URL og LOGINSERVICE_IDPORTEN_AUDIENCE
   env:
@@ -82,4 +78,4 @@ spec:
     - name: PARTNER_GATEWAY_ALTINN_ENDPOINT
       value: https://pep-gw-q1.oera-q.local:9443/ekstern/altinn/BehandleAltinnMelding/v1
     - name: ENHETSREGISTERET
-      value: data.brreg.no/enhetsregisteret/api/underenheter
+      value: https://data.brreg.no/enhetsregisteret/api/underenheter/

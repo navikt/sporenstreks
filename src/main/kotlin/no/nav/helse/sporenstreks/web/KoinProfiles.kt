@@ -254,7 +254,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { RefusjonskravProcessor(get(), get(), get(), get(), get()) }
     single { KvitteringProcessor(get(), get(), get()) }
     single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60, get()) }
-    single { BrregClientImp(get(), get(), config.getString("berreg_enhet_url")) } bind BrregClient::class
+    single { BrregClientImp(get(), config.getString("berreg_enhet_url")) } bind BrregClient::class
 }
 
 @KtorExperimentalAPI
@@ -341,7 +341,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { RefusjonskravProcessor(get(), get(), get(), get(), get()) }
     single { KvitteringProcessor(get(), get(), get()) }
     single { ProcessInfluxJob(get(), CoroutineScope(Dispatchers.IO), 1000 * 60 * 2, get()) }
-    single { BrregClientImp(get(), get(), config.getString("berreg_enhet_url")) } bind BrregClient::class
+    single { BrregClientImp(get(), config.getString("berreg_enhet_url")) } bind BrregClient::class
 }
 
 // utils
