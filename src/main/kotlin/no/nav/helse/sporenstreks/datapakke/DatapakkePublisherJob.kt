@@ -1,9 +1,10 @@
 package no.nav.helse.sporenstreks.datapakke
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
+import io.ktor.client.HttpClient
+import io.ktor.client.request.put
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.readText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.coroutines.CoroutineScope
@@ -35,15 +36,11 @@ class DatapakkePublisherJob(
         }
         val timeseries = statsRepo.getAntallKravStatsUke()
 
-        // TODO: importer datapakkeJson
-        val datapakkeTemplate = {}.toString()
-        //val datapakkeTemplate = "datapakke/datapakke-im-varsel.json".loadFromResources()
+        val datapakkeTemplate = "datapakke/datapakke-sporenstreks.json".loadFromResources()
         val populatedDatapakke = datapakkeTemplate
             .replace("@ukeSerie", timeseries.map { it.weekNumber }.joinToString())
             .replace("@web", timeseries.map { it.antall_web }.joinToString())
             .replace("@excel", timeseries.map { it.antall_excel }.joinToString())
-
-        logger.info("genererte datapakke med data: $populatedDatapakke")
 
         runBlocking {
             val response = httpClient.put<HttpResponse>("$datapakkeApiUrl/$datapakkeId") {

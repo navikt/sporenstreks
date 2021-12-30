@@ -17,6 +17,11 @@ class StatsRepoImpl(
 ) : IStatsRepo {
     override fun getAntallKravStatsUke(): List<AntallKravStatsUke> {
         val query = """
+            SELECT
+                extract('week' from date(data->>'opprettet')) as uke,
+                count(*) filter ( where data->>'kilde' = 'WEBSKJEMA' ) AS antall_web,
+                count(*) filter ( where data->>'kilde' LIKE 'XLSX%' ) AS antall_excel
+            FROM refusjonskrav group by uke order by uke;
         """.trimIndent()
 
         ds.connection.use {
