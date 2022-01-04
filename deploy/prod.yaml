@@ -81,3 +81,5 @@ spec:
       value: "e07b629971920f7d14544df9c2587819"
     - name: DATAPAKKE_API_URL
       value: "https://datakatalog-api.intern.nav.no/v1/datapackage"
+    - name: ENHETSREGISTERET
+      value: https://data.brreg.no/enhetsregisteret/api/underenheter/

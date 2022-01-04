@@ -11,6 +11,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.zaxxer.hikari.metrics.prometheus.PrometheusMetricsTrackerFactory
 import io.ktor.client.*
+import io.ktor.client.engine.*
 import io.ktor.client.engine.apache.*
 import io.ktor.client.features.json.*
 import io.ktor.config.*
@@ -45,6 +46,9 @@ import no.nav.helse.sporenstreks.integrasjon.rest.MockAaregArbeidsforholdClient
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumer
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.AktorConsumerImpl
 import no.nav.helse.sporenstreks.integrasjon.rest.aktor.MockAktorConsumer
+import no.nav.helse.sporenstreks.integrasjon.rest.brreg.BrregClient
+import no.nav.helse.sporenstreks.integrasjon.rest.brreg.BrregClientImp
+import no.nav.helse.sporenstreks.integrasjon.rest.brreg.MockBrregClient
 import no.nav.helse.sporenstreks.integrasjon.rest.dokarkiv.MockDokarkivKlient
 import no.nav.helse.sporenstreks.integrasjon.rest.oppgave.MockOppgaveKlient
 import no.nav.helse.sporenstreks.integrasjon.rest.sensu.SensuClient
@@ -62,6 +66,7 @@ import no.nav.helse.sporenstreks.service.MockRefusjonskravService
 import no.nav.helse.sporenstreks.service.PostgresRefusjonskravService
 import no.nav.helse.sporenstreks.service.RefusjonskravService
 import org.koin.core.module.Module
+import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
@@ -113,6 +118,25 @@ val common = module {
         }
     }
 
+    val httpProxy = System.getenv("HTTPS_PROXY")
+    val httpClientProxy = HttpClient(Apache) {
+        engine {
+            proxy = if (httpProxy.isNullOrEmpty()) null else ProxyBuilder.http(httpProxy)
+        }
+        install(JsonFeature) {
+            serializer = JacksonSerializer {
+                registerModule(KotlinModule())
+                registerModule(Jdk8Module())
+                registerModule(JavaTimeModule())
+                disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                configure(SerializationFeature.INDENT_OUTPUT, true)
+                configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+            }
+        }
+    }
+
+    single(named("PROXY")) { httpClientProxy }
     single { httpClient }
 }
 
@@ -125,12 +149,13 @@ fun buildAndTestConfig() = module {
     single { MockBakgrunnsjobbRepository() as BakgrunnsjobbRepository }
     single { MockDokarkivKlient() as DokarkivKlient }
     single { MockAaregArbeidsforholdClient() as AaregArbeidsforholdClient }
-    single { JoarkService(get()) as JoarkService }
+    single { JoarkService(get(), get()) as JoarkService }
     single { OppgaveService(get(), get()) as OppgaveService }
     single { MockOppgaveKlient() as OppgaveKlient }
     single { MockAktorConsumer() as AktorConsumer }
     single { DummyKvitteringSender() as KvitteringSender }
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
+    single { MockBrregClient() } bind BrregClient::class
 }
 
 @KtorExperimentalAPI
@@ -155,13 +180,14 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { MockAaregArbeidsforholdClient() as AaregArbeidsforholdClient }
     single { StaticMockAuthRepo(get()) as AltinnOrganisationsRepository }
     single { DefaultAltinnAuthorizer(get()) as AltinnAuthorizer }
-    single { JoarkService(get()) as JoarkService }
+    single { JoarkService(get(), get()) as JoarkService }
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
     single { MockAktorConsumer() as AktorConsumer }
     single { MockOppgaveKlient() as OppgaveKlient }
     single { OppgaveService(get(), get()) as OppgaveService }
     single { DummyKvitteringSender() as KvitteringSender }
+    single { MockBrregClient() } bind BrregClient::class
 }
 
 @KtorExperimentalAPI
@@ -202,8 +228,14 @@ fun preprodConfig(config: ApplicationConfig) = module {
         ) as AccessTokenProvider
     }
     single { DokarkivKlientImpl(config.getString("dokarkiv.base_url"), get(), get()) as DokarkivKlient }
-    single { AaregArbeidsforholdClientImpl(config.getString("aareg_url") + "/api/v1/arbeidstaker/arbeidsforhold?sporingsinformasjon=false&historikk=false", get(), get()) } bind AaregArbeidsforholdClient::class
-    single { JoarkService(get()) as JoarkService }
+    single {
+        AaregArbeidsforholdClientImpl(
+            config.getString("aareg_url") + "/api/v1/arbeidstaker/arbeidsforhold?sporingsinformasjon=false&historikk=false",
+            get(),
+            get()
+        )
+    } bind AaregArbeidsforholdClient::class
+    single { JoarkService(get(), get()) as JoarkService }
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
     single { DefaultAltinnAuthorizer(get()) as AltinnAuthorizer }
@@ -247,6 +279,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id"), get()) }
     single { StatsRepoImpl(get()) } bind IStatsRepo::class
+    single { BrregClientImp(get(qualifier = named("PROXY")), config.getString("berreg_enhet_url")) } bind BrregClient::class
 }
 
 @KtorExperimentalAPI
@@ -286,8 +319,14 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { PostgresKvitteringRepository(get(), get()) as KvitteringRepository }
     single { PostgresRefusjonskravService(get(), get(), get(), get(), get()) as RefusjonskravService }
     single { PostgresBakgrunnsjobbRepository(get()) as BakgrunnsjobbRepository }
-    single { JoarkService(get()) as JoarkService }
-    single { AaregArbeidsforholdClientImpl(config.getString("aareg_url") + "/api/v1/arbeidstaker/arbeidsforhold?sporingsinformasjon=false&historikk=false", get(), get()) } bind AaregArbeidsforholdClient::class
+    single { JoarkService(get(), get()) as JoarkService }
+    single {
+        AaregArbeidsforholdClientImpl(
+            config.getString("aareg_url") + "/api/v1/arbeidstaker/arbeidsforhold?sporingsinformasjon=false&historikk=false",
+            get(),
+            get()
+        )
+    } bind AaregArbeidsforholdClient::class
     single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
     single { DefaultAltinnAuthorizer(get()) as AltinnAuthorizer }
     single { OppgaveKlientImpl(config.getString("oppgavebehandling.url"), get(), get()) as OppgaveKlient }
@@ -330,6 +369,7 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id"), get()) }
     single { StatsRepoImpl(get()) } bind IStatsRepo::class
+    single { BrregClientImp(get(qualifier = named("PROXY")), config.getString("berreg_enhet_url")) } bind BrregClient::class
 }
 
 // utils

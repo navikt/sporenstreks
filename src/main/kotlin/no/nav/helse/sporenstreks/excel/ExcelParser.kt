@@ -1,6 +1,5 @@
 package no.nav.helse.sporenstreks.excel
 
-import no.nav.helse.arbeidsgiver.integrasjoner.aareg.AaregArbeidsforholdClient
 import no.nav.helse.arbeidsgiver.web.auth.AltinnAuthorizer
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.domene.Refusjonskrav
@@ -19,8 +18,8 @@ import javax.ws.rs.ForbiddenException
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
 
-class ExcelParser(private val authorizer: AltinnAuthorizer, val aaregClient: AaregArbeidsforholdClient) {
-    suspend fun parseAndValidateExcelContent(workbook: Workbook, opprettetAv: String): ExcelParsingResult {
+class ExcelParser(private val authorizer: AltinnAuthorizer) {
+    fun parseAndValidateExcelContent(workbook: Workbook, opprettetAv: String): ExcelParsingResult {
         val sheet = workbook.getSheetAt(0)
 
         val refusjonsKrav = ArrayList<Refusjonskrav>()
@@ -33,7 +32,7 @@ class ExcelParser(private val authorizer: AltinnAuthorizer, val aaregClient: Aar
         var row: Row? = sheet.getRow(currentDataRow)
         while (row != null && row.extractRawValue(0) != "") {
             try {
-                val krav = extractRefusjonsKravFromExcelRow(row, opprettetAv, parseRunId, aaregClient, tariffEndring)
+                val krav = extractRefusjonsKravFromExcelRow(row, opprettetAv, parseRunId, tariffEndring)
                 refusjonsKrav.add(krav)
             } catch (ex: ForbiddenException) {
                 errorRows.add(
@@ -75,11 +74,10 @@ class ExcelParser(private val authorizer: AltinnAuthorizer, val aaregClient: Aar
         return ExcelParsingResult(refusjonsKrav, errorRows)
     }
 
-    private suspend fun extractRefusjonsKravFromExcelRow(
+    private fun extractRefusjonsKravFromExcelRow(
         row: Row,
         opprettetAv: String,
         correlationId: String,
-        aaregClient: AaregArbeidsforholdClient,
         tariffEndring: Boolean
     ): Refusjonskrav {
         // extract values
@@ -98,8 +96,7 @@ class ExcelParser(private val authorizer: AltinnAuthorizer, val aaregClient: Aar
             tariffEndring
         )
 
-        val arbeidsforhold = aaregClient.hentArbeidsforhold(refusjonskrav.identitetsnummer, UUID.randomUUID().toString())
-        refusjonskrav.validate(arbeidsforhold)
+        refusjonskrav.validate(emptyList(), true)
 
         // authorize the use
         if (!authorizer.hasAccess(opprettetAv, virksomhetsNummer)) {
@@ -131,7 +128,11 @@ class ExcelParser(private val authorizer: AltinnAuthorizer, val aaregClient: Aar
                 else -> throw CellValueExtractionException("Uventet feil ved uthenting av verdien", columnName)
             }
         } catch (ex: Exception) {
-            throw CellValueExtractionException(columnName, "En uventet feil oppsto under uthenting av celleverdien. Sjekk celletypen og påpass at den er Tekst", ex)
+            throw CellValueExtractionException(
+                columnName,
+                "En uventet feil oppsto under uthenting av celleverdien. Sjekk celletypen og påpass at den er Tekst",
+                ex
+            )
         }
     }
 

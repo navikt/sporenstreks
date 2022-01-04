@@ -25,11 +25,13 @@ data class RefusjonskravDto(
     val perioder: Set<Arbeidsgiverperiode>,
     val tariffEndring: Boolean = false
 ) {
-    fun validate(arbeidsforhold: List<Arbeidsforhold>) {
+    fun validate(arbeidsforhold: List<Arbeidsforhold>, skipArbeidsforholdValidation: Boolean = false) {
         validate(this) {
             validate(RefusjonskravDto::identitetsnummer).isValidIdentitetsnummer()
             validate(RefusjonskravDto::virksomhetsnummer).isValidOrganisasjonsnummer()
-            validate(RefusjonskravDto::perioder).måHaAktivtArbeidsforhold(it, arbeidsforhold)
+            if (!skipArbeidsforholdValidation) {
+                validate(RefusjonskravDto::perioder).måHaAktivtArbeidsforhold(it, arbeidsforhold)
+            }
 
             validate(RefusjonskravDto::perioder).validateForEach {
                 validate(Arbeidsgiverperiode::beloep).isPositiveOrZero()
@@ -62,6 +64,7 @@ data class RefusjonskravDto(
                 validate(RefusjonskravDto::perioder).arbeidsgiverBetalerForDager(arbeidsgiverBetalerForDagerGammelPeriode, refusjonFraDatoGammelPeriode)
             } else {
                 // kan ikke kreve refusjon for dager før 1. desember 2021
+                validate(RefusjonskravDto::perioder).ikkeFørDato(refusjonFraDato)
                 validate(RefusjonskravDto::perioder).refusjonsdagerInnenforGyldigPeriode(refusjonFraDato)
 
                 // Summen av antallDagerMedRefusjon kan ikke overstige total periodelengde - 5 dager

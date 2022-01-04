@@ -11,6 +11,7 @@ import java.time.LocalDateTime
 object TestData {
     val validIdentitetsnummer = "20015001543"
     val notValidIdentitetsnummer = "50012001987"
+    val virksomhetsNavn = "Test virksomhet"
     val validOrgNr = "123456785"
     val notValidOrgNr = "123456789"
     val opprettetAv = "20015001543"

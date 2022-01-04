@@ -111,7 +111,7 @@ fun Route.sporenstreks(
                 val domeneListeMedIndex = mutableMapOf<Int, Refusjonskrav>()
 
                 for (i in 0 until jsonTree.size())
-                    responseBody.add(i, PostListResponseDto(PostListResponseDto.Status.GENERIC_ERROR))
+                    responseBody.add(i, PostListResponseDto(PostListResponseDto.Status.OK))
 
                 for (i in 0 until jsonTree.size()) {
                     try {
@@ -146,12 +146,19 @@ fun Route.sporenstreks(
                         }
                     }
                 }
-                if (domeneListeMedIndex.isNotEmpty()) {
-                    val savedList = refusjonskravService.saveKravListWithKvittering(domeneListeMedIndex)
-                    savedList.forEach {
-                        INNKOMMENDE_REFUSJONSKRAV_COUNTER.inc()
-                        INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTER.inc(it.value.perioder.sumByDouble { it.beloep }.div(1000))
-                        responseBody[it.key] = PostListResponseDto(status = PostListResponseDto.Status.OK, referenceNumber = "${it.value.referansenummer}")
+
+                val hasErrors = responseBody.any { it.status != PostListResponseDto.Status.OK }
+
+                if (hasErrors) {
+                    responseBody.filter { it.status == PostListResponseDto.Status.OK }.forEach { it.status = PostListResponseDto.Status.VALIDATION_ERRORS }
+                } else {
+                    if (domeneListeMedIndex.isNotEmpty()) {
+                        val savedList = refusjonskravService.saveKravListWithKvittering(domeneListeMedIndex)
+                        savedList.forEach {
+                            INNKOMMENDE_REFUSJONSKRAV_COUNTER.inc()
+                            INNKOMMENDE_REFUSJONSKRAV_BELOEP_COUNTER.inc(it.value.perioder.sumByDouble { it.beloep }.div(1000))
+                            responseBody[it.key] = PostListResponseDto(status = PostListResponseDto.Status.OK, referenceNumber = "${it.value.referansenummer}")
+                        }
                     }
                 }
                 call.respond(HttpStatusCode.OK, responseBody)
@@ -190,7 +197,7 @@ fun Route.sporenstreks(
                     throw IOException("Den opplastede filen er for stor")
                 }
 
-                ExcelBulkService(refusjonskravService, ExcelParser(authorizer, aaregClient))
+                ExcelBulkService(refusjonskravService, ExcelParser(authorizer))
                     .processExcelFile(bytes.inputStream(), id)
 
                 call.respond(HttpStatusCode.OK, "Søknaden er mottatt.")
