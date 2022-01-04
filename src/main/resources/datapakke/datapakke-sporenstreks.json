@@ -1,5 +1,5 @@
 {
-  "title": "Sporenstreks",
+  "title": "Refusjon sykepenger korona",
   "type": "datapackage",
   "description": "",
   "name": "sporenstreks-statistikk",
@@ -9,7 +9,7 @@
   "views": [
     {
       "title": "Tidsserier - krav",
-      "description": "Krav om refusjon",
+      "description": "Krav of refusjon ved sykepenger korona",
       "specType": "echart",
       "spec": {
         "url": "",

@@ -68,7 +68,7 @@ spec:
     - name: SECURITYTOKENSERVICE_URL_WS
       value: https://sts.adeo.no/SecurityTokenServiceProvider/
     - name: DOKARKIV_URL
-      value: https://dokarkiv.nais.adeo.no
+      value: https://dokarkiv.nais.adeo.nopp
     - name: AAREG_URL
       value: https://modapp.adeo.no/aareg-services
     - name: AKTOERREGISTER_URL
@@ -77,3 +77,7 @@ spec:
       value: http://oppgave.default.svc.nais.local/api/v1/oppgaver
     - name: PARTNER_GATEWAY_ALTINN_ENDPOINT
       value: https://pep-gw.oera.no:9443/ekstern/altinn/BehandleAltinnMelding/v1
+    - name: DATAPAKKE_ID
+      value: "e07b629971920f7d14544df9c2587819"
+    - name: DATAPAKKE_API_URL
+      value: "https://datakatalog-api.intern.nav.no/v1/datapackage"
