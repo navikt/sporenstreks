@@ -41,6 +41,7 @@ class DatapakkePublisherJob(
             .replace("@ukeSerie", timeseries.map { it.weekNumber }.joinToString())
             .replace("@web", timeseries.map { it.antall_web }.joinToString())
             .replace("@excel", timeseries.map { it.antall_excel }.joinToString())
+            .replace("@tariff", timeseries.map { it.antall_tariffendring }.joinToString())
 
         runBlocking {
             val response = httpClient.put<HttpResponse>("$datapakkeApiUrl/$datapakkeId") {

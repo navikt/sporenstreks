@@ -26,8 +26,9 @@
           "legend": {
             "left": "center",
             "data": [
-              "Sent",
-              "Lest"
+              "WEB",
+              "Excel",
+              "Tariffendring"
             ]
           },
           "xAxis": {
@@ -48,14 +49,21 @@
               "data": [
                 @web
               ],
-              "name": "Sent",
+              "name": "WEB",
               "type": "line"
             },
             {
               "data": [
                 @excel
               ],
-              "name": "Lest",
+              "name": "Excel",
+              "type": "line"
+            },
+            {
+              "data": [
+                @tariff
+              ],
+              "name": "Tariffendring",
               "type": "line"
             }
           ],
