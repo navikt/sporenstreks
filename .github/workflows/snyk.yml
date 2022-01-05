@@ -19,5 +19,5 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: --org=helsearbeidsgiver --project-name=Sporenstreks_Backend
+          args: --org=helsearbeidsgiver --project-name=Sporenstreks_Backend --fail-on=patchable
 
