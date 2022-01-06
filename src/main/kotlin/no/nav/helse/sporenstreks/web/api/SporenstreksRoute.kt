@@ -174,7 +174,7 @@ fun Route.sporenstreks(
             }
 
             get("/tariff-template") {
-                val template = javaClass.getResourceAsStream("/bulk-upload/sykepengerefusjon_tariffendringer_mal_v05-01-2022.xlsx")
+                val template = javaClass.getResourceAsStream("/bulk-upload/koronasykepenger_tariffendringer_mal_v05-01-2022.xlsx")
                 call.response.headers.append("Content-Disposition", "attachment; filename=\"koronasykepenger_tariffendringer_nav.xlsx\"")
                 call.respondBytes(template.readAllBytes(), excelContentType)
             }
