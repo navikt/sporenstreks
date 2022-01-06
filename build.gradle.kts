@@ -96,7 +96,7 @@ dependencies {
     testImplementation("io.insert-koin:koin-test:$koinVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
-    implementation("no.nav.common:log:2.2021.11.15_14.58-d7a174cfb6a8")
+    implementation("no.nav.common:log:2.2021.12.09_11.56-a71c36a61ba3")
     implementation(kotlin("stdlib", kotlinVersion))
     implementation("org.slf4j:slf4j-api:1.7.32")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
