@@ -1,0 +1,92 @@
+{
+  "title": "Refusjon sykepenger korona",
+  "type": "datapackage",
+  "description": "",
+  "name": "sporenstreks-statistikk",
+  "uri": "",
+  "url": "",
+  "team": "helsearbeidsgiver",
+  "views": [
+    {
+      "title": "Tidsserier - krav",
+      "description": "Krav of refusjon ved sykepenger korona",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option": {
+          "tooltip": {
+            "trigger": "axis",
+            "axisPointer": {
+              "type": "cross",
+              "crossStyle": {
+                "color": "#999"
+              }
+            }
+          },
+          "legend": {
+            "left": "center",
+            "data": [
+              "WEB",
+              "Excel",
+              "Tariffendring"
+            ]
+          },
+          "xAxis": {
+            "type": "category",
+            "name": "Uke",
+            "data": [
+              @ukeSerie
+            ]
+          },
+          "yAxis": [
+            {
+              "type": "value",
+              "name": "Antall"
+            }
+          ],
+          "series": [
+            {
+              "data": [
+                @web
+              ],
+              "name": "WEB",
+              "type": "line"
+            },
+            {
+              "data": [
+                @excel
+              ],
+              "name": "Excel",
+              "type": "line"
+            },
+            {
+              "data": [
+                @tariff
+              ],
+              "name": "Tariffendring",
+              "type": "line"
+            }
+          ],
+          "toolbox": {
+            "show": true,
+            "left": "center",
+            "top": "bottom",
+            "feature": {
+              "magicType": {
+                "type": [
+                  "line",
+                  "bar"
+                ]
+              },
+              "dataView": {
+                "show": true,
+                "readOnly": true
+              },
+              "saveAsImage": {}
+            }
+          }
+        }
+      }
+    }
+  ]
+}
