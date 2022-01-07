@@ -2,11 +2,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val mainClass = "no.nav.helse.sporenstreks.web.AppKt"
 val kotlinVersion = "1.5.30"
-val ktorVersion = "1.6.7"
+val ktorVersion = "1.6.6"
 val logbackVersion = "1.2.7"
 val logbackContribVersion = "0.1.5"
 val jacksonVersion = "2.13.0"
-val prometheusVersion = "0.14.1"
+val prometheusVersion = "0.12.0"
 val hikariVersion = "5.0.0"
 val vaultJdbcVersion = "1.3.7"
 val junitJupiterVersion = "5.8.1"
@@ -64,7 +64,7 @@ dependencies {
     implementation("junit:junit:4.13.1") // overstyrer transiente 4.12
     implementation("org.apache.httpcomponents:httpclient:4.5.13") // overstyrer transiente 4.5.6 via ktor-client-apache
     implementation("com.google.guava:guava:30.0-jre") // overstyrer transiente 29.0-jre
-    implementation("org.eclipse.jetty:jetty-server:11.0.7")
+    implementation("org.eclipse.jetty:jetty-server:9.4.37.v20210219")
     // -- end snyk fixes
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-jackson:$ktorVersion")
