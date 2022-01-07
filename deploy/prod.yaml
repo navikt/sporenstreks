@@ -68,7 +68,7 @@ spec:
     - name: SECURITYTOKENSERVICE_URL_WS
       value: https://sts.adeo.no/SecurityTokenServiceProvider/
     - name: DOKARKIV_URL
-      value: https://dokarkiv.nais.adeo.nopp
+      value: https://dokarkiv.nais.adeo.no
     - name: AAREG_URL
       value: https://modapp.adeo.no/aareg-services
     - name: AKTOERREGISTER_URL
