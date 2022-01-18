@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val mainClass = "no.nav.helse.sporenstreks.web.AppKt"
 val kotlinVersion = "1.5.30"
 val ktorVersion = "1.6.6"
-val logbackVersion = "1.2.7"
+val logbackVersion = "1.2.10"
 val logbackContribVersion = "0.1.5"
 val jacksonVersion = "2.13.0"
 val prometheusVersion = "0.12.0"
