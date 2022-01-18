@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val mainClass = "no.nav.helse.sporenstreks.web.AppKt"
 val kotlinVersion = "1.5.30"
 val ktorVersion = "1.6.6"
-val logbackVersion = "1.2.7"
+val logbackVersion = "1.2.10"
 val logbackContribVersion = "0.1.5"
 val jacksonVersion = "2.13.0"
 val prometheusVersion = "0.12.0"
@@ -59,7 +59,7 @@ dependencies {
     implementation("io.netty:netty-codec:4.1.59.Final") // overstyrer transiente 4.1.44
     implementation("io.netty:netty-codec-http:4.1.59.Final") // overstyrer transiente 4.1.51.Final
     implementation("io.netty:netty-codec-http2:4.1.59.Final") // overstyrer transiente 4.1.51.Final
-    implementation("io.netty:netty-transport-native-epoll:4.1.59.Final")
+    implementation("io.netty:netty-transport-native-epoll:4.1.73.Final")
     implementation("org.glassfish.jersey.media:jersey-media-jaxb:2.31") // overstyrer transiente 2.30.1
     implementation("junit:junit:4.13.1") // overstyrer transiente 4.12
     implementation("org.apache.httpcomponents:httpclient:4.5.13") // overstyrer transiente 4.5.6 via ktor-client-apache
