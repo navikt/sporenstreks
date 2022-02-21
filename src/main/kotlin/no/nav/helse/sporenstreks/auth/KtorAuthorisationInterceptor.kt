@@ -15,7 +15,8 @@ fun hentIdentitetsnummerFraLoginToken(config: ApplicationConfig, request: Applic
         ?: request.headers["Authorization"]?.replaceFirst("Bearer ", "")
         ?: throw IllegalAccessException("Du må angi et identitetstoken som cookieen $cookieName eller i Authorization-headeren")
 
-    return JwtToken(tokenString).subject
+    val pid = JwtToken(tokenString).jwtTokenClaims.get("pid")
+    return pid?.toString() ?: JwtToken(tokenString).subject
 }
 
 @KtorExperimentalAPI
