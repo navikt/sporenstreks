@@ -18,7 +18,7 @@ internal class RefusjonsKravDtoTestNyPeriode {
     @BeforeAll
     fun setup() {
         mockkStatic(Class.forName("java.time.LocalDate").kotlin)
-        every { LocalDate.now() } returns LocalDate.parse("2022-01-20")
+        every { LocalDate.now() } returns LocalDate.parse("2022-04-04")
     }
 
     @Test
@@ -28,8 +28,8 @@ internal class RefusjonsKravDtoTestNyPeriode {
             TestData.validOrgNr,
             setOf(
                 Arbeidsgiverperiode(
-                    LocalDate.of(2022, 1, 1),
-                    LocalDate.of(2022, 1, 7),
+                    LocalDate.of(2022, 2, 1),
+                    LocalDate.of(2022, 2, 7),
                     2, 2.3
                 )
             )
@@ -54,8 +54,30 @@ internal class RefusjonsKravDtoTestNyPeriode {
     }
 
     @Test
-    fun `Kan ikke søke før 1 desember i ny periode`() {
+    fun `Det kan ikke kreves refusjon for perioder lenger enn 3 måneder siden i ny periode`() {
         try {
+            RefusjonskravDto(
+                TestData.validIdentitetsnummer,
+                TestData.validOrgNr,
+                setOf(
+                    Arbeidsgiverperiode(
+                        LocalDate.of(2022, 1, 1),
+                        LocalDate.of(2022, 1, 10),
+                        2, 2.3
+                    )
+                )
+            )
+        } catch (ex: ConstraintViolationException) {
+            val validationError = ex.constraintViolations
+                .map { "${it.constraint.name}: ${it.toMessage().message}" }
+                .first()
+            assertEquals("RefusjonsdagerInnenforAntallMånederConstraint: Det kan ikke kreves refusjon for lenger enn 3 måneder siden.", validationError)
+        }
+    }
+
+    @Test
+    fun `Kan ikke søke før 1 desember i ny periode`() {
+        Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
             RefusjonskravDto(
                 TestData.validIdentitetsnummer,
                 TestData.validOrgNr,
@@ -67,31 +89,6 @@ internal class RefusjonsKravDtoTestNyPeriode {
                     )
                 )
             ).validate(TestData.arbeidsForhold)
-        } catch (ex: ConstraintViolationException) {
-            val validationError = ex.constraintViolations
-                .map { "${it.constraint.name}: ${it.toMessage().message}" }
-                .first()
-            assertEquals("RefusjonsdagerIkkeFørDatoConstraint: Det kan ikke kreves refusjon før 01.12.2021", validationError)
         }
     }
-
-/*
-    @Test
-    fun `Det kan ikke kreves refusjon for perioder lenger enn 3 måneder siden i gammel periode`() {
-        Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
-            RefusjonskravDto(
-                TestData.validIdentitetsnummer,
-                TestData.validOrgNr,
-                setOf(
-                    Arbeidsgiverperiode(
-                        LocalDate.of(2021, 9, 1),
-                        LocalDate.of(2021, 9, 6),
-                        2, 2.3
-                    )
-                )
-            )
-        }
-    }
-
- */
 }

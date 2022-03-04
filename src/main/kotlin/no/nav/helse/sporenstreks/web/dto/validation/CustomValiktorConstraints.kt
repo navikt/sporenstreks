@@ -160,6 +160,7 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.innenforAntallMån
     this.validate(RefusjonsdagerInnenforAntallMånederConstraint(mapOf("antall" to antallMåneder.toString()))) { ps ->
         val antallMånederSiden = LocalDate.now()
             .minusMonths(antallMåneder)
+            .withDayOfMonth(1)
 
         ps!!.all { p ->
             p.fom.isAfter(antallMånederSiden)
