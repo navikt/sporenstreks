@@ -161,6 +161,7 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.innenforAntallMån
         val antallMånederSiden = LocalDate.now()
             .minusMonths(antallMåneder)
             .withDayOfMonth(1)
+            .minusDays(1)
 
         ps!!.all { p ->
             p.fom.isAfter(antallMånederSiden)
