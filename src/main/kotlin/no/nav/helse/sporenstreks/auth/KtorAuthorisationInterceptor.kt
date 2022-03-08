@@ -19,6 +19,7 @@ fun hentIdentitetsnummerFraLoginToken(config: ApplicationConfig, request: Applic
 
     val pid = JwtToken(tokenString).jwtTokenClaims.get("pid")
     if (pid != null) logger.info("pid not null with length: ${pid.toString().length}")
+    else logger.info("pid failed")
     return pid?.toString() ?: JwtToken(tokenString).subject
 }
 
