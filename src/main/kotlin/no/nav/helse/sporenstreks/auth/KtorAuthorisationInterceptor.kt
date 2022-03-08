@@ -4,11 +4,13 @@ import io.ktor.config.ApplicationConfig
 import io.ktor.request.ApplicationRequest
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.security.token.support.core.jwt.JwtToken
+import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.util.*
 
 @KtorExperimentalAPI
 fun hentIdentitetsnummerFraLoginToken(config: ApplicationConfig, request: ApplicationRequest): String {
+    val logger = LoggerFactory.getLogger("KtorAuthorisationInterceptor")
     val cookieName = config.configList("no.nav.security.jwt.issuers")[0].property("cookie_name").getString()
 
     val tokenString = request.cookies[cookieName]
@@ -16,6 +18,7 @@ fun hentIdentitetsnummerFraLoginToken(config: ApplicationConfig, request: Applic
         ?: throw IllegalAccessException("Du må angi et identitetstoken som cookieen $cookieName eller i Authorization-headeren")
 
     val pid = JwtToken(tokenString).jwtTokenClaims.get("pid")
+    if (pid != null) logger.info("pid not null with length: ${pid.toString().length}")
     return pid?.toString() ?: JwtToken(tokenString).subject
 }
 
