@@ -8,6 +8,8 @@ import org.valiktor.Validator
 
 class ArbeidsforholdConstraint : CustomConstraint
 
+val MAKS_DAGER_OPPHOLD = 3L
+
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.måHaAktivtArbeidsforhold(
     refusjonskrav: RefusjonskravDto,
     arbeidsforhold: List<Arbeidsforhold>?
@@ -16,8 +18,13 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.måHaAktivtArbeids
         .filter { it.arbeidsgiver.organisasjonsnummer == refusjonskrav.virksomhetsnummer }
         .map { it.ansettelsesperiode.periode }
 
-    refusjonskrav.perioder.all { kravPeriode ->
-        ansattPerioder.any { ansattPeriode ->
+    val sammenhengedePerioder = slåSammenPerioder(ansattPerioder)
+
+    return@validate refusjonskrav.perioder.all { kravPeriode ->
+        sammenhengedePerioder.any { ansattPeriode ->
+            (ansattPeriode.tom == null || kravPeriode.tom.isBefore(ansattPeriode.tom) || kravPeriode.tom == ansattPeriode.tom) &&
+                ansattPeriode.fom!!.isBefore(kravPeriode.fom)
+        } || ansattPerioder.any { ansattPeriode ->
             (ansattPeriode.tom == null || kravPeriode.tom.isBefore(ansattPeriode.tom) || kravPeriode.tom == ansattPeriode.tom) &&
                 ansattPeriode.fom!!.isBefore(kravPeriode.fom)
         }
@@ -27,43 +34,35 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.måHaAktivtArbeids
 fun slåSammenPerioder(list: List<Periode>): List<Periode> {
     if (list.size < 2) return list
 
-    val periods = list
-        .sortedWith(compareBy(Periode::fom, Periode::tom))
+    val remainingPeriods = list
+        .sortedBy { it.fom }
+        .toMutableList()
 
-    val merged = mutableListOf<Periode>()
+    val merged = ArrayList<Periode>()
 
-    periods.forEach { gjeldendePeriode ->
-        // Legg til første periode
-        if (merged.size == 0) {
-            merged.add(gjeldendePeriode)
-            return@forEach
-        }
+    do {
+        var currentPeriod = remainingPeriods[0]
+        remainingPeriods.removeAt(0)
 
-        val forrigePeriode = merged.last()
-        // Hvis periode overlapper, oppdater tom
-        if (overlapperPeriode(gjeldendePeriode, forrigePeriode)) {
-            merged[merged.lastIndex] = Periode(forrigePeriode.fom, gjeldendePeriode.tom)
-            return@forEach
-        }
+        do {
+            val connectedPeriod = remainingPeriods
+                .find { !oppholdMellomPerioderOverstigerDager(currentPeriod, it, MAKS_DAGER_OPPHOLD) }
+            if (connectedPeriod != null) {
+                currentPeriod = Periode(currentPeriod.fom, connectedPeriod.tom)
+                remainingPeriods.remove(connectedPeriod)
+            }
+        } while (connectedPeriod != null)
 
-        merged.add(gjeldendePeriode)
-    }
+        merged.add(currentPeriod)
+    } while (remainingPeriods.isNotEmpty())
 
     return merged
 }
 
-fun kravInnenforArbeidsgiverperiode(ansattPeriode: Periode, kravPeriode: Arbeidsgiverperiode): Boolean {
-    return (ansattPeriode.tom == null || kravPeriode.tom.isBefore(ansattPeriode.tom) || kravPeriode.tom == ansattPeriode.tom) &&
-        ansattPeriode.fom!!.isBefore(kravPeriode.fom)
-}
-
-fun overlapperPeriode(
-    gjeldendePeriode: Periode,
-    forrigePeriode: Periode,
-    dager: Long = 3L // MAKS_DAGER_OPPHOLD
+fun oppholdMellomPerioderOverstigerDager(
+    a1: Periode,
+    a2: Periode,
+    dager: Long
 ): Boolean {
-    return (
-        gjeldendePeriode.fom!!.isBefore(forrigePeriode.tom?.plusDays(dager)) ||
-            gjeldendePeriode.fom!!.isEqual(forrigePeriode.tom?.plusDays(dager))
-        )
+    return a1.tom?.plusDays(dager)?.isBefore(a2.fom) ?: true
 }
