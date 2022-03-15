@@ -12,17 +12,14 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.måHaAktivtArbeids
     refusjonskrav: RefusjonskravDto,
     arbeidsforhold: List<Arbeidsforhold>?
 ) = this.validate(ArbeidsforholdConstraint()) {
-    val aktuelleArbeidsforhold = arbeidsforhold!!
+    val ansattPerioder = arbeidsforhold!!
         .filter { it.arbeidsgiver.organisasjonsnummer == refusjonskrav.virksomhetsnummer }
         .map { it.ansettelsesperiode.periode }
 
-    val sammenslåtteAnsattPerioder = slåSammenPerioder(aktuelleArbeidsforhold)
-
     refusjonskrav.perioder.all { kravPeriode ->
-        sammenslåtteAnsattPerioder.any { ansattPeriode ->
-            kravInnenforArbeidsgiverperiode(ansattPeriode, kravPeriode)
-        } || aktuelleArbeidsforhold.any { ansattPeriode ->
-            kravInnenforArbeidsgiverperiode(ansattPeriode, kravPeriode)
+        ansattPerioder.any { ansattPeriode ->
+            (ansattPeriode.tom == null || kravPeriode.tom.isBefore(ansattPeriode.tom) || kravPeriode.tom == ansattPeriode.tom) &&
+                ansattPeriode.fom!!.isBefore(kravPeriode.fom)
         }
     }
 }

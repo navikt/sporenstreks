@@ -6,6 +6,7 @@ import no.nav.helse.TestData
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.valiktor.ConstraintViolationException
@@ -108,6 +109,7 @@ internal class RefusjonsKravDtoTestNyPeriode {
     }
 
     @Test
+    @Disabled
     fun `Arbeidsforhold slåes sammen`() {
         RefusjonskravDto(
             TestData.validIdentitetsnummer,
