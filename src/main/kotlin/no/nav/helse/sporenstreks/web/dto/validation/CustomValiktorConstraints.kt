@@ -1,8 +1,6 @@
 package no.nav.helse.sporenstreks.web.dto.validation
 
-import no.nav.helse.arbeidsgiver.integrasjoner.aareg.Arbeidsforhold
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
-import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import org.valiktor.Constraint
 import org.valiktor.Validator
 import java.time.LocalDate
@@ -15,24 +13,6 @@ val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 interface CustomConstraint : Constraint {
     override val messageBundle: String
         get() = "validation/validation-messages"
-}
-
-class ArbeidsforholdConstraint : CustomConstraint
-
-fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.måHaAktivtArbeidsforhold(
-    refusjonskrav: RefusjonskravDto,
-    arbeidsforhold: List<Arbeidsforhold>?
-) = this.validate(ArbeidsforholdConstraint()) {
-    val aktuelleArbeidsforhold = arbeidsforhold!!.filter { it.arbeidsgiver.organisasjonsnummer == refusjonskrav.virksomhetsnummer }
-
-    val ansattPerioder = aktuelleArbeidsforhold.map { it.ansettelsesperiode.periode }
-
-    refusjonskrav.perioder.all { kravPeriode ->
-        ansattPerioder.any { ansattPeriode ->
-            (ansattPeriode.tom == null || kravPeriode.tom.isBefore(ansattPeriode.tom) || kravPeriode.tom == ansattPeriode.tom) &&
-                ansattPeriode.fom!!.isBefore(kravPeriode.fom)
-        }
-    }
 }
 
 class IdentitetsnummerConstraint : CustomConstraint

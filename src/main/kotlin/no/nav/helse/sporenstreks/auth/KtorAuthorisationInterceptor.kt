@@ -4,7 +4,6 @@ import io.ktor.config.ApplicationConfig
 import io.ktor.request.ApplicationRequest
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.security.token.support.core.jwt.JwtToken
-import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.util.*
 
@@ -26,7 +25,7 @@ fun hentUtløpsdatoFraLoginToken(config: ApplicationConfig, request: Application
 
     val tokenString = request.cookies[cookieName]
         ?: request.headers["Authorization"]?.replaceFirst("Bearer ", "")
-        ?: throw IllegalAccessException("Du må angi et identitetstoken som cookieen $cookieName eller i Authorization-headeren")
+        ?: throw IllegalAccessException("Du må angi et identitetstoken som cookie'en $cookieName eller i Authorization-headeren")
 
     return JwtToken(tokenString).jwtTokenClaims.expirationTime ?: Date.from(Instant.MIN)
 }
