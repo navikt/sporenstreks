@@ -108,7 +108,7 @@ internal class RefusjonsKravDtoTestNyPeriode {
     }
 
     @Test
-    fun `Arbeidsforhold`() {
+    fun `Arbeidsforhold slåes sammen`() {
         RefusjonskravDto(
             TestData.validIdentitetsnummer,
             TestData.validOrgNr,
