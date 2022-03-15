@@ -1,8 +1,5 @@
 package no.nav.helse.sporenstreks.web.dto
 
-
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -10,12 +7,14 @@ import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.mockk.every
 import io.mockk.mockkStatic
-import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import no.nav.helse.TestData
 import no.nav.helse.arbeidsgiver.integrasjoner.aareg.*
+import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.web.dto.validation.slåSammenPerioder
 import org.assertj.core.api.Assertions
