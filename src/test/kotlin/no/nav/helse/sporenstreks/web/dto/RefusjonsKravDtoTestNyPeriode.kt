@@ -18,7 +18,7 @@ internal class RefusjonsKravDtoTestNyPeriode {
     @BeforeAll
     fun setup() {
         mockkStatic(Class.forName("java.time.LocalDate").kotlin)
-        every { LocalDate.now() } returns LocalDate.parse("2022-04-04")
+        every { LocalDate.now() } returns LocalDate.parse("2022-03-15")
     }
 
     @Test
@@ -61,8 +61,8 @@ internal class RefusjonsKravDtoTestNyPeriode {
                 TestData.validOrgNr,
                 setOf(
                     Arbeidsgiverperiode(
-                        LocalDate.of(2022, 1, 1),
-                        LocalDate.of(2022, 1, 10),
+                        LocalDate.of(2021, 12, 1),
+                        LocalDate.of(2021, 12, 10),
                         2, 2.3
                     )
                 )
@@ -83,12 +83,42 @@ internal class RefusjonsKravDtoTestNyPeriode {
                 TestData.validOrgNr,
                 setOf(
                     Arbeidsgiverperiode(
-                        LocalDate.of(2021, 11, 29),
-                        LocalDate.of(2021, 12, 7),
+                        LocalDate.of(2021, 11, 30),
+                        LocalDate.of(2021, 12, 10),
                         2, 2.3
                     )
                 )
             ).validate(TestData.arbeidsForhold)
         }
+    }
+
+    @Test
+    fun `Kan søke 1 desember i ny periode`() {
+        RefusjonskravDto(
+            TestData.validIdentitetsnummer,
+            TestData.validOrgNr,
+            setOf(
+                Arbeidsgiverperiode(
+                    LocalDate.of(2021, 12, 1),
+                    LocalDate.of(2021, 12, 10),
+                    2, 2.3
+                )
+            )
+        ).validate(TestData.arbeidsForhold)
+    }
+
+    @Test
+    fun `Arbeidsforhold`() {
+        RefusjonskravDto(
+            TestData.validIdentitetsnummer,
+            TestData.validOrgNr,
+            setOf(
+                Arbeidsgiverperiode(
+                    LocalDate.of(2021, 12, 30),
+                    LocalDate.of(2022, 1, 10),
+                    2, 2.3
+                )
+            )
+        ).validate(TestData.flereArbeidsForholdISammeOrg)
     }
 }

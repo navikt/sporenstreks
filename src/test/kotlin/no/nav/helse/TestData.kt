@@ -36,4 +36,31 @@ object TestData {
             LocalDateTime.now()
         )
     )
+
+    val flereArbeidsForholdISammeOrg = listOf(
+        Arbeidsforhold(
+            Arbeidsgiver("AS", "123456785"),
+            Opplysningspliktig("AS", "1212121212"),
+            emptyList(),
+            Ansettelsesperiode(
+                Periode(
+                    LocalDate.of(2022, 1, 1),
+                    LocalDate.of(2022, 1, 31)
+                )
+            ),
+            LocalDateTime.now()
+        ),
+        Arbeidsforhold(
+            Arbeidsgiver("AS", "123456785"),
+            Opplysningspliktig("AS", "1212121212"),
+            emptyList(),
+            Ansettelsesperiode(
+                Periode(
+                    LocalDate.of(2021, 5, 20),
+                    LocalDate.of(2021, 12, 31)
+                )
+            ),
+            LocalDateTime.now()
+        )
+    )
 }
