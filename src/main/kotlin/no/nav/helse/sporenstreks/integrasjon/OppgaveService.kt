@@ -25,8 +25,8 @@ class OppgaveService(private val oppgaveKlient: OppgaveKlient, private val om: O
 
     private fun mapOppgave(journalpostId: String, aktørId: String, beskrivelse: String, tariffEndring: Boolean): OpprettOppgaveRequest {
         val oppgaveType = if (!tariffEndring) "ROB_BEH" else "VUR_KONS_YTE"
-        val behandlingstema = if (!tariffEndring) "ab0456" else "ab0433"
         val behandlingstype = if (!tariffEndring) "ae0052" else null
+        val behandlingstema = "ab0456"
 
         return OpprettOppgaveRequest(
             aktoerId = aktørId,

@@ -8,7 +8,6 @@ import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.maksOpphol
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.maksimalAGPLengde
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.refusjonFraDato
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.refusjonTilDato
-import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode.Companion.refusjonTilDatoGammelPeriode
 import no.nav.helse.sporenstreks.web.dto.validation.*
 import org.valiktor.functions.isGreaterThanOrEqualTo
 import org.valiktor.functions.isLessThanOrEqualTo
