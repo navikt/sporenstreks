@@ -63,8 +63,8 @@ internal class AaregConstraintsTest {
 
         // Endre til perioden kravet gjelder
         val arbeidsgiverPeriode = Arbeidsgiverperiode(
-            LocalDate.of(2021, 1, 15),
-            LocalDate.of(2021, 1, 20),
+            of(2021, 1, 15),
+            of(2021, 1, 20),
             4,
             beloep = 2.0
         )
@@ -180,43 +180,55 @@ internal class AaregConstraintsTest {
             refusjonskravDto.validate(arbeidsForhold)
         }
     }
-}
 
-@Test
-fun `merge fragmented periods`() {
-    assertThat(
-        slåSammenPerioder(
-            listOf(
-                // skal ble merget til 1 periode fra 1.1.21 til 28.2.21
-                Periode(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 1, 29)),
-                Periode(LocalDate.of(2021, 2, 1), LocalDate.of(2021, 2, 13)),
-                Periode(LocalDate.of(2021, 2, 15), LocalDate.of(2021, 2, 28)),
+    @Test
+    fun `merge fragmented periods`() {
+        assertThat(
+            slåSammenPerioder(
+                listOf(
+                    // skal ble merget til 1 periode fra 1.1.21 til 28.2.21
+                    Periode(of(2021, 1, 1), of(2021, 1, 29)),
+                    Periode(of(2021, 2, 1), of(2021, 2, 13)),
+                    Periode(of(2021, 2, 15), of(2021, 2, 28)),
 
-                // skal bli merget til 1
-                Periode(LocalDate.of(2021, 3, 20), LocalDate.of(2021, 3, 31)),
-                Periode(LocalDate.of(2021, 4, 2), LocalDate.of(2021, 4, 30)),
+                    // skal bli merget til 1
+                    Periode(of(2021, 3, 20), of(2021, 3, 31)),
+                    Periode(of(2021, 4, 2), of(2021, 4, 30)),
 
-                // skal bli merget til 1
-                Periode(LocalDate.of(2021, 7, 1), LocalDate.of(2021, 8, 30)),
-                Periode(LocalDate.of(2021, 9, 1), null),
+                    // skal bli merget til 1
+                    Periode(of(2021, 7, 1), of(2021, 8, 30)),
+                    Periode(of(2021, 9, 1), null),
+                )
             )
-        )
-    ).hasSize(3)
+        ).hasSize(3)
 
-    assertThat(
-        slåSammenPerioder(
-            listOf(
-                Periode(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 1, 29)),
-                Periode(LocalDate.of(2021, 9, 1), null),
+        assertThat(
+            slåSammenPerioder(
+                listOf(
+                    Periode(of(2021, 1, 1), of(2021, 1, 29)),
+                    Periode(of(2021, 9, 1), null),
+                )
             )
-        )
-    ).hasSize(2)
+        ).hasSize(2)
 
-    assertThat(
-        slåSammenPerioder(
-            listOf(
-                Periode(LocalDate.of(2021, 9, 1), null),
+        assertThat(
+            slåSammenPerioder(
+                listOf(
+                    Periode(of(2021, 9, 1), null),
+                )
             )
-        )
-    ).hasSize(1)
+        ).hasSize(1)
+
+        assertThat(
+            slåSammenPerioder(
+                listOf(
+                    Periode(of(2022, 2, 1), null),
+                    Periode(of(2005, 12, 1), of(2014, 12, 31)),
+                    Periode(of(1984, 10, 20), of(2000, 10, 25)),
+                    Periode(of(1984, 10, 20), of(1993, 10, 24)),
+                    Periode(of(1984, 10, 20), of(2022, 1, 31)),
+                )
+            )
+        ).hasSize(1)
+    }
 }
