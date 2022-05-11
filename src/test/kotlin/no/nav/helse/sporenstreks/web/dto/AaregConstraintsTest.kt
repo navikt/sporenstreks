@@ -20,7 +20,6 @@ import no.nav.helse.sporenstreks.web.dto.validation.slåSammenPerioder
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.valiktor.ConstraintViolationException
@@ -199,7 +198,7 @@ internal class AaregConstraintsTest {
                     Periode(of(2021, 7, 1), of(2021, 8, 30)),
                     Periode(of(2021, 9, 1), null),
                 )
-            )
+            ).asRanges()
         ).hasSize(3)
 
         assertThat(
@@ -208,7 +207,7 @@ internal class AaregConstraintsTest {
                     Periode(of(2021, 1, 1), of(2021, 1, 29)),
                     Periode(of(2021, 9, 1), null),
                 )
-            )
+            ).asRanges()
         ).hasSize(2)
 
         assertThat(
@@ -216,7 +215,7 @@ internal class AaregConstraintsTest {
                 listOf(
                     Periode(of(2021, 9, 1), null),
                 )
-            )
+            ).asRanges()
         ).hasSize(1)
 
         assertThat(
@@ -228,7 +227,7 @@ internal class AaregConstraintsTest {
                     Periode(of(1984, 10, 20), of(1993, 10, 24)),
                     Periode(of(1984, 10, 20), of(2022, 1, 31)),
                 )
-            )
+            ).asRanges()
         ).hasSize(1)
     }
 }
