@@ -25,7 +25,7 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.måHaAktivtArbeids
     val sammenhengendePerioder = slåSammenPerioder(ansattPerioder)
 
     return@validate refusjonskrav.perioder.all { p ->
-        sammenhengendePerioder.encloses(Range.open(p.fom, p.tom))
+        sammenhengendePerioder.encloses(Range.closed(p.fom, p.tom))
     }
 }
 fun slåSammenPerioder(arbeidsforholdPerioder: List<Periode>): RangeSet<LocalDate> {
