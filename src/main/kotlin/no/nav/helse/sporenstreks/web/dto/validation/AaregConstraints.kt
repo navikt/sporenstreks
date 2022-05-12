@@ -23,20 +23,20 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.måHaAktivtArbeids
         .map { it.ansettelsesperiode.periode }
         .sortedWith(compareBy(Periode::fom, Periode::tom))
 
-    val sammenhengendePerioder = slåSammenPerioder(ansattPerioder)
+    val sammenslåttePerioder = slåSammenPerioder(ansattPerioder)
 
     refusjonskrav.perioder
-        .all { periode -> sammenhengendePerioder.encloses(Range.open(periode.fom, periode.tom)) }
+        .all { periode -> sammenslåttePerioder.encloses(Range.open(periode.fom, periode.tom)) }
 }
 
-fun slåSammenPerioder(arbeidsforholdPerioder: List<Periode>): RangeSet<LocalDate> {
-    val sammenhengendePerioder: RangeSet<LocalDate> = TreeRangeSet.create()
-    arbeidsforholdPerioder.forEach { ansattPeriode ->
-        val f = if (sammenhengendePerioder.intersects(Range.atLeast(ansattPeriode.fom!!.minusDays(MAKS_DAGER_OPPHOLD)))) {
-            ansattPeriode.fom!!.minusDays(MAKS_DAGER_OPPHOLD)
-        } else ansattPeriode.fom
-        if (ansattPeriode.tom == null) sammenhengendePerioder.add(Range.atLeast(f))
-        else sammenhengendePerioder.add(Range.closed(f, ansattPeriode.tom))
+fun slåSammenPerioder(perioder: List<Periode>): RangeSet<LocalDate> {
+    val sammenslåttePerioder: RangeSet<LocalDate> = TreeRangeSet.create()
+    perioder.forEach { periode ->
+        val fomTidligst = periode.fom!!.minusDays(MAKS_DAGER_OPPHOLD)
+        val overlappendePeriode = sammenslåttePerioder.intersects(Range.atLeast(fomTidligst))
+        val f = if (overlappendePeriode) { fomTidligst } else periode.fom
+        if (periode.tom == null) sammenslåttePerioder.add(Range.atLeast(f))
+        else sammenslåttePerioder.add(Range.closed(f, periode.tom))
     }
-    return sammenhengendePerioder
+    return sammenslåttePerioder
 }
