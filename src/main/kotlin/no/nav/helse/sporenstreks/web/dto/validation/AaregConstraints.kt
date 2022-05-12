@@ -21,18 +21,19 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.måHaAktivtArbeids
     val ansattPerioder = arbeidsforhold!!
         .filter { it.arbeidsgiver.organisasjonsnummer == refusjonskrav.virksomhetsnummer }
         .map { it.ansettelsesperiode.periode }
+        .sortedWith(compareBy(Periode::fom, Periode::tom))
 
     val sammenhengendePerioder = slåSammenPerioder(ansattPerioder)
 
-    return@validate refusjonskrav.perioder.all { p ->
-        sammenhengendePerioder.encloses(Range.closed(p.fom, p.tom))
-    }
+    refusjonskrav.perioder
+        .all { periode -> sammenhengendePerioder.encloses(Range.open(periode.fom, periode.tom)) }
 }
+
 fun slåSammenPerioder(arbeidsforholdPerioder: List<Periode>): RangeSet<LocalDate> {
     val sammenhengendePerioder: RangeSet<LocalDate> = TreeRangeSet.create()
-    arbeidsforholdPerioder.sortedWith(compareBy(Periode::fom, Periode::tom)).forEach { ansattPeriode ->
-        val f = if (sammenhengendePerioder.intersects(Range.atLeast(ansattPeriode.fom!!.minusDays(3)))) {
-            ansattPeriode.fom!!.minusDays(3)
+    arbeidsforholdPerioder.forEach { ansattPeriode ->
+        val f = if (sammenhengendePerioder.intersects(Range.atLeast(ansattPeriode.fom!!.minusDays(MAKS_DAGER_OPPHOLD)))) {
+            ansattPeriode.fom!!.minusDays(MAKS_DAGER_OPPHOLD)
         } else ansattPeriode.fom
         if (ansattPeriode.tom == null) sammenhengendePerioder.add(Range.atLeast(f))
         else sammenhengendePerioder.add(Range.closed(f, ansattPeriode.tom))
