@@ -39,11 +39,15 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.måHaAktivtArbeids
 fun slåSammenPerioder(perioder: List<Periode>): RangeSet<LocalDate> {
     val sammenslåttePerioder: RangeSet<LocalDate> = TreeRangeSet.create()
     perioder.sortedWith(compareBy(Periode::fom, Periode::tom)).forEach { periode ->
-        val fomTidligst = if (periode.fom!!.year > 0) periode.fom!!.minusDays(MAKS_DAGER_OPPHOLD) else LocalDate.of(0, 1, 1)
-        val overlappendePeriode = sammenslåttePerioder.intersects(Range.atLeast(fomTidligst))
-        val f = if (overlappendePeriode) { fomTidligst } else periode.fom
-        if (periode.tom == null) sammenslåttePerioder.add(Range.atLeast(f))
-        else sammenslåttePerioder.add(Range.closed(f, periode.tom))
+        val r = periodeToRange(periode)
+        if (sammenslåttePerioder.contains(r.lowerEndpoint().minusDays(3))) {
+            sammenslåttePerioder.add(Range.closed(r.lowerEndpoint().minusDays(3), r.upperEndpoint()))
+        } else sammenslåttePerioder.add(r)
     }
     return sammenslåttePerioder
+}
+fun periodeToRange(periode: Periode): Range<LocalDate> {
+    if (periode.fom!!.toEpochDay() > 0) {
+        return Range.closed(periode.fom, periode.tom ?: LocalDate.MAX)
+    } else return Range.closed(LocalDate.ofEpochDay(0), periode.tom ?: LocalDate.MAX)
 }
