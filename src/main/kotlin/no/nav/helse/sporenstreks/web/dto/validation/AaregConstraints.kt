@@ -52,8 +52,10 @@ fun slåSammenPerioder(perioder: MutableList<AaregPeriode>): List<AaregPeriode> 
         sammenslåttePerioder.find {
             gjeldendePeriode.overlapperPeriode(it)
         }?.let { overlappendePeriode ->
-            if (gjeldendePeriode.tom.isAfter(overlappendePeriode.tom))
-                sammenslåttePerioder[sammenslåttePerioder.indexOf(overlappendePeriode)].tom = gjeldendePeriode.tom
+            with(overlappendePeriode) {
+                fom = minOf(fom, gjeldendePeriode.fom)
+                tom = maxOf(tom, gjeldendePeriode.tom)
+            }
             return@forEach
         }
         sammenslåttePerioder.add(gjeldendePeriode)
