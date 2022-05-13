@@ -8,7 +8,7 @@ import org.valiktor.Validator
 
 class ArbeidsforholdConstraint : CustomConstraint
 
-val MAKS_DAGER_OPPHOLD = 3L
+const val MAKS_DAGER_OPPHOLD = 3L
 
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.måHaAktivtArbeidsforhold(
     refusjonskrav: RefusjonskravDto,
@@ -20,49 +20,47 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.måHaAktivtArbeids
 
     val sammenhengedePerioder = slåSammenPerioder(ansattPerioder)
 
-    return@validate refusjonskrav.perioder.all { kravPeriode ->
+    refusjonskrav.perioder.all { kravPeriode ->
         sammenhengedePerioder.any { ansattPeriode ->
-            (ansattPeriode.tom == null || kravPeriode.tom.isBefore(ansattPeriode.tom) || kravPeriode.tom == ansattPeriode.tom) &&
-                ansattPeriode.fom!!.isBefore(kravPeriode.fom)
-        } || ansattPerioder.any { ansattPeriode ->
             (ansattPeriode.tom == null || kravPeriode.tom.isBefore(ansattPeriode.tom) || kravPeriode.tom == ansattPeriode.tom) &&
                 ansattPeriode.fom!!.isBefore(kravPeriode.fom)
         }
     }
 }
 
-fun slåSammenPerioder(list: List<Periode>): List<Periode> {
-    if (list.size < 2) return list
+fun slåSammenPerioder(arbeidsforholdPerioder: List<Periode>): List<Periode> {
+    if (arbeidsforholdPerioder.size < 2) return arbeidsforholdPerioder
 
-    val remainingPeriods = list
-        .sortedBy { it.fom }
+    val perioder = arbeidsforholdPerioder
+        .sortedWith(compareBy(Periode::fom, Periode::tom))
         .toMutableList()
 
-    val merged = ArrayList<Periode>()
+    // Legg til første periode
+    val sammenhengedePerioder = mutableListOf(perioder.removeFirst())
 
-    do {
-        var currentPeriod = remainingPeriods[0]
-        remainingPeriods.removeAt(0)
-
-        do {
-            val connectedPeriod = remainingPeriods
-                .find { !oppholdMellomPerioderOverstigerDager(currentPeriod, it, MAKS_DAGER_OPPHOLD) }
-            if (connectedPeriod != null) {
-                currentPeriod = Periode(currentPeriod.fom, connectedPeriod.tom)
-                remainingPeriods.remove(connectedPeriod)
+    perioder.forEach { gjeldendePeriode ->
+        val forrigePeriode = sammenhengedePerioder.last()
+        // Hvis periode gjeldendePeriode og forrigePeriode overlapper
+        if (overlapperPeriode(gjeldendePeriode, forrigePeriode)) {
+            // Hvis gjeldendePeriode.tom er null eller før forrigePeriode.tom oppdater forrigePeriode
+            if (gjeldendePeriode.tom == null || gjeldendePeriode.tom!! > forrigePeriode.tom) {
+                sammenhengedePerioder[sammenhengedePerioder.lastIndex] = Periode(forrigePeriode.fom, gjeldendePeriode.tom)
             }
-        } while (connectedPeriod != null)
+            return@forEach
+        }
 
-        merged.add(currentPeriod)
-    } while (remainingPeriods.isNotEmpty())
+        sammenhengedePerioder.add(gjeldendePeriode)
+    }
 
-    return merged
+    return sammenhengedePerioder
 }
 
-fun oppholdMellomPerioderOverstigerDager(
-    a1: Periode,
-    a2: Periode,
-    dager: Long
+fun overlapperPeriode(
+    gjeldendePeriode: Periode,
+    forrigePeriode: Periode
 ): Boolean {
-    return a1.tom?.plusDays(dager)?.isBefore(a2.fom) ?: true
+    if (forrigePeriode.tom == null) return true
+    val gjeldendePeriodeFom = gjeldendePeriode.fom!!.minusDays(MAKS_DAGER_OPPHOLD)
+    // Hvis gjeldende periode (fra og med) er før eller lik som forrige periode (til og med)
+    return gjeldendePeriodeFom <= forrigePeriode.tom
 }
