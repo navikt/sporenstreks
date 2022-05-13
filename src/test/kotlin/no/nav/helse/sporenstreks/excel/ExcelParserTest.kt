@@ -24,7 +24,7 @@ internal class ExcelParserTest {
     fun setup() {
         every { authorizerMock.hasAccess(any(), any()) } returns true
         mockkStatic(Class.forName("java.time.LocalDate").kotlin)
-        every { LocalDate.now() } returns LocalDate.parse("2022-02-01")
+        every { LocalDate.now() } returns LocalDate.parse("2022-03-01")
     }
 
     @Test
