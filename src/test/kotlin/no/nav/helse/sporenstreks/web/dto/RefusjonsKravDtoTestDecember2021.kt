@@ -33,6 +33,7 @@ internal class RefusjonsKravDtoTestDecember2021 {
             )
         ).validate(TestData.arbeidsForhold)
     }
+
     @Test
     fun `Refusjonskrav med arbeidsperiode som starter 5 dager før ordning er gyldig`() {
         RefusjonskravDto(
