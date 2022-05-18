@@ -3,7 +3,6 @@ package no.nav.helse.sporenstreks.web.dto.validation
 import no.nav.helse.arbeidsgiver.integrasjoner.aareg.Arbeidsforhold
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.utils.isBeforeOrEqual
-import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import org.valiktor.Validator
 import java.time.LocalDate
 import java.time.LocalDate.MAX
