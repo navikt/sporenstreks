@@ -22,13 +22,14 @@ data class AaregPeriode(
     ): Boolean = this.fom.minusDays(dager).isBeforeOrEqual(periode.tom)
 }
 
-fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.måHaAktivtArbeidsforhold(
-    refusjonskrav: RefusjonskravDto,
-    arbeidsforhold: List<Arbeidsforhold>?
+fun <E> Validator<E>.Property<LocalDate?>.måHaAktivtArbeidsforhold(
+    agp: Arbeidsgiverperiode,
+    virksomhet: String,
+    arbeidsforhold: List<Arbeidsforhold>
 ) = this.validate(ArbeidsforholdConstraint()) {
     val ansattPerioder = arbeidsforhold!!
         .asSequence()
-        .filter { it.arbeidsgiver.organisasjonsnummer == refusjonskrav.virksomhetsnummer }
+        .filter { it.arbeidsgiver.organisasjonsnummer == virksomhet }
         .map { it.ansettelsesperiode.periode }
         .map { AaregPeriode(it.fom!!, it.tom ?: MAX) }
         .sortedBy { it.fom }
@@ -36,10 +37,8 @@ fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.måHaAktivtArbeids
 
     val sammenslåttePerioder = slåSammenPerioder(ansattPerioder)
 
-    refusjonskrav.perioder.all { kravPeriode ->
-        sammenslåttePerioder.any { ansattPeriode ->
-            (kravPeriode.tom.isBeforeOrEqual(ansattPeriode.tom)) && (ansattPeriode.fom.isBeforeOrEqual(kravPeriode.fom))
-        }
+    sammenslåttePerioder.any { ansattPeriode ->
+        (agp.tom.isBeforeOrEqual(ansattPeriode.tom)) && (ansattPeriode.fom.isBeforeOrEqual(agp.fom))
     }
 }
 
