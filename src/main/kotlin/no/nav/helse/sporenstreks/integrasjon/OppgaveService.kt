@@ -24,19 +24,21 @@ class OppgaveService(private val oppgaveKlient: OppgaveKlient, private val om: O
     }
 
     private fun mapOppgave(journalpostId: String, aktørId: String, beskrivelse: String, tariffEndring: Boolean): OpprettOppgaveRequest {
-        val oppgaveType = if (!tariffEndring) "ROB_BEH" else "VUR_KONS_YTE"
-        val behandlingsTema = if (!tariffEndring) "ab0456" else "ab0433"
+        val oppgavetype = if (tariffEndring) "VURD_HENV" else "ROB_BEH"
+        val behandlingstype = if (tariffEndring) "ae0052" else null
+        val behandlingstema = "ab0456"
 
         return OpprettOppgaveRequest(
             aktoerId = aktørId,
             journalpostId = journalpostId,
             beskrivelse = beskrivelse,
             tema = "SYK",
-            oppgavetype = oppgaveType,
-            behandlingstema = behandlingsTema,
+            oppgavetype = oppgavetype,
+            behandlingstema = behandlingstema,
             aktivDato = LocalDate.now(),
             fristFerdigstillelse = LocalDate.now().plusDays(7),
-            prioritet = "NORM"
+            prioritet = "NORM",
+            behandlingstype = behandlingstype,
         )
     }
 }
