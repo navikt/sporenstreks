@@ -26,14 +26,14 @@ data class RefusjonskravDto(
         validate(this) {
             validate(RefusjonskravDto::identitetsnummer).isValidIdentitetsnummer()
             validate(RefusjonskravDto::virksomhetsnummer).isValidOrganisasjonsnummer()
-            if (!skipArbeidsforholdValidation) {
-                validate(RefusjonskravDto::perioder).måHaAktivtArbeidsforhold(it, arbeidsforhold)
-            }
 
             validate(RefusjonskravDto::perioder).validateForEach {
                 validate(Arbeidsgiverperiode::beloep).isPositiveOrZero()
                 validate(Arbeidsgiverperiode::beloep).isLessThanOrEqualTo(1_000_000.0)
                 validate(Arbeidsgiverperiode::antallDagerMedRefusjon).isPositiveOrZero()
+                if (!skipArbeidsforholdValidation) {
+                    validate(Arbeidsgiverperiode::fom).måHaAktivtArbeidsforhold(it, virksomhetsnummer, arbeidsforhold)
+                }
             }
 
             // kan ikke kreve refusjon for dager etter gjenåpning 30.06.2022

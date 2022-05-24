@@ -16,6 +16,8 @@ import no.nav.helse.TestData
 import no.nav.helse.arbeidsgiver.integrasjoner.aareg.*
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
+import no.nav.helse.sporenstreks.web.dto.validation.AaregPeriode
+import no.nav.helse.sporenstreks.web.dto.validation.måHaAktivtArbeidsforhold
 import no.nav.helse.sporenstreks.web.dto.validation.slåSammenPerioder
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
@@ -24,7 +26,10 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.valiktor.ConstraintViolationException
+import org.valiktor.functions.validateForEach
+import org.valiktor.validate
 import java.time.LocalDate
+import java.time.LocalDate.MAX
 import java.time.LocalDate.of
 import java.time.LocalDateTime
 
@@ -182,51 +187,178 @@ internal class AaregConstraintsTest {
     }
 
     @Test
+    fun `Ansatt slutter fram i tid`() {
+        val periode = Arbeidsgiverperiode(
+            LocalDate.of(2021, 1, 15),
+            LocalDate.of(2021, 1, 20),
+            4,
+            beloep = 2590.8,
+        )
+
+        validate(periode) {
+            validate(Arbeidsgiverperiode::fom).måHaAktivtArbeidsforhold(periode, TestData.validOrgNr, TestData.arbeidsforholdMedSluttDato)
+        }
+    }
+
+    @Test
+    fun `Refusjonskravet er innenfor Arbeidsforholdet`() {
+        val periode = Arbeidsgiverperiode(
+            LocalDate.of(2021, 1, 15),
+            LocalDate.of(2021, 1, 18),
+            2,
+            beloep = 2590.8,
+        )
+
+        validate(periode) {
+            validate(Arbeidsgiverperiode::fom).måHaAktivtArbeidsforhold(periode, TestData.validOrgNr, TestData.evigArbeidsForholdListe)
+        }
+    }
+
+    @Test
+    fun `Sammenehengende arbeidsforhold slås sammen til en periode`() {
+
+        val arbeidsForhold1 = Arbeidsforhold(
+            TestData.arbeidsgiver,
+            TestData.opplysningspliktig,
+            emptyList(),
+            Ansettelsesperiode(
+                Periode(
+                    LocalDate.of(2019, 1, 1),
+                    LocalDate.of(2021, 2, 28)
+                )
+            ),
+            LocalDateTime.now()
+        )
+
+        val arbeidsForhold2 = Arbeidsforhold(
+            TestData.arbeidsgiver,
+            TestData.opplysningspliktig,
+            emptyList(),
+            Ansettelsesperiode(
+                Periode(
+                    LocalDate.of(2021, 3, 1),
+                    null
+                )
+            ),
+            LocalDateTime.now()
+        )
+
+        val refusjonskravDto = RefusjonskravDto(
+            TestData.validIdentitetsnummer,
+            TestData.validOrgNr,
+            setOf(
+                Arbeidsgiverperiode(
+                    LocalDate.of(2021, 1, 15),
+                    LocalDate.of(2021, 1, 18),
+                    2,
+                    beloep = 2590.8,
+                ),
+                Arbeidsgiverperiode(
+                    LocalDate.of(2021, 2, 26),
+                    LocalDate.of(2021, 3, 10),
+                    12,
+                    beloep = 2590.8,
+                )
+            )
+        )
+
+        validate(refusjonskravDto) {
+            validate(RefusjonskravDto::perioder).validateForEach {
+                validate(Arbeidsgiverperiode::fom).måHaAktivtArbeidsforhold(
+                    it,
+                    TestData.validOrgNr,
+                    listOf(arbeidsForhold1, arbeidsForhold2)
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `Refusjonsdato er før Arbeidsforhold har begynt`() {
+
+        val periode = Arbeidsgiverperiode(
+            LocalDate.of(2021, 1, 1),
+            LocalDate.of(2021, 1, 5),
+            2,
+            beloep = 2590.8,
+        )
+        validationShouldFailFor(Arbeidsgiverperiode::fom) {
+            validate(periode) {
+                validate(Arbeidsgiverperiode::fom).måHaAktivtArbeidsforhold(
+                    periode,
+                    TestData.validOrgNr,
+                    TestData.pågåendeArbeidsforholdListe
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `Refusjonsdato etter Arbeidsforhold er avsluttet`() {
+        val periode = Arbeidsgiverperiode(
+            LocalDate.of(2021, 5, 15),
+            LocalDate.of(2021, 5, 18),
+            2,
+            beloep = 2590.8,
+        )
+
+        validationShouldFailFor(Arbeidsgiverperiode::fom) {
+            validate(periode) {
+                validate(Arbeidsgiverperiode::fom).måHaAktivtArbeidsforhold(
+                    periode,
+                    TestData.validOrgNr,
+                    TestData.avsluttetArbeidsforholdListe
+                )
+            }
+        }
+    }
+
+    @Test
     fun `merge fragmented periods`() {
         assertThat(
             slåSammenPerioder(
-                listOf(
+                mutableListOf(
                     // skal ble merget til 1 periode fra 1.1.21 til 28.2.21
-                    Periode(of(2021, 1, 1), of(2021, 1, 29)),
-                    Periode(of(2021, 2, 1), of(2021, 2, 13)),
-                    Periode(of(2021, 2, 15), of(2021, 2, 28)),
+                    AaregPeriode(of(2021, 1, 1), of(2021, 1, 29)),
+                    AaregPeriode(of(2021, 2, 1), of(2021, 2, 13)),
+                    AaregPeriode(of(2021, 2, 15), of(2021, 2, 28)),
 
                     // skal bli merget til 1
-                    Periode(of(2021, 3, 20), of(2021, 3, 31)),
-                    Periode(of(2021, 4, 2), of(2021, 4, 30)),
+                    AaregPeriode(of(2021, 3, 20), of(2021, 3, 31)),
+                    AaregPeriode(of(2021, 4, 2), of(2021, 4, 30)),
 
                     // skal bli merget til 1
-                    Periode(of(2021, 7, 1), of(2021, 8, 30)),
-                    Periode(of(2021, 9, 1), null),
+                    AaregPeriode(of(2021, 7, 1), of(2021, 8, 30)),
+                    AaregPeriode(of(2021, 9, 1), MAX),
                 )
             )
         ).hasSize(3)
 
         assertThat(
             slåSammenPerioder(
-                listOf(
-                    Periode(of(2021, 1, 1), of(2021, 1, 29)),
-                    Periode(of(2021, 9, 1), null),
+                mutableListOf(
+                    AaregPeriode(of(2021, 1, 1), of(2021, 1, 29)),
+                    AaregPeriode(of(2021, 9, 1), MAX),
                 )
             )
         ).hasSize(2)
 
         assertThat(
             slåSammenPerioder(
-                listOf(
-                    Periode(of(2021, 9, 1), null),
+                mutableListOf(
+                    AaregPeriode(of(2021, 9, 1), MAX),
                 )
             )
         ).hasSize(1)
 
         assertThat(
             slåSammenPerioder(
-                listOf(
-                    Periode(of(2022, 2, 1), null),
-                    Periode(of(2005, 12, 1), of(2014, 12, 31)),
-                    Periode(of(1984, 10, 20), of(2000, 10, 25)),
-                    Periode(of(1984, 10, 20), of(1993, 10, 24)),
-                    Periode(of(1984, 10, 20), of(2022, 1, 31)),
+                mutableListOf(
+                    AaregPeriode(of(2022, 2, 1), MAX),
+                    AaregPeriode(of(2005, 12, 1), of(2014, 12, 31)),
+                    AaregPeriode(of(1984, 10, 20), of(2000, 10, 25)),
+                    AaregPeriode(of(1984, 10, 20), of(1993, 10, 24)),
+                    AaregPeriode(of(1984, 10, 20), of(2022, 1, 31)),
                 )
             )
         ).hasSize(1)
