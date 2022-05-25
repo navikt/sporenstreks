@@ -294,6 +294,45 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
             }
         }
     }
+
+    @KtorExperimentalLocationsAPI
+    @Test
+    fun `Gir riktig feilmedling uten gyldig arbeidsforhold`() {
+        configuredTestApplication({
+            sporenstreksModule()
+        }) {
+            val om = application.get<ObjectMapper>()
+            val dtoListe = listOf(
+                RefusjonskravDtoMock(
+                    identitetsnummer = TestData.validIdentitetsnummer,
+                    virksomhetsnummer = "805824352",
+                    perioder = setOf(
+                        Arbeidsgiverperiode(
+                            fom = LocalDate.of(2022, 3, 12),
+                            tom = LocalDate.of(2022, 3, 25),
+                            antallDagerMedRefusjon = 7,
+                            beloep = 6000.0
+                        )
+                    )
+                )
+            )
+            doAuthenticatedRequest(HttpMethod.Post, "api/v1/refusjonskrav/list") {
+                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                setBody(
+                    om.writeValueAsString(
+                        dtoListe
+                    )
+                )
+            }.apply {
+                assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
+                val resultat: List<PostListResponseDto> = om.readValue(response.content!!)
+                assertThat(resultat).hasSize(1)
+                assertThat(resultat.first().status).isEqualTo(PostListResponseDto.Status.VALIDATION_ERRORS)
+                assertThat(resultat[0].validationErrors?.map { it.validationType })
+                    .contains("ArbeidsforholdConstraint")
+            }
+        }
+    }
 }
 
 data class RefusjonskravDtoMock(
