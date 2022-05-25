@@ -16,7 +16,7 @@ internal class RefusjonsKravDtoTestDecember2021 {
     @BeforeAll
     fun setup() {
         mockkStatic(Class.forName("java.time.LocalDate").kotlin)
-        every { LocalDate.now() } returns LocalDate.parse("2022-04-22")
+        every { LocalDate.now() } returns LocalDate.parse("2022-05-22")
     }
 
     @Test
@@ -26,8 +26,8 @@ internal class RefusjonsKravDtoTestDecember2021 {
             TestData.validOrgNr,
             setOf(
                 Arbeidsgiverperiode(
-                    LocalDate.of(2021, 12, 28),
-                    LocalDate.of(2022, 1, 10),
+                    LocalDate.of(2022, 1, 28),
+                    LocalDate.of(2022, 2, 10),
                     9, 300.0
                 )
             )
@@ -41,8 +41,8 @@ internal class RefusjonsKravDtoTestDecember2021 {
             TestData.validOrgNr,
             setOf(
                 Arbeidsgiverperiode(
-                    LocalDate.of(2021, 12, 27),
-                    LocalDate.of(2022, 1, 10),
+                    LocalDate.of(2022, 1, 27),
+                    LocalDate.of(2022, 2, 10),
                     9, 300.0
                 )
             )
@@ -58,17 +58,32 @@ internal class RefusjonsKravDtoTestDecember2021 {
                 TestData.validOrgNr,
                 setOf(
                     Arbeidsgiverperiode(
-                        LocalDate.of(2021, 12, 28),
-                        LocalDate.of(2022, 1, 2),
+                        LocalDate.of(2022, 1, 28),
+                        LocalDate.of(2022, 2, 2),
                         5, 200.3
                     )
                 )
             ).validate(TestData.arbeidsForhold)
         }
     }
+    @Test
+    fun `Det skal være mulig å kreve refusjon for alle dager fra og med fristen`() {
+
+        RefusjonskravDto(
+            TestData.validIdentitetsnummer,
+            TestData.validOrgNr,
+            setOf(
+                Arbeidsgiverperiode(
+                    LocalDate.of(2022, 1, 24),
+                    LocalDate.of(2022, 2, 4),
+                    4, 200.3
+                )
+            )
+        ).validate(TestData.arbeidsForhold)
+    }
 
     @Test
-    fun `Refusjonskrav med arbeidsperiode som starter 6 dager før ordning er IKKE gyldig`() {
+    fun `Refusjonskrav med arbeidsperiode som starter 16 dager før ordning er IKKE gyldig`() {
         Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
 
             RefusjonskravDto(
@@ -76,8 +91,25 @@ internal class RefusjonsKravDtoTestDecember2021 {
                 TestData.validOrgNr,
                 setOf(
                     Arbeidsgiverperiode(
-                        LocalDate.of(2021, 12, 26),
-                        LocalDate.of(2022, 1, 10),
+                        LocalDate.of(2022, 1, 16),
+                        LocalDate.of(2022, 2, 1),
+                        9, 200.3
+                    )
+                )
+            ).validate(TestData.arbeidsForhold)
+        }
+    }
+    @Test
+    fun `Refusjonskrav med arbeidsperiode som slutter før ordning er IKKE gyldig`() {
+        Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
+
+            RefusjonskravDto(
+                TestData.validIdentitetsnummer,
+                TestData.validOrgNr,
+                setOf(
+                    Arbeidsgiverperiode(
+                        LocalDate.of(2022, 1, 17),
+                        LocalDate.of(2022, 1, 31),
                         9, 200.3
                     )
                 )

@@ -43,6 +43,7 @@ data class RefusjonskravDto(
             if (!tariffEndring) {
                 // kan ikke kreve refusjon for dager før tre måneder siden
                 validate(RefusjonskravDto::perioder).innenforAntallMåneder(antallMånederTilStengt)
+                // validate(RefusjonskravDto::perioder).tomInnenforAntallMåneder(antallMånederTilStengt)
             }
 
             validate(RefusjonskravDto::perioder).validateForEach {

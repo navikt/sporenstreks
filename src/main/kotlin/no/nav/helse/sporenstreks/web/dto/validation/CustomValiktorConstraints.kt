@@ -1,6 +1,7 @@
 package no.nav.helse.sporenstreks.web.dto.validation
 
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
+import no.nav.helse.sporenstreks.utils.isAfterOrEqual
 import org.valiktor.Constraint
 import org.valiktor.Validator
 import java.time.LocalDate
@@ -138,13 +139,14 @@ class RefusjonsdagerInnenforAntallMånederConstraint(override val messageParams:
 
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.innenforAntallMåneder(antallMåneder: Long) =
     this.validate(RefusjonsdagerInnenforAntallMånederConstraint(mapOf("antall" to antallMåneder.toString()))) { ps ->
-        val antallMånederSiden = LocalDate.now()
+        val gyldigFomDato = LocalDate.now()
             .minusMonths(antallMåneder)
             .withDayOfMonth(1)
-            .minusDays(6)
+            .minusDays(1)
 
         ps!!.all { p ->
-            p.fom.isAfter(antallMånederSiden)
+            p.tom.minusDays(p.antallDagerMedRefusjon.toLong()).isAfterOrEqual(gyldigFomDato) &&
+                p.fom.isAfter(gyldigFomDato.minusDays(15))
         }
     }
 
