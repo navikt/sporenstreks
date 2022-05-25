@@ -31,9 +31,10 @@ data class RefusjonskravDto(
                 validate(Arbeidsgiverperiode::beloep).isPositiveOrZero()
                 validate(Arbeidsgiverperiode::beloep).isLessThanOrEqualTo(1_000_000.0)
                 validate(Arbeidsgiverperiode::antallDagerMedRefusjon).isPositiveOrZero()
-                if (!skipArbeidsforholdValidation) {
-                    validate(Arbeidsgiverperiode::fom).måHaAktivtArbeidsforhold(it, virksomhetsnummer, arbeidsforhold)
-                }
+            }
+
+            if (!skipArbeidsforholdValidation) {
+                validate(RefusjonskravDto::perioder).måHaAktivtArbeidsforhold(it, arbeidsforhold)
             }
 
             // kan ikke kreve refusjon for dager etter gjenåpning 30.06.2022

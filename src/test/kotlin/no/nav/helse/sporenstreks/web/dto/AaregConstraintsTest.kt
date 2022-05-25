@@ -18,6 +18,7 @@ import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.web.dto.validation.AaregPeriode
 import no.nav.helse.sporenstreks.web.dto.validation.måHaAktivtArbeidsforhold
+import no.nav.helse.sporenstreks.web.dto.validation.måHaAktivtArbeidsforholdEnkel
 import no.nav.helse.sporenstreks.web.dto.validation.slåSammenPerioder
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
@@ -196,7 +197,7 @@ internal class AaregConstraintsTest {
         )
 
         validate(periode) {
-            validate(Arbeidsgiverperiode::fom).måHaAktivtArbeidsforhold(periode, TestData.validOrgNr, TestData.arbeidsforholdMedSluttDato)
+            validate(Arbeidsgiverperiode::fom).måHaAktivtArbeidsforholdEnkel(periode, TestData.validOrgNr, TestData.arbeidsforholdMedSluttDato)
         }
     }
 
@@ -210,7 +211,7 @@ internal class AaregConstraintsTest {
         )
 
         validate(periode) {
-            validate(Arbeidsgiverperiode::fom).måHaAktivtArbeidsforhold(periode, TestData.validOrgNr, TestData.evigArbeidsForholdListe)
+            validate(Arbeidsgiverperiode::fom).måHaAktivtArbeidsforholdEnkel(periode, TestData.validOrgNr, TestData.evigArbeidsForholdListe)
         }
     }
 
@@ -264,7 +265,7 @@ internal class AaregConstraintsTest {
 
         validate(refusjonskravDto) {
             validate(RefusjonskravDto::perioder).validateForEach {
-                validate(Arbeidsgiverperiode::fom).måHaAktivtArbeidsforhold(
+                validate(Arbeidsgiverperiode::fom).måHaAktivtArbeidsforholdEnkel(
                     it,
                     TestData.validOrgNr,
                     listOf(arbeidsForhold1, arbeidsForhold2)
@@ -284,7 +285,7 @@ internal class AaregConstraintsTest {
         )
         validationShouldFailFor(Arbeidsgiverperiode::fom) {
             validate(periode) {
-                validate(Arbeidsgiverperiode::fom).måHaAktivtArbeidsforhold(
+                validate(Arbeidsgiverperiode::fom).måHaAktivtArbeidsforholdEnkel(
                     periode,
                     TestData.validOrgNr,
                     TestData.pågåendeArbeidsforholdListe
@@ -304,7 +305,7 @@ internal class AaregConstraintsTest {
 
         validationShouldFailFor(Arbeidsgiverperiode::fom) {
             validate(periode) {
-                validate(Arbeidsgiverperiode::fom).måHaAktivtArbeidsforhold(
+                validate(Arbeidsgiverperiode::fom).måHaAktivtArbeidsforholdEnkel(
                     periode,
                     TestData.validOrgNr,
                     TestData.avsluttetArbeidsforholdListe

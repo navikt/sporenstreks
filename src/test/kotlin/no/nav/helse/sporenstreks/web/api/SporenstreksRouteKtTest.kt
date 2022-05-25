@@ -309,8 +309,14 @@ class SporenstreksRouteKtTest : ControllerIntegrationTestBase() {
                     perioder = setOf(
                         Arbeidsgiverperiode(
                             fom = LocalDate.of(2022, 3, 12),
+                            tom = LocalDate.of(2022, 3, 17),
+                            antallDagerMedRefusjon = 4,
+                            beloep = 4000.0
+                        ),
+                        Arbeidsgiverperiode(
+                            fom = LocalDate.of(2022, 3, 18),
                             tom = LocalDate.of(2022, 3, 25),
-                            antallDagerMedRefusjon = 7,
+                            antallDagerMedRefusjon = 6,
                             beloep = 6000.0
                         )
                     )
