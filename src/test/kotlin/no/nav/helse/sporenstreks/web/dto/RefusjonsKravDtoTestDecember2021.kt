@@ -66,6 +66,24 @@ internal class RefusjonsKravDtoTestDecember2021 {
             ).validate(TestData.arbeidsForhold)
         }
     }
+
+    @Test
+    fun `Det kan ikke kreves refusjon hvis TOM minus antallDager er før fristen`() {
+        Assertions.assertThatExceptionOfType(ConstraintViolationException::class.java).isThrownBy {
+
+            RefusjonskravDto(
+                TestData.validIdentitetsnummer,
+                TestData.validOrgNr,
+                setOf(
+                    Arbeidsgiverperiode(
+                        LocalDate.of(2022, 1, 24),
+                        LocalDate.of(2022, 2, 4),
+                        5, 200.3
+                    )
+                )
+            ).validate(TestData.arbeidsForhold)
+        }
+    }
     @Test
     fun `Det skal være mulig å kreve refusjon for alle dager fra og med fristen`() {
 
