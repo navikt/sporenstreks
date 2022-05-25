@@ -17,7 +17,6 @@ import no.nav.helse.arbeidsgiver.integrasjoner.aareg.*
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.web.dto.validation.AaregPeriode
-import no.nav.helse.sporenstreks.web.dto.validation.måHaAktivtArbeidsforhold
 import no.nav.helse.sporenstreks.web.dto.validation.måHaAktivtArbeidsforholdEnkel
 import no.nav.helse.sporenstreks.web.dto.validation.slåSammenPerioder
 import org.assertj.core.api.Assertions
