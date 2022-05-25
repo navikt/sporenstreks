@@ -139,13 +139,13 @@ class RefusjonsdagerInnenforAntallMånederConstraint(override val messageParams:
 
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.innenforAntallMåneder(antallMåneder: Long) =
     this.validate(RefusjonsdagerInnenforAntallMånederConstraint(mapOf("antall" to antallMåneder.toString()))) { ps ->
-        val gyldigFomDato = LocalDate.now()
+        val fristDato = LocalDate.now()
             .minusMonths(antallMåneder)
             .withDayOfMonth(1)
 
         ps!!.all { p ->
-            p.tom.minusDays(p.antallDagerMedRefusjon.minus(1).toLong()).isAfterOrEqual(gyldigFomDato) &&
-                p.fom.isAfterOrEqual(gyldigFomDato.minusDays(15))
+            p.tom.minusDays(p.antallDagerMedRefusjon.minus(1).toLong()).isAfterOrEqual(fristDato) &&
+                p.fom.isAfterOrEqual(fristDato.minusDays(15))
         }
     }
 
