@@ -3,6 +3,7 @@ package no.nav.helse.sporenstreks.web.dto.validation
 import no.nav.helse.arbeidsgiver.integrasjoner.aareg.Arbeidsforhold
 import no.nav.helse.sporenstreks.domene.Arbeidsgiverperiode
 import no.nav.helse.sporenstreks.utils.isBeforeOrEqual
+import no.nav.helse.sporenstreks.web.dto.RefusjonskravDto
 import org.valiktor.Validator
 import java.time.LocalDate
 import java.time.LocalDate.MAX
@@ -21,7 +22,27 @@ data class AaregPeriode(
     ): Boolean = this.fom.minusDays(dager).isBeforeOrEqual(periode.tom)
 }
 
-fun <E> Validator<E>.Property<LocalDate?>.måHaAktivtArbeidsforhold(
+fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.måHaAktivtArbeidsforhold(
+    refusjonskrav: RefusjonskravDto,
+    arbeidsforhold: List<Arbeidsforhold>
+) = this.validate(ArbeidsforholdConstraint()) {
+    val ansattPerioder = arbeidsforhold!!
+        .asSequence()
+        .filter { it.arbeidsgiver.organisasjonsnummer == refusjonskrav.virksomhetsnummer }
+        .map { it.ansettelsesperiode.periode }
+        .map { AaregPeriode(it.fom!!, it.tom ?: MAX) }
+        .sortedBy { it.fom }
+        .toMutableList()
+
+    val sammenslåttePerioder = slåSammenPerioder(ansattPerioder)
+
+    return@validate refusjonskrav.perioder.all { agp ->
+        sammenslåttePerioder.any { ansattPeriode ->
+            (agp.tom.isBeforeOrEqual(ansattPeriode.tom)) && (ansattPeriode.fom.isBeforeOrEqual(agp.fom))
+        }
+    }
+}
+fun <E> Validator<E>.Property<LocalDate?>.måHaAktivtArbeidsforholdEnkel(
     agp: Arbeidsgiverperiode,
     virksomhet: String,
     arbeidsforhold: List<Arbeidsforhold>
@@ -36,7 +57,7 @@ fun <E> Validator<E>.Property<LocalDate?>.måHaAktivtArbeidsforhold(
 
     val sammenslåttePerioder = slåSammenPerioder(ansattPerioder)
 
-    sammenslåttePerioder.any { ansattPeriode ->
+    return@validate sammenslåttePerioder.any { ansattPeriode ->
         (agp.tom.isBeforeOrEqual(ansattPeriode.tom)) && (ansattPeriode.fom.isBeforeOrEqual(agp.fom))
     }
 }
