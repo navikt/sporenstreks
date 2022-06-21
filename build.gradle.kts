@@ -18,7 +18,7 @@ val koinVersion = "3.1.4"
 val valiktorVersion = "0.12.0"
 val cxfVersion = "3.4.1"
 val jaxwsVersion = "2.3.1"
-val jaxwsToolsVersion = "2.3.3"
+val jaxwsToolsVersion = "4.0.0"
 val apachePoiVersion = "5.0.0"
 val influxVersion = "2.21"
 val githubPassword: String by project
