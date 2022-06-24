@@ -13,7 +13,6 @@ import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import no.nav.helse.arbeidsgiver.system.AppEnv
 import no.nav.helse.arbeidsgiver.system.getEnvironment
 import no.nav.helse.sporenstreks.auth.localCookieDispenser
-import no.nav.helse.sporenstreks.datapakke.DatapakkePublisherJob
 import no.nav.helse.sporenstreks.prosessering.kvittering.KvitteringProcessor
 import no.nav.helse.sporenstreks.prosessering.metrics.ProcessInfluxJob
 import no.nav.helse.sporenstreks.prosessering.refusjonskrav.RefusjonskravProcessor
@@ -61,9 +60,6 @@ private fun initBackgroundWorkers(app: NettyApplicationEngine) {
             koin.get<RefusjonskravProcessor>()
         )
         bakgrunnsjobbService.startAsync(true)
-
-        val datapakkeJob = koin.get<DatapakkePublisherJob>()
-        datapakkeJob.startAsync(retryOnFail = true)
     }
 
     runBlocking { autoDetectProbeableComponents(koin) }
