@@ -130,8 +130,8 @@ class RefusjonsdagerInnenforGjenaapningConstraint(override val messageParams: Ma
 
 fun <E> Validator<E>.Property<Iterable<Arbeidsgiverperiode>?>.refusjonsdatoIkkeEtterGjenåpning(refusjonsdagerTom: LocalDate) =
     this.validate(RefusjonsdagerInnenforGjenaapningConstraint(mapOf("dato" to dateFormatter.format(refusjonsdagerTom)))) { ps ->
-        ps!!.all { p ->
-            (p.fom < refusjonsdagerTom)
+        ps!!.any { p ->
+            p.fom.isBefore(refusjonsdagerTom)
         }
     }
 
