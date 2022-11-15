@@ -102,7 +102,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("ch.qos.logback.contrib:logback-jackson:$logbackContribVersion")
     implementation("ch.qos.logback.contrib:logback-json-classic:$logbackContribVersion")
-    implementation("net.logstash.logback:logstash-logback-encoder:7.0")
+    implementation("net.logstash.logback:logstash-logback-encoder:7.2")
     implementation("org.codehaus.janino:janino:3.1.6")
     implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:1.2019.09.25-00.21-49b69f0625e0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
