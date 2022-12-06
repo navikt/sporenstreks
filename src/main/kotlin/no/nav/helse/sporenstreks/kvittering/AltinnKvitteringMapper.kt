@@ -42,9 +42,10 @@ class AltinnKvitteringMapper(val altinnTjenesteKode: String) {
             krav.perioder.sorted().joinToString(
                 separator = "\n"
             ) {
+                val sladdetFnr = sladdFnr(krav.identitetsnummer)
                 """
                                 <tr>
-                                <td style="padding:12px">${krav.identitetsnummer}</td>
+                                <td style="padding:12px">$sladdetFnr</td>
                                 <td style="padding:12px">${it.fom.format(dateFormatter)} - ${it.tom.format(dateFormatter)}</td>
                                 <td style="padding:12px">${it.antallDagerMedRefusjon}</td>
                                 <td style="padding:12px">${it.beloep}</td>
@@ -73,5 +74,9 @@ class AltinnKvitteringMapper(val altinnTjenesteKode: String) {
             .withServiceCode(altinnTjenesteKode)
             .withServiceEdition("1")
             .withContent(meldingsInnhold)
+    }
+
+    fun sladdFnr(fnr: String): String {
+        return fnr.take(6) + "*****"
     }
 }
